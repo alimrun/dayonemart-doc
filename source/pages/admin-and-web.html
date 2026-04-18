@@ -443,67 +443,62 @@ npm install && npm run build
     <h3>Web Installer Wizard</h3>
     <p>Navigate to <code>https://yourdomain.com/install/requirements</code> in your browser. The wizard guides you through <strong>5 steps</strong>:</p>
 
-    <ol class="steps">
-      <li>
-        <div class="step-body">
-          <strong>System Requirements Check</strong>
-          The installer verifies your server meets all requirements:
-          <ul class="list">
-            <li>PHP 8.2+ with version validation</li>
-            <li>Required extensions: PDO_MySQL, Sodium, Mbstring, OpenSSL, cURL, Fileinfo, BCMath, XML, Zip</li>
-            <li><code>file_get_contents()</code> and <code>symlink()</code> functions available</li>
-            <li>Composer and Node.js available via shell</li>
-          </ul>
-          <p>All checks must pass before you can proceed to the next step.</p>
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Purchase Verification</strong>
-          Enter your <strong>Envato purchase code</strong> and <strong>Envato username</strong> to verify your license.
-          Upon successful verification, the <code>PURCHASE_VERIFIED=true</code> flag is written to <code>.env</code>.
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Database Configuration</strong>
-          Enter your MySQL database connection details:
-          <ul class="list">
-            <li><strong>DB Host</strong> — e.g. <code>127.0.0.1</code> or <code>localhost</code></li>
-            <li><strong>DB Port</strong> — e.g. <code>3306</code></li>
-            <li><strong>DB Database</strong> — the database name you created</li>
-            <li><strong>DB Username</strong> — MySQL user with full privileges</li>
-            <li><strong>DB Password</strong> — MySQL password</li>
-          </ul>
-          <p>The installer tests the connection before proceeding. On success, it writes the credentials to <code>.env</code> and automatically runs all database migrations.</p>
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Business &amp; Admin Setup</strong>
-          Configure your business and create the super-admin account:
-          <ul class="list">
-            <li><strong>Business info:</strong> Business name, email, phone, address</li>
-            <li><strong>Brand colors:</strong> Primary and secondary color (hex, e.g. <code>#2563eb</code>)</li>
-            <li><strong>Admin account:</strong> First name, last name, email, and password (min 8 characters, with confirmation)</li>
-          </ul>
-          <p>The installer creates the business record, the admin user, and runs essential seeders (currencies, website setup, general settings, push notification setup, email templates, modules).</p>
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Finalize Installation</strong>
-          Click the finalize button to complete the setup. The installer automatically:
-          <ul class="list">
-            <li>Generates the app key if not already set</li>
-            <li>Clears all cached config, routes, and views</li>
-            <li>Creates the <code>public/storage</code> symlink</li>
-            <li>Sets <code>INSTALLED=true</code>, <code>APP_ENV=production</code>, <code>APP_DEBUG=false</code></li>
-            <li>Sets <code>APP_URL</code> to your current domain automatically</li>
-          </ul>
-        </div>
-      </li>
-    </ol>
+    <h4>Step 1 — System Requirements Check</h4>
+    <p>
+      The installer verifies your server meets all requirements — PHP version, extensions,
+      functions, and tool availability. All checks must show <strong>OK</strong> before you can proceed.
+    </p>
+    <img src="../assets/images/upload/installer-requirements.png" alt="Installer — System Requirements Check" class="doc-img" />
+
+    <h4>Step 2 — Purchase Verification</h4>
+    <p>
+      Enter your <strong>Envato purchase code</strong> and <strong>Envato username</strong>.
+      Click <em>Verify &amp; Continue</em> to validate your license. Upon success, the
+      <code>PURCHASE_VERIFIED=true</code> flag is written to <code>.env</code>.
+    </p>
+    <img src="../assets/images/upload/installer-purchase.png" alt="Installer — Purchase Verification" class="doc-img" />
+
+    <h4>Step 3 — Database Configuration</h4>
+    <p>
+      Enter your MySQL connection details — <strong>Host</strong>, <strong>Port</strong>,
+      <strong>Database</strong> name, <strong>Username</strong>, and <strong>Password</strong>.
+      The installer tests the connection live before saving. On success, it writes the credentials
+      to <code>.env</code> and automatically runs all database migrations.
+    </p>
+    <img src="../assets/images/upload/installer-database.png" alt="Installer — Database Setup" class="doc-img" />
+
+    <h4>Step 4 — Business &amp; Admin Setup</h4>
+    <p>Configure your business and create the super-admin account on this page:</p>
+    <ul class="list">
+      <li><strong>Business Setup:</strong> Business name, email, phone, and address</li>
+      <li><strong>Theme Setup:</strong> Primary color and secondary color (hex values, e.g. <code>#6366F1</code>)</li>
+      <li><strong>Administrator Account:</strong> First name, last name, email, password, and password confirmation (min 8 characters)</li>
+    </ul>
+    <p>
+      The installer creates the business record, the admin user, and runs essential seeders
+      (currencies, website setup, general settings, push notification setup, email templates, modules).
+    </p>
+    <img src="../assets/images/upload/installer-admin.png" alt="Installer — Business & Admin Setup" class="doc-img" />
+
+    <h4>Step 5 — Finalize Installation</h4>
+    <p>
+      Click <em>Run to finalize the installation</em> to complete the setup. The installer automatically:
+    </p>
+    <ul class="list">
+      <li>Generates the app key if not already set</li>
+      <li>Clears all cached config, routes, and views</li>
+      <li>Creates the <code>public/storage</code> symlink</li>
+      <li>Sets <code>INSTALLED=true</code>, <code>APP_ENV=production</code>, <code>APP_DEBUG=false</code></li>
+      <li>Sets <code>APP_URL</code> to your current domain automatically</li>
+    </ul>
+    <img src="../assets/images/upload/installer-finalize.png" alt="Installer — Finalize" class="doc-img" />
+
+    <h4>Installation Complete</h4>
+    <p>
+      Once finalized, the success screen appears with links to visit the <strong>Storefront</strong>
+      or the <strong>Admin Panel</strong>. Your application is now live.
+    </p>
+    <img src="../assets/images/upload/installer-complete.png" alt="Installer — Installation Complete" class="doc-img" />
 
     <div class="alert alert-warning">
       <span class="alert-icon">⚠️</span>
