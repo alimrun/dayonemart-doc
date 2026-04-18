@@ -618,25 +618,19 @@ footer {
 .search-hidden { display: none !important; }
 
 /* ---------- Responsive ---------- */
+
+/* Tablet (max 900px) */
 @media (max-width: 900px) {
   .sidebar { width: 240px; }
   .content { margin-left: 240px; padding: 32px 28px 60px; }
+  .content h2 { font-size: 1.4rem; }
+  .feature-grid { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
 }
 
+/* Mobile (max 680px) */
 @media (max-width: 680px) {
-  .sidebar {
-    display: none;
-    position: fixed;
-    top: var(--nav-h);
-    left: 0;
-    width: 80vw;
-    max-width: 320px;
-    height: calc(100vh - var(--nav-h));
-    z-index: 200;
-    box-shadow: 4px 0 24px rgba(0,0,0,.15);
-  }
-  .sidebar.open { display: block; }
-  .content { margin-left: 0; padding: 24px 18px 60px; }
+  /* Navbar */
+  .navbar { padding: 0 12px; gap: 12px; }
   .navbar nav { display: none; }
   .navbar nav.open {
     display: flex;
@@ -655,9 +649,94 @@ footer {
     border-radius: 0;
   }
   .menu-toggle { display: flex; }
-  .hero h1 { font-size: 1.8rem; }
-  .cards-grid { grid-template-columns: 1fr; }
-  .doc-table { display: block; overflow-x: auto; }
+
+  /* Sidebar — hidden by default, slides in as overlay */
+  .sidebar {
+    display: none;
+    position: fixed;
+    top: var(--nav-h);
+    left: 0;
+    width: 85vw;
+    max-width: 320px;
+    height: calc(100vh - var(--nav-h));
+    z-index: 200;
+    box-shadow: 4px 0 24px rgba(0,0,0,.2);
+    background: var(--bg-alt);
+  }
+  .sidebar.open { display: block; }
+
+  /* Content — full width */
+  .content {
+    margin-left: 0;
+    padding: 20px 16px 60px;
+    max-width: 100%;
+  }
+
+  /* Typography */
+  .content h2 { font-size: 1.25rem; margin: 36px 0 12px; }
+  .content h3 { font-size: 1rem; margin: 20px 0 8px; }
+  .content p { font-size: .9rem; }
+
+  /* Code blocks */
+  pre.code { padding: 14px 12px; font-size: .75rem; margin: 12px 0 18px; }
+
+  /* Tables — horizontal scroll */
+  .doc-table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .doc-table th, .doc-table td { padding: 8px 10px; font-size: .8rem; white-space: nowrap; }
+
+  /* Alerts */
+  .alert { padding: 10px 12px; font-size: .8rem; }
+
+  /* Cards grid */
+  .cards-grid { grid-template-columns: 1fr; gap: 16px; padding: 0 12px; }
+  .card { padding: 20px; }
+
+  /* Feature grid */
+  .feature-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+  .feature-item { padding: 10px 12px; }
+
+  /* Steps */
+  .steps li { gap: 12px; }
+  .steps li::before { min-width: 24px; height: 24px; font-size: .7rem; }
+
+  /* Checklist */
+  .checklist li { font-size: .8rem; }
+
+  /* Hero */
+  .hero { margin-bottom: 36px; padding: 0 12px; }
+  .hero h1 { font-size: 1.6rem; }
+  .hero p { font-size: .95rem; }
+  .page-home { padding-top: calc(var(--nav-h) + 36px); padding-bottom: 40px; }
+
+  /* Footer */
+  footer { padding: 24px 12px; }
+
+  /* Back to top — smaller on mobile */
+  .back-to-top { width: 36px; height: 36px; bottom: 20px; right: 16px; font-size: .95rem; }
+
+  /* Inline code — prevent overflow */
+  code { word-break: break-word; }
+
+  /* Images */
+  .doc-img { margin: 8px 0 16px; }
+
+  /* Pill badges */
+  .pill { font-size: .7rem; padding: 2px 8px; }
+
+  /* Support list */
+  .support-list li { font-size: .8rem; }
+}
+
+/* Small phones (max 400px) */
+@media (max-width: 400px) {
+  .navbar .brand span:not(.brand-dot):not(:first-child) { font-size: .95rem; }
+  .content { padding: 16px 12px 48px; }
+  .content h2 { font-size: 1.15rem; }
+  pre.code { padding: 10px 8px; font-size: .7rem; }
+  .hero h1 { font-size: 1.35rem; }
+  .feature-grid { grid-template-columns: 1fr 1fr; }
+  .steps li { flex-direction: column; gap: 6px; }
+  .steps li::before { margin-bottom: 0; }
 }
 
 /* Overlay behind mobile sidebar/nav */
@@ -720,7 +799,7 @@ footer {
   color: var(--text-muted);
 }
 @media (max-width: 900px) { .doc-footer { margin-left: 240px; padding: 24px 28px; } }
-@media (max-width: 680px) { .doc-footer { margin-left: 0; padding: 24px 18px; } }
+@media (max-width: 680px) { .doc-footer { margin-left: 0; padding: 20px 12px; font-size: .75rem; } }
 
 /* ---------- Anchor links on h2/h3 ---------- */
 .content h2 .anchor,
