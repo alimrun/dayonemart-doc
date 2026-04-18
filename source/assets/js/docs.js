@@ -24,6 +24,20 @@
 
   function toggleTheme() { applyTheme(getTheme() === 'dark' ? 'light' : 'dark'); }
 
+  /* ---- Fallback copy for file:// protocol ---- */
+  function fallbackCopy(text, btn) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) { /* ignore */ }
+    document.body.removeChild(ta);
+    btn.textContent = 'Copied!';
+    btn.style.color = '#86efac';
+    setTimeout(function () { btn.textContent = 'Copy'; btn.style.color = '#94a3b8'; }, 2000);
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     applyTheme(getTheme());
 
@@ -148,12 +162,19 @@
       ].join(';');
       btn.addEventListener('mouseenter', () => { btn.style.background = '#334155'; btn.style.color = '#f1f5f9'; });
       btn.addEventListener('mouseleave', () => { btn.style.background = '#1e293b'; btn.style.color = '#94a3b8'; });
-      btn.addEventListener('click', () => {
-        navigator.clipboard.writeText(pre.textContent.replace('Copy', '').trim()).then(() => {
-          btn.textContent = 'Copied!';
-          btn.style.color = '#86efac';
-          setTimeout(() => { btn.textContent = 'Copy'; btn.style.color = '#94a3b8'; }, 2000);
-        });
+      btn.addEventListener('click', function () {
+        var text = pre.textContent.replace('Copy', '').trim();
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function () {
+              btn.textContent = 'Copied!';
+              btn.style.color = '#86efac';
+              setTimeout(function () { btn.textContent = 'Copy'; btn.style.color = '#94a3b8'; }, 2000);
+            }).catch(function () { fallbackCopy(text, btn); });
+          } else {
+            fallbackCopy(text, btn);
+          }
+        } catch (e) { fallbackCopy(text, btn); }
       });
       pre.style.position = 'relative';
       pre.appendChild(btn);
@@ -167,7 +188,7 @@
           e.preventDefault();
           const top = target.offsetTop - 76;
           window.scrollTo({ top, behavior: 'smooth' });
-          history.pushState(null, null, this.getAttribute('href'));
+          try { history.pushState(null, null, this.getAttribute('href')); } catch (e) { /* file:// */ }
         }
       });
     });
