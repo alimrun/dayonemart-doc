@@ -56,6 +56,8 @@
         <li><a href="#social-auth">Social Auth Setup</a></li>
         <li><a href="#localization">Localization</a></li>
         <li><a href="#build-and-release">Build &amp; Release</a></li>
+        <li><a href="#secure-storage">Secure Storage</a></li>
+        <li><a href="#crash-reporting">Crash Reporting</a></li>
         <li><a href="#api-integration">API Integration</a></li>
         <li><a href="#troubleshooting">Troubleshooting</a></li>
         <li><a href="#customization">Customization</a></li>
@@ -99,15 +101,16 @@
         <tr><td>Dependency Injection</td><td>get_it + injectable</td><td>^9.2 / ^2.7</td></tr>
         <tr><td>Code Generation</td><td>freezed + json_serializable</td><td>^3.2 / ^6.13</td></tr>
         <tr><td>Networking</td><td>http</td><td>^1.6</td></tr>
-        <tr><td>Firebase</td><td>Core, Messaging, Crashlytics, Analytics</td><td>^4.6 / ^16.1</td></tr>
-        <tr><td>Maps &amp; Location</td><td>google_maps_flutter + geolocator</td><td>^2.17 / ^14.0</td></tr>
-        <tr><td>Social Auth</td><td>google_sign_in, flutter_facebook_auth, sign_in_with_apple</td><td>Latest</td></tr>
-        <tr><td>Images</td><td>cached_network_image</td><td>^3.4</td></tr>
+        <tr><td>Firebase</td><td>Core, Messaging, Crashlytics, Analytics</td><td>^4.7 / ^16.2</td></tr>
+        <tr><td>Maps &amp; Location</td><td>google_maps_flutter + geolocator + geocoding</td><td>^2.17 / ^14.0 / ^4.0</td></tr>
+        <tr><td>Social Auth</td><td>google_sign_in, flutter_facebook_auth, sign_in_with_apple</td><td>^7.2 / ^7.1 / ^7.0</td></tr>
+        <tr><td>Images</td><td>cached_network_image + flutter_image_compress</td><td>^3.4 / ^2.4</td></tr>
         <tr><td>Animations</td><td>lottie</td><td>^3.3</td></tr>
         <tr><td>Localization</td><td>flutter_localizations + intl</td><td>SDK / ^0.20</td></tr>
-        <tr><td>Notifications</td><td>flutter_local_notifications</td><td>^21.0</td></tr>
+        <tr><td>Notifications</td><td>flutter_local_notifications + timezone</td><td>^21.0 / ^0.11</td></tr>
+        <tr><td>Secure Storage</td><td>flutter_secure_storage</td><td>^10.0</td></tr>
         <tr><td>PDF / Files</td><td>flutter_html_to_pdf_plus + open_filex</td><td>Latest</td></tr>
-        <tr><td>Error Tracking</td><td>firebase_crashlytics + catcher_2</td><td>Latest</td></tr>
+        <tr><td>Crash Reporting</td><td>firebase_crashlytics</td><td>^5.2</td></tr>
       </tbody>
     </table>
 
@@ -304,10 +307,9 @@ lib/
 │       └── styles.dart             ← Reusable TextStyles
 │
 ├── core/
-│   ├── data/                       ← Base network client, interceptors
+│   ├── data/                       ← Base network client, interceptors, enums
 │   ├── dependency_injection/       ← GetIt setup + injectable module
-│   ├── helper/                     ← Utility helpers (storage, etc.)
-│   └── catcher_logs/               ← Catcher_2 error reporting config
+│   └── helper/                     ← Utility helpers (notifications, extensions)
 │
 ├── features/                       ← Feature-first modules
 │   ├── splash/
@@ -344,12 +346,15 @@ lib/
 │   ├── webview/
 │   └── file_viewer/
 │
-└── l10n/                           ← ARB localization files
-    ├── app_en.arb
-    ├── app_es.arb
-    ├── app_ar.arb
-    ├── app_hi.arb
-    └── app_bn.arb
+└── l10n/
+    ├── arb/                        ← ARB localization source files
+    │   ├── app_en.arb
+    │   ├── app_es.arb
+    │   ├── app_ar.arb
+    │   ├── app_hi.arb
+    │   └── app_bn.arb
+    └── gen/                        ← Generated localization classes
+        └── app_localizations.dart
 
 assets/
 ├── images/                         ← PNG / JPG images
@@ -442,11 +447,11 @@ class AppConstants {
 
     <h3>App Module</h3>
     <p>
-      The app supports multiple business modules. The default is set in <code>main.dart</code>:
+      The app supports multiple business modules. The default is set in <code>lib/config/util/app_constants.dart</code>:
     </p>
 <pre class="code">
-// main.dart
-AppModule defaultModule = AppModule.grocery;
+// lib/config/util/app_constants.dart
+static const AppModule defaultModule = AppModule.grocery;
 </pre>
     <p>Change this enum value to match your business type if needed.</p>
 
@@ -555,8 +560,9 @@ cp secrets.xml.example android/app/src/main/res/values/secrets.xml
 <pre class="code highlight">
 &lt;!-- android/app/src/main/res/values/secrets.xml --&gt;
 &lt;resources&gt;
-  &lt;string name="google_maps_key"&gt;YOUR_GOOGLE_MAPS_API_KEY&lt;/string&gt;
+  &lt;string name="google_maps_api_key"&gt;YOUR_GOOGLE_MAPS_API_KEY&lt;/string&gt;
   &lt;string name="facebook_app_id"&gt;YOUR_FACEBOOK_APP_ID&lt;/string&gt;
+  &lt;string name="fb_login_protocol_scheme"&gt;fbYOUR_FACEBOOK_APP_ID&lt;/string&gt;
   &lt;string name="facebook_client_token"&gt;YOUR_FACEBOOK_CLIENT_TOKEN&lt;/string&gt;
 &lt;/resources&gt;
 </pre>
@@ -621,43 +627,46 @@ cp secrets.xml.example android/app/src/main/res/values/secrets.xml
     <table class="doc-table">
       <thead><tr><th>Language</th><th>Code</th><th>ARB File</th></tr></thead>
       <tbody>
-        <tr><td>English</td><td><code>en</code></td><td><code>lib/l10n/app_en.arb</code></td></tr>
-        <tr><td>Spanish</td><td><code>es</code></td><td><code>lib/l10n/app_es.arb</code></td></tr>
-        <tr><td>Arabic</td><td><code>ar</code></td><td><code>lib/l10n/app_ar.arb</code></td></tr>
-        <tr><td>Hindi</td><td><code>hi</code></td><td><code>lib/l10n/app_hi.arb</code></td></tr>
-        <tr><td>Bangla</td><td><code>bn</code></td><td><code>lib/l10n/app_bn.arb</code></td></tr>
+        <tr><td>English</td><td><code>en</code></td><td><code>lib/l10n/arb/app_en.arb</code></td></tr>
+        <tr><td>Spanish</td><td><code>es</code></td><td><code>lib/l10n/arb/app_es.arb</code></td></tr>
+        <tr><td>Arabic</td><td><code>ar</code></td><td><code>lib/l10n/arb/app_ar.arb</code></td></tr>
+        <tr><td>Hindi</td><td><code>hi</code></td><td><code>lib/l10n/arb/app_hi.arb</code></td></tr>
+        <tr><td>Bangla</td><td><code>bn</code></td><td><code>lib/l10n/arb/app_bn.arb</code></td></tr>
       </tbody>
     </table>
+
+    <h3>Localization Config</h3>
+    <p>The localization configuration is defined in <code>l10n.yaml</code>:</p>
+<pre class="code">
+arb-dir: lib/l10n/arb
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-dir: lib/l10n/gen
+nullable-getter: false
+</pre>
 
     <h3>Adding a New Language</h3>
     <ol class="steps">
       <li>
         <div class="step-body">
-          <strong>Create a new ARB file</strong>, e.g. <code>lib/l10n/app_fr.arb</code>.
+          <strong>Create a new ARB file</strong>, e.g. <code>lib/l10n/arb/app_fr.arb</code>.
           Copy the structure from <code>app_en.arb</code> and translate all strings.
         </div>
       </li>
       <li>
         <div class="step-body">
-          <strong>Register the locale</strong> in <code>l10n.yaml</code>:
+          <strong>Add the language</strong> to the <code>languages</code> list in <code>app_constants.dart</code>:
 <pre class="code">
-arb-dir: lib/l10n
-template-arb-file: app_en.arb
-output-localization-file: app_localizations.dart
+LanguageModel(code: 'fr', name: 'French', nativeName: 'Français'),
 </pre>
         </div>
       </li>
       <li>
         <div class="step-body">
-          <strong>Regenerate the localization files:</strong>
+          <strong>Regenerate localization files:</strong>
 <pre class="code">
 flutter gen-l10n
 </pre>
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Add the locale</strong> to the <code>supportedLocales</code> list in <code>MaterialApp</code>.
         </div>
       </li>
     </ol>
@@ -665,8 +674,9 @@ flutter gen-l10n
     <div class="alert alert-info">
       <span class="alert-icon">ℹ️</span>
       <div>
-        Arabic (<code>ar</code>) is an RTL language. Flutter's <code>Directionality</code> widget
-        handles layout mirroring automatically when the <code>ar</code> locale is active.
+        Arabic (<code>ar</code>) is an RTL language. Flutter handles layout mirroring automatically
+        when the <code>ar</code> locale is active. Untranslated strings are tracked in
+        <code>untranslated.txt</code> at the project root.
       </div>
     </div>
 
@@ -705,20 +715,38 @@ flutter build appbundle --release \
     </div>
 
     <h3>Android — Signing</h3>
-    <p>Generate a keystore and configure signing in <code>android/key.properties</code>:</p>
+    <p>The app is already configured to automatically sign release builds when you provide a <code>key.properties</code> file.</p>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Create a release keystore:</strong>
 <pre class="code">
-# Generate keystore
-keytool -genkey -v -keystore onemart.keystore \
-  -alias onemart -keyalg RSA -keysize 2048 -validity 10000
+keytool -genkey -v -keystore android/app/upload-keystore.jks \
+  -keyalg RSA -keysize 2048 -validity 10000 -alias upload
 </pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Create <code>android/key.properties</code>:</strong>
 <pre class="code highlight">
-# android/key.properties
-storePassword=your_store_password
-keyPassword=your_key_password
-keyAlias=onemart
-storeFile=../onemart.keystore
+storePassword=&lt;your-store-password&gt;
+keyPassword=&lt;your-key-password&gt;
+keyAlias=upload
+storeFile=upload-keystore.jks
 </pre>
-    <p>Reference <code>key.properties</code> in <code>android/app/build.gradle</code> under <code>signingConfigs</code>.</p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        Keep the keystore (<code>.jks</code>) and <code>key.properties</code> file safe.
+        You need them for every future app update on Google Play. Losing the keystore means
+        you cannot publish updates to the same listing.
+      </div>
+    </div>
 
     <h3>iOS — Debug</h3>
 <pre class="code">
@@ -743,6 +771,52 @@ dart run build_runner watch --delete-conflicting-outputs
 </pre>
 
     <!-- ========================================================
+         SECURE STORAGE
+         ======================================================== -->
+    <h2 id="secure-storage">Secure Storage</h2>
+
+    <p>
+      Auth tokens are stored securely via <span class="mark">flutter_secure_storage</span>
+      (Android Keystore / iOS Keychain) instead of <code>SharedPreferences</code>.
+    </p>
+
+    <h3>Android</h3>
+    <ul class="list">
+      <li><code>minSdkVersion</code> must be <strong>23 or higher</strong> — already configured in <code>android/app/build.gradle.kts</code></li>
+      <li><code>AndroidManifest.xml</code> sets <code>android:allowBackup="false"</code> and <code>android:fullBackupContent="false"</code> to prevent decryption errors after auto-restore</li>
+    </ul>
+
+    <h3>iOS</h3>
+    <ul class="list">
+      <li>iOS deployment target must be <strong>12.0 or higher</strong> (already satisfied by the current <code>Podfile</code>)</li>
+      <li>The <strong>Keychain Sharing</strong> capability is enabled via <code>ios/Runner/Runner.entitlements</code></li>
+      <li>If you regenerate the Xcode project, re-add it: Xcode → Runner target → Signing &amp; Capabilities → <strong>+ Capability → Keychain Sharing</strong></li>
+    </ul>
+
+    <!-- ========================================================
+         CRASH REPORTING
+         ======================================================== -->
+    <h2 id="crash-reporting">Crash Reporting</h2>
+
+    <p>The app uses <span class="mark">Firebase Crashlytics</span> for crash reporting in production builds.</p>
+
+    <table class="doc-table">
+      <thead><tr><th>Build Mode</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Debug</strong></td><td>Errors print to the console (Flutter default). No remote reporting.</td></tr>
+        <tr><td><strong>Release</strong></td><td>Uncaught errors are reported to Firebase Crashlytics automatically via <code>FlutterError.onError</code> and <code>PlatformDispatcher.instance.onError</code> in <code>lib/main.dart</code>.</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Setup</h3>
+    <ul class="list">
+      <li>Enable Crashlytics in the Firebase Console for the project configured by <code>flutterfire configure</code></li>
+      <li><strong>Android symbols</strong> are uploaded automatically by the Crashlytics Gradle plugin (already wired in <code>android/app/build.gradle.kts</code>)</li>
+      <li><strong>iOS dSYMs</strong> upload via the standard Crashlytics run-script build phase in Xcode</li>
+      <li>When building with <code>--obfuscate --split-debug-info</code>, upload the symbols to Firebase for deobfuscated crash reports</li>
+    </ul>
+
+    <!-- ========================================================
          API INTEGRATION
          ======================================================== -->
     <h2 id="api-integration">API Integration</h2>
@@ -755,9 +829,13 @@ dart run build_runner watch --delete-conflicting-outputs
 
     <h3>Authentication Flow</h3>
 <pre class="code">
-POST /api/v1/customer/auth/login              ← Email + password
-POST /api/v1/customer/auth/send-login-otp     ← Request OTP
+POST /api/v1/customer/auth/check-user-exists  ← Check if user exists
+POST /api/v1/customer/auth/login              ← Email/phone + password
+POST /api/v1/customer/auth/send-login-otp     ← Request login OTP
 POST /api/v1/customer/auth/verify-login-otp   ← Verify OTP → returns JWT
+POST /api/v1/customer/auth/forgot-password     ← Initiate password reset
+POST /api/v1/customer/auth/verify-otp          ← Verify reset OTP
+POST /api/v1/customer/auth/reset-password      ← Set new password
 POST /api/v1/customer/auth/google             ← Google ID token
 POST /api/v1/customer/auth/facebook           ← Facebook access token
 POST /api/v1/customer/auth/apple              ← Apple identity token
@@ -794,9 +872,13 @@ X-localization: en         ← Current language code (en, ar, hi, es, bn)
         <tr><td>Wishlist</td><td><code>/api/v1/customer/wishlist</code></td></tr>
         <tr><td>Reviews</td><td><code>/api/v1/customer/reviews</code></td></tr>
         <tr><td>Refund Requests</td><td><code>/api/v1/customer/refund-requests</code></td></tr>
-        <tr><td>Brands</td><td><code>/api/v1/customer/brands</code></td></tr>
+        <tr><td>Brands (Popular)</td><td><code>/api/v1/customer/brands/popular</code></td></tr>
+        <tr><td>Labels</td><td><code>/api/v1/customer/labels</code></td></tr>
+        <tr><td>Common Conditions</td><td><code>/api/v1/customer/common-conditions</code></td></tr>
         <tr><td>Flash Sales</td><td><code>/api/v1/customer/flash-sales</code></td></tr>
-        <tr><td>FAQ</td><td><code>/api/v1/customer/faqs</code></td></tr>
+        <tr><td>Special Offers</td><td><code>/api/v1/customer/app-screen/special-offer</code></td></tr>
+        <tr><td>FAQ &amp; Categories</td><td><code>/api/v1/customer/faqs</code>, <code>.../faqs/categories</code></td></tr>
+        <tr><td>Item Content</td><td><code>/api/v1/customer/app-screen/item-content</code></td></tr>
       </tbody>
     </table>
 
