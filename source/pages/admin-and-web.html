@@ -305,14 +305,21 @@
     </table>
 
     <h3>Required PHP Extensions</h3>
+    <p>The installer wizard automatically verifies all of these on the first step:</p>
     <ul class="list">
-      <li><code>BCMath</code>, <code>Ctype</code>, <code>cURL</code>, <code>DOM</code></li>
-      <li><code>Fileinfo</code>, <code>JSON</code>, <code>Mbstring</code>, <code>OpenSSL</code></li>
-      <li><code>PDO</code>, <code>PDO_MySQL</code>, <code>Tokenizer</code>, <code>XML</code></li>
-      <li><code>GD</code> or <code>Imagick</code> (for image processing)</li>
-      <li><code>Swoole</code> (required for Laravel Octane — optional, falls back to PHP-FPM)</li>
-      <li><code>zip</code> (for backup/restore)</li>
+      <li><code>PDO_MySQL</code> — MySQL database driver</li>
+      <li><code>Sodium</code> — encryption and hashing</li>
+      <li><code>Mbstring</code> — multibyte string support</li>
+      <li><code>OpenSSL</code> — secure connections</li>
+      <li><code>cURL</code> — external HTTP requests</li>
+      <li><code>Fileinfo</code> — file type detection</li>
+      <li><code>BCMath</code> — arbitrary precision math</li>
+      <li><code>XML</code> — XML parsing</li>
+      <li><code>Zip</code> — archive handling</li>
+      <li><code>GD</code> or <code>Imagick</code> — image processing</li>
+      <li><code>Swoole</code> (optional) — required only for Laravel Octane</li>
     </ul>
+    <p>The installer also checks that <code>Composer</code>, <code>Node.js</code>, <code>file_get_contents()</code>, and <code>symlink()</code> are available.</p>
 
     <div class="alert alert-info">
       <span class="alert-icon">ℹ️</span>
@@ -348,7 +355,7 @@
       <li>Purchase code from Envato ready</li>
     </ul>
 
-    <h3>4-Step Quick Install</h3>
+    <h3>5-Step Quick Install</h3>
 
     <ol class="steps">
       <li>
@@ -369,19 +376,32 @@ chown -R www-data:www-data .
       </li>
       <li>
         <div class="step-body">
-          <strong>Install dependencies</strong>
+          <strong>Install dependencies &amp; prepare environment</strong>
 <pre class="code">
 composer install --optimize-autoloader --no-dev
 npm install
 npm run build
+cp .env.example .env
+php artisan key:generate
+php artisan jwt:secret
 </pre>
         </div>
       </li>
       <li>
         <div class="step-body">
           <strong>Run the installer wizard</strong>
-          Visit <code>https://yourdomain.com/install</code> in your browser and follow the
-          on-screen steps to configure the database, mail, and create the admin account.
+          Visit <code>https://yourdomain.com/install/requirements</code> in your browser and follow the
+          5-step on-screen wizard (details below).
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Post-install production optimization</strong>
+<pre class="code">
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+</pre>
         </div>
       </li>
     </ol>
@@ -390,7 +410,9 @@ npm run build
       <span class="alert-icon">✅</span>
       <div>
         After the installer completes, the <code>INSTALLED=true</code> flag is written to your
-        <code>.env</code> file and the installer route is automatically disabled for security.
+        <code>.env</code>, <code>APP_ENV</code> is set to <code>production</code>,
+        <code>APP_DEBUG</code> is set to <code>false</code>, and the installer route is
+        automatically disabled for security.
       </div>
     </div>
 
@@ -399,8 +421,8 @@ npm run build
          ======================================================== -->
     <h2 id="installation-process">Installation Process</h2>
 
-    <h3>1. Database Setup</h3>
-    <p>Create a MySQL database and user before running the installer:</p>
+    <h3>Pre-Install: Create a MySQL Database</h3>
+    <p>Create a MySQL database and user before running the installer wizard:</p>
 <pre class="code">
 CREATE DATABASE onemart CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER 'onemart_user'@'localhost' IDENTIFIED BY 'strong_password_here';
@@ -408,31 +430,105 @@ GRANT ALL PRIVILEGES ON onemart.* TO 'onemart_user'@'localhost';
 FLUSH PRIVILEGES;
 </pre>
 
-    <h3>2. Environment Bootstrap</h3>
-    <p>Copy the example environment file and generate the application key:</p>
+    <h3>Pre-Install: Environment &amp; Dependencies</h3>
+    <p>Copy the example environment file, generate keys, and install dependencies:</p>
 <pre class="code">
 cp .env.example .env
 php artisan key:generate
+php artisan jwt:secret
+composer install --optimize-autoloader --no-dev
+npm install && npm run build
 </pre>
 
-    <h3>3. Web Installer Wizard</h3>
-    <p>Navigate to <code>/install</code> in your browser. The wizard walks through:</p>
-    <ul class="list">
-      <li><strong>Step 1 — License:</strong> Enter your Envato purchase code to verify the license</li>
-      <li><strong>Step 2 — System Check:</strong> Validates PHP version, extensions, and folder permissions</li>
-      <li><strong>Step 3 — Database:</strong> Enter DB host, port, name, username, and password</li>
-      <li><strong>Step 4 — Mail:</strong> Configure the mail driver (SMTP, Mailgun, SES, etc.)</li>
-      <li><strong>Step 5 — Admin Account:</strong> Set the super-admin name, email, and password</li>
-      <li><strong>Step 6 — Finish:</strong> Migrations, seeders, and storage link are run automatically</li>
-    </ul>
+    <h3>Web Installer Wizard</h3>
+    <p>Navigate to <code>https://yourdomain.com/install/requirements</code> in your browser. The wizard guides you through <strong>5 steps</strong>:</p>
 
-    <h3>4. Post-Install Commands</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>System Requirements Check</strong>
+          The installer verifies your server meets all requirements:
+          <ul class="list">
+            <li>PHP 8.2+ with version validation</li>
+            <li>Required extensions: PDO_MySQL, Sodium, Mbstring, OpenSSL, cURL, Fileinfo, BCMath, XML, Zip</li>
+            <li><code>file_get_contents()</code> and <code>symlink()</code> functions available</li>
+            <li>Composer and Node.js available via shell</li>
+          </ul>
+          <p>All checks must pass before you can proceed to the next step.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Purchase Verification</strong>
+          Enter your <strong>Envato purchase code</strong> and <strong>Envato username</strong> to verify your license.
+          Upon successful verification, the <code>PURCHASE_VERIFIED=true</code> flag is written to <code>.env</code>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Database Configuration</strong>
+          Enter your MySQL database connection details:
+          <ul class="list">
+            <li><strong>DB Host</strong> — e.g. <code>127.0.0.1</code> or <code>localhost</code></li>
+            <li><strong>DB Port</strong> — e.g. <code>3306</code></li>
+            <li><strong>DB Database</strong> — the database name you created</li>
+            <li><strong>DB Username</strong> — MySQL user with full privileges</li>
+            <li><strong>DB Password</strong> — MySQL password</li>
+          </ul>
+          <p>The installer tests the connection before proceeding. On success, it writes the credentials to <code>.env</code> and automatically runs all database migrations.</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Business &amp; Admin Setup</strong>
+          Configure your business and create the super-admin account:
+          <ul class="list">
+            <li><strong>Business info:</strong> Business name, email, phone, address</li>
+            <li><strong>Brand colors:</strong> Primary and secondary color (hex, e.g. <code>#2563eb</code>)</li>
+            <li><strong>Admin account:</strong> First name, last name, email, and password (min 8 characters, with confirmation)</li>
+          </ul>
+          <p>The installer creates the business record, the admin user, and runs essential seeders (currencies, website setup, general settings, push notification setup, email templates, modules).</p>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Finalize Installation</strong>
+          Click the finalize button to complete the setup. The installer automatically:
+          <ul class="list">
+            <li>Generates the app key if not already set</li>
+            <li>Clears all cached config, routes, and views</li>
+            <li>Creates the <code>public/storage</code> symlink</li>
+            <li>Sets <code>INSTALLED=true</code>, <code>APP_ENV=production</code>, <code>APP_DEBUG=false</code></li>
+            <li>Sets <code>APP_URL</code> to your current domain automatically</li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        Once the installer sets <code>INSTALLED=true</code>, the <code>/install</code> routes are
+        disabled by the <code>notInstalled</code> middleware. The installer cannot be re-run unless
+        you manually set <code>INSTALLED=false</code> in <code>.env</code>.
+      </div>
+    </div>
+
+    <h3>Post-Install Production Commands</h3>
 <pre class="code">
-php artisan storage:link          # Link public storage disk
-php artisan config:cache          # Cache configuration
-php artisan route:cache           # Cache routes
-php artisan view:cache            # Cache compiled views
-php artisan queue:work --daemon   # Start queue worker
+# Cache for production performance
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+
+# Start queue worker (use Supervisor in production)
+php artisan queue:work --sleep=3 --tries=3 --max-time=3600
+
+# Optional: Start broadcasting (Reverb)
+php artisan reverb:start --host=0.0.0.0 --port=8080
+
+# Optional: Start Octane for high performance
+php artisan octane:start
 </pre>
 
     <!-- ========================================================
@@ -441,15 +537,20 @@ php artisan queue:work --daemon   # Start queue worker
     <h2 id="basic-configuration">Basic Configuration</h2>
 
     <h3>Core .env Variables</h3>
+    <p>Most of these are configured automatically by the installer wizard. Key values to review after installation:</p>
 <pre class="code highlight">
-# Application
-APP_NAME=DayOneFood
+# Application (set automatically by installer)
+APP_NAME=DayOneMart
 APP_ENV=production
 APP_KEY=base64:YOUR_GENERATED_KEY
 APP_DEBUG=false
 APP_URL=https://yourdomain.com
 
-# Database
+# Locale
+APP_LOCALE=en
+APP_FALLBACK_LOCALE=en
+
+# Database (set by installer wizard — Step 3)
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -457,55 +558,45 @@ DB_DATABASE=onemart
 DB_USERNAME=onemart_user
 DB_PASSWORD=strong_password_here
 
-# Queue & Broadcasting
-QUEUE_CONNECTION=database
+# Session & Cache
+SESSION_DRIVER=file
+CACHE_STORE=file
+QUEUE_CONNECTION=sync
+
+# Broadcasting (optional — set to 'reverb' to enable real-time)
 BROADCAST_CONNECTION=reverb
+FILESYSTEM_DISK=local
 
 # Octane (optional — remove if not using Swoole)
 OCTANE_SERVER=swoole
 
-# JWT
+# JWT (generated via: php artisan jwt:secret)
 JWT_SECRET=your_jwt_secret_here
 
-# Cache
-CACHE_STORE=file
-SESSION_DRIVER=file
-
-# Mail
-MAIL_MAILER=smtp
-MAIL_HOST=smtp.mailgun.org
-MAIL_PORT=587
-MAIL_USERNAME=your_smtp_user
-MAIL_PASSWORD=your_smtp_password
-MAIL_ENCRYPTION=tls
-MAIL_FROM_ADDRESS=noreply@yourdomain.com
-MAIL_FROM_NAME="${APP_NAME}"
-
-# File Storage (optional — S3)
-FILESYSTEM_DISK=local
-AWS_ACCESS_KEY_ID=
-AWS_SECRET_ACCESS_KEY=
-AWS_DEFAULT_REGION=us-east-1
-AWS_BUCKET=
-
-# Reverb (real-time)
+# Reverb — real-time broadcasting (optional)
 REVERB_APP_ID=999114
 REVERB_APP_KEY=your_reverb_key
 REVERB_APP_SECRET=your_reverb_secret
-REVERB_HOST=0.0.0.0
+REVERB_HOST=localhost
 REVERB_PORT=8080
+REVERB_SCHEME=http
 
-# Stripe
-STRIPE_KEY=pk_live_...
-STRIPE_SECRET=sk_live_...
-
-# Firebase
-FIREBASE_CREDENTIALS=path/to/firebase-service-account.json
-
-# License
+# License (set automatically by installer)
 INSTALLED=true
+SOFTWARE_ID=20000000
+PURCHASE_VERIFIED=true
 PURCHASE_CODE=your_envato_purchase_code
+PURCHASE_USERNAME=your_envato_username
 </pre>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        Mail, payment gateways, Firebase, and other third-party integrations are configured
+        from the <strong>Admin Panel → Settings</strong> after installation — not in the
+        <code>.env</code> file directly.
+      </div>
+    </div>
 
     <h3>Mail Configuration</h3>
     <p>Supported mail drivers and their key variables:</p>
@@ -762,6 +853,13 @@ supervisorctl restart onemart-worker:*
     <h2 id="update-procedure">Update Procedure</h2>
 
     <h3>Using the Built-in Updater (Recommended)</h3>
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        The updater is admin-only — you must be logged in as an admin to access it.
+        It is accessible at <code>/updater</code>.
+      </div>
+    </div>
     <ol class="steps">
       <li>
         <div class="step-body">
@@ -772,19 +870,21 @@ supervisorctl restart onemart-worker:*
       <li>
         <div class="step-body">
           <strong>Navigate to the updater</strong>
-          Visit <code>https://yourdomain.com/updater</code> and log in with your admin credentials.
+          Visit <code>https://yourdomain.com/updater</code> while logged in as admin.
         </div>
       </li>
       <li>
         <div class="step-body">
-          <strong>Enter the new update package URL or upload the ZIP</strong>
-          Provide the update file from your Envato download page.
+          <strong>Upload the update ZIP file</strong>
+          Download the latest update package from your Envato download page and upload it via the updater.
+          The file is uploaded in chunks for reliability on large updates.
         </div>
       </li>
       <li>
         <div class="step-body">
           <strong>Run the update</strong>
-          The updater extracts files, runs migrations, and clears caches automatically.
+          Click the update button. The updater extracts files, runs migrations, and clears caches automatically.
+          You will be redirected to a success page upon completion.
         </div>
       </li>
     </ol>
@@ -1090,14 +1190,18 @@ chown -R www-data:www-data storage bootstrap/cache
 
     <h3>Development Workflow</h3>
 <pre class="code">
-# Start all dev services concurrently (PHP + queue + logs + Vite)
+# Start all dev services concurrently (PHP server + queue listener + logs + Vite)
 composer dev
 
 # Or start individually:
-php artisan serve
-npm run dev
-php artisan queue:listen
-php artisan pail           # Tail logs in terminal
+php artisan serve                    # PHP dev server on port 8000
+npm run dev                          # Vite dev server with HMR
+php artisan queue:listen --tries=1   # Queue listener
+php artisan pail                     # Tail logs in terminal
+
+# Optional services:
+php artisan reverb:start             # Real-time broadcasting (if enabled)
+php artisan octane:start             # Octane performance server (if enabled)
 </pre>
 
     <hr class="section-divider" />
