@@ -141,6 +141,7 @@ img { max-width: 100%; height: auto; }
   transition: background .15s, color .15s;
 }
 .btn-icon:hover { background: var(--accent-soft); color: var(--accent); }
+.menu-toggle { display: none; }
 
 /* ---------- Home / Landing ---------- */
 .page-home {
@@ -627,6 +628,7 @@ footer {
   .sidebar.open { display: block; width: 80vw; box-shadow: 4px 0 24px rgba(0,0,0,.15); }
   .content { margin-left: 0; padding: 24px 18px 60px; }
   .navbar nav { display: none; }
+  .menu-toggle { display: flex; }
   .hero h1 { font-size: 1.8rem; }
   .cards-grid { grid-template-columns: 1fr; }
   .doc-table { display: block; overflow-x: auto; }
