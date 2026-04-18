@@ -31,11 +31,37 @@
       btn.addEventListener('click', toggleTheme);
     });
 
-    /* ---- Mobile sidebar toggle ---- */
-    document.querySelectorAll('.menu-toggle').forEach(btn => {
+    /* ---- Mobile menu toggle ---- */
+    // Create overlay element for mobile
+    var overlay = document.createElement('div');
+    overlay.className = 'mobile-overlay';
+    document.body.appendChild(overlay);
+
+    function closeMobileMenus() {
+      var sidebar = document.querySelector('.sidebar');
+      var nav = document.querySelector('.navbar nav');
+      if (sidebar) sidebar.classList.remove('open');
+      if (nav) nav.classList.remove('open');
+      overlay.classList.remove('active');
+    }
+
+    overlay.addEventListener('click', closeMobileMenus);
+
+    document.querySelectorAll('.menu-toggle').forEach(function (btn) {
       btn.addEventListener('click', function () {
-        const sidebar = document.querySelector('.sidebar');
-        if (sidebar) sidebar.classList.toggle('open');
+        var sidebar = document.querySelector('.sidebar');
+        var nav = document.querySelector('.navbar nav');
+
+        if (sidebar) {
+          // Doc page — toggle sidebar
+          var isOpen = sidebar.classList.toggle('open');
+          if (nav) nav.classList.remove('open');
+          overlay.classList.toggle('active', isOpen);
+        } else if (nav) {
+          // Home page — toggle nav dropdown
+          var isOpen = nav.classList.toggle('open');
+          overlay.classList.toggle('active', isOpen);
+        }
       });
     });
 
@@ -170,11 +196,8 @@
     }
 
     /* ---- Close sidebar on link click (mobile) ---- */
-    document.querySelectorAll('.toc a').forEach(a => {
-      a.addEventListener('click', function () {
-        const sidebar = document.querySelector('.sidebar');
-        if (sidebar && window.innerWidth <= 680) sidebar.classList.remove('open');
-      });
+    document.querySelectorAll('.toc a').forEach(function (a) {
+      a.addEventListener('click', closeMobileMenus);
     });
   });
 })();

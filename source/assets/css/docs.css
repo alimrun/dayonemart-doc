@@ -624,15 +624,52 @@ footer {
 }
 
 @media (max-width: 680px) {
-  .sidebar { display: none; }
-  .sidebar.open { display: block; width: 80vw; box-shadow: 4px 0 24px rgba(0,0,0,.15); }
+  .sidebar {
+    display: none;
+    position: fixed;
+    top: var(--nav-h);
+    left: 0;
+    width: 80vw;
+    max-width: 320px;
+    height: calc(100vh - var(--nav-h));
+    z-index: 200;
+    box-shadow: 4px 0 24px rgba(0,0,0,.15);
+  }
+  .sidebar.open { display: block; }
   .content { margin-left: 0; padding: 24px 18px 60px; }
   .navbar nav { display: none; }
+  .navbar nav.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: var(--nav-h);
+    left: 0; right: 0;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    padding: 8px 0;
+    z-index: 200;
+  }
+  .navbar nav.open a {
+    padding: 10px 24px;
+    border-radius: 0;
+  }
   .menu-toggle { display: flex; }
   .hero h1 { font-size: 1.8rem; }
   .cards-grid { grid-template-columns: 1fr; }
   .doc-table { display: block; overflow-x: auto; }
 }
+
+/* Overlay behind mobile sidebar/nav */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: var(--nav-h);
+  left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,.3);
+  z-index: 150;
+}
+.mobile-overlay.active { display: block; }
 
 /* ---------- Scroll progress bar ---------- */
 .scroll-progress {
