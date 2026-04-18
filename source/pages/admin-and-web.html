@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin &amp; Web — DayOneMart Docs</title>
+  <link rel="stylesheet" href="../assets/css/docs.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🖥️</text></svg>" />
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+<header class="navbar">
+  <a class="brand" href="../../index.html">
+    <span style="font-size:1.5rem;">🛒</span>
+    <span>DayOneMart<span class="brand-dot">.</span></span>
+  </a>
+  <nav>
+    <a href="../../index.html">Home</a>
+    <a href="admin-and-web.html" class="active">Admin &amp; Web</a>
+    <a href="customer-app.html">Customer App</a>
+    <a href="deliveryman-app.html">Deliveryman App</a>
+  </nav>
+  <div class="nav-actions">
+    <button class="btn-icon menu-toggle" title="Toggle menu" aria-label="Toggle sidebar">☰</button>
+    <button class="btn-icon theme-toggle" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<!-- ============================================================
+     PAGE LAYOUT
+     ============================================================ -->
+<div class="page-doc">
+
+  <!-- ---- Sidebar ---- -->
+  <aside class="sidebar">
+    <div class="sidebar-search">
+      <span class="search-icon">🔍</span>
+      <input id="search" type="search" placeholder="Search sections… ( / )" />
+    </div>
+
+    <h4>Contents</h4>
+    <nav>
+      <ul class="toc">
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#system-features">System Features</a></li>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#quick-start">Quick Start</a></li>
+        <li><a href="#installation-process">Installation Process</a></li>
+        <li><a href="#basic-configuration">Basic Configuration</a></li>
+        <li><a href="#server-configuration">Server Configuration</a></li>
+        <li><a href="#deployment">Deployment</a></li>
+        <li><a href="#update-procedure">Update Procedure</a></li>
+        <li><a href="#api-reference">API Reference</a></li>
+        <li><a href="#default-credentials">Default Credentials</a></li>
+        <li><a href="#troubleshooting">Troubleshooting</a></li>
+        <li><a href="#customization">Customization</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ---- Main Content ---- -->
+  <section class="content">
+
+    <!-- ========================================================
+         INTRODUCTION
+         ======================================================== -->
+    <h2 id="introduction">Introduction</h2>
+
+    <p>
+      <strong>OneMart Admin &amp; Web</strong> is the back-office management panel and customer-facing
+      storefront for the DayOneMart single-vendor e-commerce platform. Built on
+      <span class="mark">Laravel 12</span> with a <span class="mark">Vue 3 / Inertia.js</span>
+      frontend, it ships as a single deployable application that serves three distinct surfaces:
+    </p>
+
+    <ul class="list">
+      <li><strong>Admin Panel</strong> — Full business management interface (orders, products, users, analytics, settings)</li>
+      <li><strong>Customer Storefront</strong> — SEO-friendly web shopping experience served via Inertia</li>
+      <li><strong>REST API</strong> — Versioned JSON API consumed by the Flutter Customer App</li>
+    </ul>
+
+    <h3>Technology Stack</h3>
+
+    <table class="doc-table">
+      <thead>
+        <tr><th>Layer</th><th>Technology</th><th>Version</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Backend Framework</td><td>Laravel</td><td>^12.0</td></tr>
+        <tr><td>PHP Runtime</td><td>PHP</td><td>^8.2</td></tr>
+        <tr><td>Frontend Framework</td><td>Vue 3 + Inertia.js</td><td>^3.5 / ^2.1</td></tr>
+        <tr><td>Build Tool</td><td>Vite</td><td>^7.0</td></tr>
+        <tr><td>CSS Framework</td><td>Tailwind CSS</td><td>^4.0</td></tr>
+        <tr><td>UI Components</td><td>Shadcn Vue / Reka UI</td><td>^2.2 / ^2.6</td></tr>
+        <tr><td>Authentication</td><td>JWT (tymon/jwt-auth)</td><td>^2.2</td></tr>
+        <tr><td>2FA</td><td>Google TOTP (pragmarx/google2fa)</td><td>^9.0</td></tr>
+        <tr><td>Real-time</td><td>Laravel Reverb + Echo</td><td>^1.6</td></tr>
+        <tr><td>Performance</td><td>Laravel Octane (Swoole)</td><td>^2.12</td></tr>
+        <tr><td>Storage</td><td>AWS S3 / Local</td><td>—</td></tr>
+        <tr><td>Payments</td><td>Stripe + multiple gateways</td><td>^17.6</td></tr>
+        <tr><td>Charts</td><td>Chart.js + ApexCharts</td><td>—</td></tr>
+        <tr><td>Maps</td><td>Google Maps JS API</td><td>—</td></tr>
+        <tr><td>Rich Text</td><td>Tiptap v3</td><td>—</td></tr>
+        <tr><td>i18n</td><td>i18next + i18next-vue</td><td>—</td></tr>
+        <tr><td>Firebase</td><td>Firebase JS SDK</td><td>^10.14</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Project Folder Structure</h3>
+
+<pre class="code">
+/app
+├── Console/
+├── Enums/
+├── Events/
+├── Http/
+│   ├── Controllers/
+│   │   ├── Api/              ← REST API v1 controllers
+│   │   ├── Payment/          ← Stripe, PayPal, Razorpay, etc.
+│   │   ├── Web/              ← Inertia page controllers
+│   │   ├── InstallerController.php
+│   │   └── UpdaterController.php
+│   ├── Middleware/
+│   ├── Requests/
+│   └── Resources/
+├── Jobs/
+├── Mail/
+├── Models/
+├── Services/
+└── Utils/
+    ├── constants.php
+    ├── formatter.php
+    └── translation.php
+
+/resources/js
+├── AdminPanel/               ← Admin Vue application
+│   ├── Layouts/
+│   ├── Pages/
+│   │   ├── Analytics/
+│   │   ├── Authentication/
+│   │   ├── Dashboard/
+│   │   ├── Food/
+│   │   ├── Orders/
+│   │   ├── Promotion/
+│   │   ├── Reports/
+│   │   ├── Settings/
+│   │   └── ...
+│   ├── components/
+│   ├── composables/
+│   └── locales/
+└── StoreFront/               ← Customer web Vue application
+    ├── Layouts/
+    ├── Pages/
+    │   ├── Homepage/
+    │   ├── Menu/
+    │   ├── Checkout/
+    │   ├── Profile/
+    │   └── ...
+    ├── components/
+    └── composables/
+
+/routes
+├── api/v1/
+│   ├── admin.php
+│   ├── customer.php
+│   └── deliveryman.php
+├── web/
+│   ├── admin.php
+│   ├── storefront.php
+│   ├── installer.php
+│   └── updater.php
+└── payment.php
+
+/lang          ← en, bn, hi, ar, es translations
+/public        ← Document root — point domain here
+</pre>
+
+    <!-- ========================================================
+         SYSTEM FEATURES
+         ======================================================== -->
+    <h2 id="system-features">System Features</h2>
+
+    <h3>Dashboard &amp; Analytics</h3>
+    <ul class="list">
+      <li>Real-time business overview with live order stats and revenue counters</li>
+      <li>Sales reports — daily, weekly, monthly, custom date range</li>
+      <li>Category performance analytics</li>
+      <li>User activity reports and hourly trend charts (Chart.js + ApexCharts)</li>
+      <li>Top-selling products and revenue breakdown</li>
+    </ul>
+
+    <h3>Order Management</h3>
+    <ul class="list">
+      <li>Full order lifecycle: <span class="mark">Pending → Confirmed → Processing → Handover → Picked Up → Delivered</span></li>
+      <li>Assign / unassign deliveryman per order</li>
+      <li>Edit order items, delivery address, and customer notes</li>
+      <li>Cancel orders with reason tracking</li>
+      <li>Refund workflow — approve or reject refund requests</li>
+      <li>Invoice generation and download (PDF)</li>
+      <li>Payment status management</li>
+      <li>Bulk order actions</li>
+    </ul>
+
+    <h3>Product &amp; Menu Management</h3>
+    <ul class="list">
+      <li>Product items with variations, add-ons, stock levels, and pricing</li>
+      <li>Categories and sub-categories with images</li>
+      <li>Labels (e.g. New, Best Seller, Veg) and Cuisines</li>
+      <li>Menu Types (e.g. Breakfast, Lunch, Dinner)</li>
+      <li>Bulk CSV / Excel import and export</li>
+      <li>Toggle product availability and featured status</li>
+    </ul>
+
+    <h3>Marketing &amp; Promotions</h3>
+    <ul class="list">
+      <li>Coupon codes with usage limits, minimum order value, and expiry</li>
+      <li>BOGO (Buy One Get One) deals</li>
+      <li>Happy Hour — time-based automatic discounts</li>
+      <li>Loyalty points — earn on orders, redeem at checkout, configurable rules</li>
+      <li>Push notifications via Firebase Cloud Messaging</li>
+      <li>Marketing tools &amp; sales popup configuration</li>
+      <li>Newsletter subscriber management</li>
+    </ul>
+
+    <h3>User Management</h3>
+    <ul class="list">
+      <li>Employees — CRUD, role &amp; permission management (RBAC)</li>
+      <li>Deliverymen — CRUD, working hours, earnings tracking</li>
+      <li>Customers — CRUD, wallet balance, order history, bulk actions</li>
+      <li>Wallet transactions overview</li>
+    </ul>
+
+    <h3>Website &amp; Content</h3>
+    <ul class="list">
+      <li>Page builder for About, Privacy Policy, Terms &amp; Conditions, Refund, Cancel Policy</li>
+      <li>Blog management (create, publish, draft)</li>
+      <li>FAQ management</li>
+      <li>Social media link configuration</li>
+      <li>Homepage banner and featured sections control</li>
+    </ul>
+
+    <h3>Communication</h3>
+    <ul class="list">
+      <li>Live chat between admin ↔ customer and admin ↔ deliveryman (real-time via Reverb)</li>
+      <li>Order-specific customer support</li>
+      <li>Push notification campaigns with target selection</li>
+    </ul>
+
+    <h3>Settings &amp; Integrations</h3>
+    <ul class="list">
+      <li><strong>Payment gateways:</strong> Stripe, PayPal, Razorpay, Flutterwave, and more</li>
+      <li><strong>SMS gateways:</strong> Twilio, Nexmo (Vonage)</li>
+      <li><strong>Email:</strong> SMTP, Gmail, AWS SES, Mailgun</li>
+      <li><strong>Firebase:</strong> Push notifications, social auth configuration</li>
+      <li><strong>Social login:</strong> Google, Facebook, Apple</li>
+      <li><strong>Google Maps:</strong> Geocoding, autocomplete, direction APIs</li>
+      <li>Tax rates, currency configuration</li>
+      <li>Delivery charge zones and rules</li>
+      <li>Cookie consent configuration</li>
+      <li>Environment variable management (in-app editor)</li>
+    </ul>
+
+    <h3>System &amp; Security</h3>
+    <ul class="list">
+      <li>Built-in database backup &amp; restore</li>
+      <li>Application cache management</li>
+      <li>Activity logs</li>
+      <li>RBAC — fine-grained employee role permissions</li>
+      <li>Two-Factor Authentication (TOTP) for admin accounts</li>
+      <li>reCAPTCHA v3 on login</li>
+      <li>JWT-based API authentication</li>
+    </ul>
+
+    <h3>Installer &amp; Updater</h3>
+    <ul class="list">
+      <li>Built-in graphical installer wizard at <code>/install</code></li>
+      <li>Built-in updater at <code>/updater</code> — no SSH required for updates</li>
+      <li>Purchase code verification</li>
+    </ul>
+
+    <!-- ========================================================
+         PREREQUISITES
+         ======================================================== -->
+    <h2 id="prerequisites">Prerequisites</h2>
+
+    <h3>Server Requirements</h3>
+
+    <table class="doc-table">
+      <thead>
+        <tr><th>Requirement</th><th>Minimum</th><th>Recommended</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>PHP</td><td>8.2</td><td>8.3+</td></tr>
+        <tr><td>MySQL / MariaDB</td><td>8.0 / 10.4</td><td>8.0+ / 10.6+</td></tr>
+        <tr><td>Web Server</td><td>Nginx / Apache</td><td>Nginx + Octane</td></tr>
+        <tr><td>RAM</td><td>1 GB</td><td>2 GB+</td></tr>
+        <tr><td>Disk Space</td><td>500 MB</td><td>2 GB+</td></tr>
+        <tr><td>Node.js</td><td>18</td><td>20+ LTS</td></tr>
+        <tr><td>Composer</td><td>2.x</td><td>Latest</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Required PHP Extensions</h3>
+    <ul class="list">
+      <li><code>BCMath</code>, <code>Ctype</code>, <code>cURL</code>, <code>DOM</code></li>
+      <li><code>Fileinfo</code>, <code>JSON</code>, <code>Mbstring</code>, <code>OpenSSL</code></li>
+      <li><code>PDO</code>, <code>PDO_MySQL</code>, <code>Tokenizer</code>, <code>XML</code></li>
+      <li><code>GD</code> or <code>Imagick</code> (for image processing)</li>
+      <li><code>Swoole</code> (required for Laravel Octane — optional, falls back to PHP-FPM)</li>
+      <li><code>zip</code> (for backup/restore)</li>
+    </ul>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        <strong>Octane (Swoole) is optional.</strong> The application runs perfectly fine with standard
+        PHP-FPM. Swoole is recommended for high-traffic production environments to significantly
+        improve throughput and response times.
+      </div>
+    </div>
+
+    <h3>External Services (Recommended)</h3>
+    <ul class="list">
+      <li><strong>Firebase Project</strong> — push notifications, social auth, crashlytics</li>
+      <li><strong>Google Maps API Key</strong> — geocoding, place autocomplete, directions</li>
+      <li><strong>SMTP / Mail provider</strong> — transactional emails (Gmail, SES, Mailgun, etc.)</li>
+      <li><strong>AWS S3 bucket</strong> (optional) — file and image storage instead of local disk</li>
+    </ul>
+
+    <!-- ========================================================
+         QUICK START
+         ======================================================== -->
+    <h2 id="quick-start">Quick Start</h2>
+
+    <h3>Pre-flight Checklist</h3>
+    <ul class="checklist">
+      <li>PHP 8.2+ with all required extensions installed</li>
+      <li>Composer 2.x installed globally</li>
+      <li>Node.js 18+ and npm installed</li>
+      <li>MySQL/MariaDB server running and accessible</li>
+      <li>Empty database created for the application</li>
+      <li>Web server (Nginx or Apache) configured</li>
+      <li>Domain / subdomain pointed to the server</li>
+      <li>Purchase code from Envato ready</li>
+    </ul>
+
+    <h3>4-Step Quick Install</h3>
+
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Extract the archive</strong>
+          Extract the downloaded ZIP to your server's web directory (e.g. <code>/var/www/onemart</code>).
+          Point your Nginx/Apache document root to the <code>/public</code> folder.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Set permissions</strong>
+<pre class="code">
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data .
+</pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Install dependencies</strong>
+<pre class="code">
+composer install --optimize-autoloader --no-dev
+npm install
+npm run build
+</pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Run the installer wizard</strong>
+          Visit <code>https://yourdomain.com/install</code> in your browser and follow the
+          on-screen steps to configure the database, mail, and create the admin account.
+        </div>
+      </li>
+    </ol>
+
+    <div class="alert alert-success">
+      <span class="alert-icon">✅</span>
+      <div>
+        After the installer completes, the <code>INSTALLED=true</code> flag is written to your
+        <code>.env</code> file and the installer route is automatically disabled for security.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         INSTALLATION PROCESS
+         ======================================================== -->
+    <h2 id="installation-process">Installation Process</h2>
+
+    <h3>1. Database Setup</h3>
+    <p>Create a MySQL database and user before running the installer:</p>
+<pre class="code">
+CREATE DATABASE onemart CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE USER 'onemart_user'@'localhost' IDENTIFIED BY 'strong_password_here';
+GRANT ALL PRIVILEGES ON onemart.* TO 'onemart_user'@'localhost';
+FLUSH PRIVILEGES;
+</pre>
+
+    <h3>2. Environment Bootstrap</h3>
+    <p>Copy the example environment file and generate the application key:</p>
+<pre class="code">
+cp .env.example .env
+php artisan key:generate
+</pre>
+
+    <h3>3. Web Installer Wizard</h3>
+    <p>Navigate to <code>/install</code> in your browser. The wizard walks through:</p>
+    <ul class="list">
+      <li><strong>Step 1 — License:</strong> Enter your Envato purchase code to verify the license</li>
+      <li><strong>Step 2 — System Check:</strong> Validates PHP version, extensions, and folder permissions</li>
+      <li><strong>Step 3 — Database:</strong> Enter DB host, port, name, username, and password</li>
+      <li><strong>Step 4 — Mail:</strong> Configure the mail driver (SMTP, Mailgun, SES, etc.)</li>
+      <li><strong>Step 5 — Admin Account:</strong> Set the super-admin name, email, and password</li>
+      <li><strong>Step 6 — Finish:</strong> Migrations, seeders, and storage link are run automatically</li>
+    </ul>
+
+    <h3>4. Post-Install Commands</h3>
+<pre class="code">
+php artisan storage:link          # Link public storage disk
+php artisan config:cache          # Cache configuration
+php artisan route:cache           # Cache routes
+php artisan view:cache            # Cache compiled views
+php artisan queue:work --daemon   # Start queue worker
+</pre>
+
+    <!-- ========================================================
+         BASIC CONFIGURATION
+         ======================================================== -->
+    <h2 id="basic-configuration">Basic Configuration</h2>
+
+    <h3>Core .env Variables</h3>
+<pre class="code highlight">
+# Application
+APP_NAME=DayOneFood
+APP_ENV=production
+APP_KEY=base64:YOUR_GENERATED_KEY
+APP_DEBUG=false
+APP_URL=https://yourdomain.com
+
+# Database
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=onemart
+DB_USERNAME=onemart_user
+DB_PASSWORD=strong_password_here
+
+# Queue & Broadcasting
+QUEUE_CONNECTION=database
+BROADCAST_CONNECTION=reverb
+
+# Octane (optional — remove if not using Swoole)
+OCTANE_SERVER=swoole
+
+# JWT
+JWT_SECRET=your_jwt_secret_here
+
+# Cache
+CACHE_STORE=file
+SESSION_DRIVER=file
+
+# Mail
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailgun.org
+MAIL_PORT=587
+MAIL_USERNAME=your_smtp_user
+MAIL_PASSWORD=your_smtp_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=noreply@yourdomain.com
+MAIL_FROM_NAME="${APP_NAME}"
+
+# File Storage (optional — S3)
+FILESYSTEM_DISK=local
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_DEFAULT_REGION=us-east-1
+AWS_BUCKET=
+
+# Reverb (real-time)
+REVERB_APP_ID=999114
+REVERB_APP_KEY=your_reverb_key
+REVERB_APP_SECRET=your_reverb_secret
+REVERB_HOST=0.0.0.0
+REVERB_PORT=8080
+
+# Stripe
+STRIPE_KEY=pk_live_...
+STRIPE_SECRET=sk_live_...
+
+# Firebase
+FIREBASE_CREDENTIALS=path/to/firebase-service-account.json
+
+# License
+INSTALLED=true
+PURCHASE_CODE=your_envato_purchase_code
+</pre>
+
+    <h3>Mail Configuration</h3>
+    <p>Supported mail drivers and their key variables:</p>
+
+    <table class="doc-table">
+      <thead><tr><th>Driver</th><th>MAIL_MAILER value</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>SMTP</td><td><code>smtp</code></td><td>Any SMTP server (Gmail, custom)</td></tr>
+        <tr><td>Mailgun</td><td><code>mailgun</code></td><td>Set <code>MAILGUN_DOMAIN</code> + <code>MAILGUN_SECRET</code></td></tr>
+        <tr><td>AWS SES</td><td><code>ses</code></td><td>Set AWS credentials</td></tr>
+        <tr><td>Sendmail</td><td><code>sendmail</code></td><td>Server sendmail binary</td></tr>
+        <tr><td>Log (dev)</td><td><code>log</code></td><td>Writes emails to <code>storage/logs</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Storage Configuration</h3>
+    <p>
+      By default the application uses the <code>local</code> disk (<code>storage/app/public</code>).
+      To switch to AWS S3, set <code>FILESYSTEM_DISK=s3</code> and fill in the <code>AWS_*</code>
+      variables in <code>.env</code>. No other code changes are needed.
+    </p>
+
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        When using S3, ensure the S3 bucket has <strong>public read access</strong> or a CloudFront
+        distribution in front of it, otherwise product images will not render on the storefront.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         SERVER CONFIGURATION
+         ======================================================== -->
+    <h2 id="server-configuration">Server Configuration</h2>
+
+    <h3>Nginx (Recommended)</h3>
+<pre class="code">
+server {
+    listen 80;
+    listen [::]:80;
+    server_name yourdomain.com www.yourdomain.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name yourdomain.com www.yourdomain.com;
+
+    root /var/www/onemart/public;
+    index index.php;
+
+    ssl_certificate     /etc/ssl/certs/yourdomain.crt;
+    ssl_certificate_key /etc/ssl/private/yourdomain.key;
+
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-XSS-Protection "1; mode=block";
+    add_header X-Content-Type-Options "nosniff";
+
+    charset utf-8;
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/var/run/php/php8.3-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+}
+</pre>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        If you are running <strong>Laravel Octane</strong> with Swoole, replace the
+        <code>fastcgi_pass</code> block above with a reverse proxy to the Octane server:
+        <code>proxy_pass http://127.0.0.1:8000;</code>
+      </div>
+    </div>
+
+    <h3>Apache (.htaccess)</h3>
+    <p>The <code>public/.htaccess</code> file ships with the application. Ensure <code>mod_rewrite</code> is enabled:</p>
+<pre class="code">
+a2enmod rewrite
+systemctl restart apache2
+</pre>
+
+    <h3>SSL / HTTPS</h3>
+    <p>Use Certbot (Let's Encrypt) for a free SSL certificate:</p>
+<pre class="code">
+apt install certbot python3-certbot-nginx
+certbot --nginx -d yourdomain.com -d www.yourdomain.com
+</pre>
+
+    <h3>Queue Worker (Supervisor)</h3>
+    <p>Create a Supervisor config to keep the queue worker running persistently:</p>
+<pre class="code">
+# /etc/supervisor/conf.d/onemart-worker.conf
+
+[program:onemart-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /var/www/onemart/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+autostart=true
+autorestart=true
+stopasgroup=true
+killasgroup=true
+user=www-data
+numprocs=2
+redirect_stderr=true
+stdout_logfile=/var/log/onemart-worker.log
+stopwaitsecs=3600
+</pre>
+<pre class="code">
+supervisorctl reread
+supervisorctl update
+supervisorctl start onemart-worker:*
+</pre>
+
+    <h3>Cron Job</h3>
+    <p>Add the Laravel scheduler to your crontab (<code>crontab -e</code>):</p>
+<pre class="code">
+* * * * * cd /var/www/onemart && php artisan schedule:run >> /dev/null 2>&1
+</pre>
+
+    <h3>Laravel Reverb (Real-time)</h3>
+    <p>Start the Reverb WebSocket server (use Supervisor or a systemd service in production):</p>
+<pre class="code">
+php artisan reverb:start --host=0.0.0.0 --port=8080
+</pre>
+
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        Open port <strong>8080</strong> (or your configured Reverb port) in your firewall.
+        For HTTPS setups, proxy the WebSocket through Nginx with a <code>location /app/</code>
+        block to avoid mixed-content browser errors.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         DEPLOYMENT
+         ======================================================== -->
+    <h2 id="deployment">Deployment</h2>
+
+    <h3>First-Time Deploy</h3>
+<pre class="code">
+# 1. Install PHP dependencies
+composer install --optimize-autoloader --no-dev
+
+# 2. Build frontend assets
+npm ci
+npm run build
+
+# 3. Run migrations and seeders
+php artisan migrate --force
+php artisan db:seed --force
+
+# 4. Create storage symlink
+php artisan storage:link
+
+# 5. Cache everything for production
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+php artisan event:cache
+
+# 6. Set permissions
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data .
+</pre>
+
+    <h3>Subsequent Deploys</h3>
+<pre class="code">
+# Pull latest code
+git pull origin main
+
+# Refresh dependencies
+composer install --optimize-autoloader --no-dev
+npm ci && npm run build
+
+# Run new migrations
+php artisan migrate --force
+
+# Clear caches then rebuild
+php artisan optimize:clear
+php artisan optimize
+
+# Restart Octane / queue workers
+php artisan octane:reload   # if using Octane
+supervisorctl restart onemart-worker:*
+</pre>
+
+    <h3>Post-Deploy Checklist</h3>
+    <ul class="checklist">
+      <li>Visit the storefront homepage and confirm products render</li>
+      <li>Log in to the admin panel and verify the dashboard loads</li>
+      <li>Place a test order end-to-end</li>
+      <li>Check queue worker is processing jobs (<code>php artisan queue:monitor</code>)</li>
+      <li>Verify email notifications are delivered</li>
+      <li>Test WebSocket / real-time chat connectivity</li>
+      <li>Confirm file uploads and storage links work</li>
+    </ul>
+
+    <h3>cPanel / Shared Hosting</h3>
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        Shared hosting is <strong>not recommended</strong> for production. If you must use cPanel,
+        ensure PHP 8.2+, Composer, and Node.js are available via SSH. Set the document root to the
+        <code>public/</code> subdirectory using cPanel's "Subdomains" or "Addon Domains" settings.
+        Laravel Octane and Reverb WebSockets will not be available on shared hosting.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         UPDATE PROCEDURE
+         ======================================================== -->
+    <h2 id="update-procedure">Update Procedure</h2>
+
+    <h3>Using the Built-in Updater (Recommended)</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Back up your database</strong>
+          Go to <em>Admin Panel → Settings → System → Database Backup</em> and download a fresh backup.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Navigate to the updater</strong>
+          Visit <code>https://yourdomain.com/updater</code> and log in with your admin credentials.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Enter the new update package URL or upload the ZIP</strong>
+          Provide the update file from your Envato download page.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Run the update</strong>
+          The updater extracts files, runs migrations, and clears caches automatically.
+        </div>
+      </li>
+    </ol>
+
+    <h3>Manual Update via SSH</h3>
+<pre class="code">
+# 1. Put application in maintenance mode
+php artisan down --message="Updating, back in 5 minutes" --retry=300
+
+# 2. Backup database
+mysqldump -u root -p onemart > backup_$(date +%Y%m%d).sql
+
+# 3. Extract and overwrite files (keep your .env and storage/)
+# Do NOT overwrite .env or storage/
+
+# 4. Update dependencies
+composer install --optimize-autoloader --no-dev
+npm ci && npm run build
+
+# 5. Run migrations
+php artisan migrate --force
+
+# 6. Rebuild cache
+php artisan optimize:clear && php artisan optimize
+
+# 7. Bring application back online
+php artisan up
+</pre>
+
+    <!-- ========================================================
+         API REFERENCE
+         ======================================================== -->
+    <h2 id="api-reference">API Reference</h2>
+
+    <p>
+      The application ships with a complete <span class="mark">Postman collection</span>
+      (<code>postman-collection.json</code>, ~485 KB) covering all API endpoints.
+      Import it into Postman or Insomnia for interactive exploration.
+    </p>
+
+    <h3>Base URL &amp; Versioning</h3>
+<pre class="code">
+Base URL:  https://yourdomain.com/api/v1
+Auth:      Bearer JWT token (Authorization: Bearer {token})
+</pre>
+
+    <h3>Customer API Endpoints</h3>
+
+    <table class="doc-table">
+      <thead><tr><th>Group</th><th>Endpoints</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Authentication</strong></td><td>login, OTP login, sign-up, forgot-password, verify-OTP, reset-password, Google / Facebook / Apple social login, logout, refresh, check-user-exists</td></tr>
+        <tr><td><strong>App Config</strong></td><td>home screen, app config, geocode-reverse, place-autocomplete, map-place-details, map-direction</td></tr>
+        <tr><td><strong>Products</strong></td><td>list, detail, by-category, search, featured, popular, recommended</td></tr>
+        <tr><td><strong>Categories</strong></td><td>list, show, featured, popular</td></tr>
+        <tr><td><strong>Cart</strong></td><td>get, add, update quantity, update item, remove</td></tr>
+        <tr><td><strong>Checkout</strong></td><td>place-order, apply-delivery-charge, coupon apply/remove, BOGO, Happy Hour</td></tr>
+        <tr><td><strong>Orders</strong></td><td>list, show, cancel, track (public), invoice, history</td></tr>
+        <tr><td><strong>Wallet</strong></td><td>show, add-money</td></tr>
+        <tr><td><strong>Loyalty Points</strong></td><td>config, histories, redeem</td></tr>
+        <tr><td><strong>Notifications</strong></td><td>list, unread count, mark-read, mark-all-read, delete, preferences</td></tr>
+        <tr><td><strong>Chat</strong></td><td>list, start-chat, show, messages, send-message</td></tr>
+        <tr><td><strong>Profile</strong></td><td>show, update, change-password, delete-account, settings</td></tr>
+        <tr><td><strong>Addresses</strong></td><td>CRUD delivery addresses</td></tr>
+        <tr><td><strong>Wishlist</strong></td><td>list, add, delete</td></tr>
+        <tr><td><strong>Reviews</strong></td><td>CRUD product reviews</td></tr>
+        <tr><td><strong>Refund Requests</strong></td><td>list, show, store, cancel</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Admin API Endpoints</h3>
+
+    <table class="doc-table">
+      <thead><tr><th>Group</th><th>Endpoints</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Auth</strong></td><td>login, verify-2FA, logout, refresh</td></tr>
+        <tr><td><strong>Dashboard</strong></td><td>summary stats, recent orders, real-time data</td></tr>
+        <tr><td><strong>Products &amp; Menu</strong></td><td>items, categories, sub-categories, cuisines, labels, menu-types, addons — full CRUD + status toggle</td></tr>
+        <tr><td><strong>Orders</strong></td><td>list, show, update status, assign deliveryman, cancel, refund, bulk actions</td></tr>
+        <tr><td><strong>Users</strong></td><td>customers, deliverymen, employees — CRUD, bulk actions, role management</td></tr>
+        <tr><td><strong>Promotions</strong></td><td>coupons, BOGO, Happy Hour — full CRUD + status</td></tr>
+        <tr><td><strong>Notifications</strong></td><td>create, send, bulk actions, mark-seen</td></tr>
+        <tr><td><strong>Settings</strong></td><td>business setup, payment gateways, SMS gateways, Firebase, social auth, email, tax, currency, delivery charges, cookies, marketing tools</td></tr>
+        <tr><td><strong>Analytics</strong></td><td>sales, category performance, user activity</td></tr>
+        <tr><td><strong>System</strong></td><td>cache clear, env variable CRUD, DB backups</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ========================================================
+         DEFAULT CREDENTIALS
+         ======================================================== -->
+    <h2 id="default-credentials">Default Credentials</h2>
+
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        Change all default passwords immediately after first login. These credentials are
+        for demo/development use only and are included in the database seeders.
+      </div>
+    </div>
+
+    <table class="doc-table">
+      <thead><tr><th>Role</th><th>Email</th><th>Password</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Super Admin</strong></td><td>admin@example.com</td><td>password</td></tr>
+        <tr><td><strong>Employee</strong></td><td>employee@example.com</td><td>password</td></tr>
+        <tr><td><strong>Customer</strong></td><td>customer@example.com</td><td>password</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ========================================================
+         TROUBLESHOOTING
+         ======================================================== -->
+    <h2 id="troubleshooting">Troubleshooting</h2>
+
+    <h3>500 — Internal Server Error</h3>
+    <ul class="list">
+      <li>Check <code>storage/logs/laravel.log</code> for the root cause</li>
+      <li>Set <code>APP_DEBUG=true</code> temporarily in <code>.env</code> to see the exception in the browser</li>
+      <li>Run <code>php artisan config:clear &amp;&amp; php artisan cache:clear</code></li>
+      <li>Verify <code>storage/</code> and <code>bootstrap/cache/</code> are writable by the web server</li>
+    </ul>
+
+    <h3>Vite Manifest Not Found</h3>
+<pre class="code">
+npm install
+npm run build
+php artisan view:clear
+</pre>
+
+    <h3>Images / Uploads Not Showing</h3>
+<pre class="code">
+php artisan storage:link
+# If the symlink already exists but is broken:
+rm public/storage
+php artisan storage:link
+</pre>
+
+    <h3>404 — Page Not Found</h3>
+    <ul class="list">
+      <li>Confirm the Nginx/Apache document root points to <code>/public</code></li>
+      <li>For Nginx: ensure <code>try_files $uri $uri/ /index.php?$query_string;</code> is present</li>
+      <li>For Apache: confirm <code>mod_rewrite</code> is enabled and <code>AllowOverride All</code> is set</li>
+    </ul>
+
+    <h3>Emails Not Sending</h3>
+    <ul class="list">
+      <li>Verify <code>MAIL_*</code> variables in <code>.env</code> are correct</li>
+      <li>Ensure the queue worker is running (<code>php artisan queue:work</code>)</li>
+      <li>Check <code>storage/logs/laravel.log</code> for mail errors</li>
+      <li>Test with <code>php artisan tinker</code>: <code>Mail::raw('test', fn($m) => $m->to('test@example.com'));</code></li>
+    </ul>
+
+    <h3>CSRF Token Mismatch</h3>
+    <ul class="list">
+      <li>Clear browser cookies and try again</li>
+      <li>Verify <code>APP_URL</code> in <code>.env</code> matches the actual domain (including <code>https://</code>)</li>
+      <li>Run <code>php artisan config:clear</code></li>
+    </ul>
+
+    <h3>Queue Jobs Not Processing</h3>
+<pre class="code">
+# Check if queue worker is running
+supervisorctl status onemart-worker:*
+
+# Restart if needed
+supervisorctl restart onemart-worker:*
+
+# Run manually to debug
+php artisan queue:work --verbose
+</pre>
+
+    <h3>Real-time / Chat Not Working</h3>
+    <ul class="list">
+      <li>Ensure Reverb is running: <code>php artisan reverb:start</code></li>
+      <li>Check that the Reverb port (default 8080) is open in your firewall</li>
+      <li>Verify <code>REVERB_*</code> variables in <code>.env</code> match your frontend config</li>
+      <li>For HTTPS sites, ensure WebSocket connections are proxied through Nginx with <code>Upgrade</code> and <code>Connection</code> headers</li>
+    </ul>
+
+    <h3>Permission Errors</h3>
+<pre class="code">
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+</pre>
+
+    <!-- ========================================================
+         CUSTOMIZATION
+         ======================================================== -->
+    <h2 id="customization">Customization</h2>
+
+    <h3>Backend — Controllers &amp; Services</h3>
+    <ul class="list">
+      <li>API controllers live in <code>app/Http/Controllers/Api/</code></li>
+      <li>Business logic is extracted to <code>app/Services/</code></li>
+      <li>Eloquent models are in <code>app/Models/</code></li>
+      <li>Follow standard Laravel conventions — register new routes in <code>routes/api/v1/</code></li>
+    </ul>
+
+    <h3>Frontend — Vue &amp; Tailwind</h3>
+    <ul class="list">
+      <li>Admin panel pages: <code>resources/js/AdminPanel/Pages/</code></li>
+      <li>Storefront pages: <code>resources/js/StoreFront/Pages/</code></li>
+      <li>Shared components: <code>resources/js/components/</code></li>
+      <li>Add Shadcn components: <code>npm run shadcn:admin</code> or <code>npm run shadcn:storefront</code></li>
+      <li>Tailwind config is driven by CSS variables — edit <code>resources/css/app.css</code> to change the color scheme</li>
+      <li>After changes, rebuild with <code>npm run build</code></li>
+    </ul>
+
+    <h3>Translations / i18n</h3>
+    <ul class="list">
+      <li>Backend translations: <code>lang/{en,bn,hi,ar,es}/</code></li>
+      <li>Admin frontend locales: <code>resources/js/AdminPanel/locales/</code></li>
+      <li>Storefront locales: <code>resources/js/StoreFront/locales/</code></li>
+      <li>Sort locale files after editing: <code>npm run sort:locales</code></li>
+    </ul>
+
+    <h3>Adding a Payment Gateway</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Create the controller</strong> in <code>app/Http/Controllers/Payment/</code> implementing the gateway's webhook and redirect callbacks.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Register routes</strong> in <code>routes/payment.php</code>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Add the gateway to settings</strong> — register it in the admin panel's payment gateway list and add the necessary <code>.env</code> variables.
+        </div>
+      </li>
+    </ol>
+
+    <h3>Email Templates</h3>
+    <p>
+      Laravel Mailable classes are in <code>app/Mail/</code>. Blade email views are in
+      <code>resources/views/emails/</code>. Customize the HTML/CSS directly in those files.
+    </p>
+
+    <h3>Development Workflow</h3>
+<pre class="code">
+# Start all dev services concurrently (PHP + queue + logs + Vite)
+composer dev
+
+# Or start individually:
+php artisan serve
+npm run dev
+php artisan queue:listen
+php artisan pail           # Tail logs in terminal
+</pre>
+
+    <hr class="section-divider" />
+    <p style="color:var(--text-muted);font-size:.85rem;">
+      Need help? Contact <a href="mailto:thedayonesoft@gmail.com">thedayonesoft@gmail.com</a>
+      or open a support ticket via the Envato item page.
+    </p>
+
+  </section>
+</div>
+
+<script src="../assets/js/docs.js"></script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DayOneMart — Documentation</title>
+  <link rel="stylesheet" href="source/assets/css/docs.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛒</text></svg>" />
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+<header class="navbar">
+  <a class="brand" href="index.html">
+    <span style="font-size:1.5rem;">🛒</span>
+    <span>DayOneMart<span class="brand-dot">.</span></span>
+  </a>
+
+  <nav>
+    <a href="index.html" class="active">Home</a>
+    <a href="source/pages/admin-and-web.html">Admin &amp; Web</a>
+    <a href="source/pages/customer-app.html">Customer App</a>
+    <a href="source/pages/deliveryman-app.html">Deliveryman App</a>
+  </nav>
+
+  <div class="nav-actions">
+    <button class="btn-icon menu-toggle" title="Toggle menu" aria-label="Toggle menu">☰</button>
+    <button class="btn-icon theme-toggle" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<!-- ============================================================
+     HOME CONTENT
+     ============================================================ -->
+<main class="page-home">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="badge-version">v1.0 — Complete Solution</div>
+    <h1>DayOneMart <span>Documentation</span></h1>
+    <p>Complete technical reference for the OneMart single-vendor e-commerce platform — covering the Laravel + Vue admin panel, customer storefront, Flutter customer app, and Flutter deliveryman app.</p>
+  </div>
+
+  <!-- Cards Grid -->
+  <div class="cards-grid">
+
+    <!-- Admin & Web Card -->
+    <div class="card">
+      <div class="card-icon blue">🖥️</div>
+      <h3>Admin &amp; Web</h3>
+      <p>
+        Full-featured back-office panel built with <span class="mark">Laravel 12</span> and
+        <span class="mark">Vue 3 / Inertia.js</span>. Includes an embedded customer-facing
+        storefront, REST API, real-time broadcasting via <span class="mark">Reverb</span>,
+        and a built-in installer &amp; updater wizard.
+      </p>
+      <div class="actions">
+        <span class="pill">Laravel 12</span>
+        <span class="pill">Vue 3</span>
+        <span class="pill">Inertia.js</span>
+        <span class="pill">Tailwind CSS 4</span>
+        <span class="pill">Laravel Octane</span>
+        <span class="pill">JWT Auth</span>
+        <span class="pill">Firebase</span>
+      </div>
+      <a href="source/pages/admin-and-web.html" class="btn-link">View Documentation →</a>
+    </div>
+
+    <!-- Customer App Card -->
+    <div class="card">
+      <div class="card-icon green">📱</div>
+      <h3>Customer App</h3>
+      <p>
+        Cross-platform mobile app built with <span class="mark">Flutter</span> for Android and iOS.
+        Supports social login, real-time order tracking with <span class="mark">Google Maps</span>,
+        push notifications via <span class="mark">Firebase</span>, live chat, wallet, loyalty
+        points, and more.
+      </p>
+      <div class="actions">
+        <span class="pill">Flutter</span>
+        <span class="pill">Dart 3</span>
+        <span class="pill">BLoC</span>
+        <span class="pill">GoRouter</span>
+        <span class="pill">Firebase</span>
+        <span class="pill">Google Maps</span>
+        <span class="pill">GetIt / Injectable</span>
+      </div>
+      <a href="source/pages/customer-app.html" class="btn-link">View Documentation →</a>
+    </div>
+
+    <!-- Deliveryman App Card -->
+    <div class="card">
+      <div class="card-icon purple">🚚</div>
+      <h3>Deliveryman App</h3>
+      <p>
+        Dedicated delivery management app built with <span class="mark">Flutter</span> for Android
+        and iOS. Enables deliverymen to receive orders, navigate to delivery locations via
+        <span class="mark">Google Maps</span>, update order status, and chat with admin support in
+        real-time.
+      </p>
+      <div class="actions">
+        <span class="pill">Flutter</span>
+        <span class="pill">Dart 3</span>
+        <span class="pill">BLoC</span>
+        <span class="pill">GoRouter</span>
+        <span class="pill">Firebase</span>
+        <span class="pill">Google Maps</span>
+        <span class="pill">GetIt / Injectable</span>
+      </div>
+      <a href="source/pages/deliveryman-app.html" class="btn-link">View Documentation →</a>
+    </div>
+
+    <!-- Help & Support Card -->
+    <div class="card">
+      <div class="card-icon orange">🛟</div>
+      <h3>Help &amp; Support</h3>
+      <p>Need assistance? Reach out via the channels below or browse the documentation for answers.</p>
+
+      <ul class="support-list">
+        <li>
+          <span class="icon">📧</span>
+          <span>Email: <a href="mailto:thedayonesoft@gmail.com">thedayonesoft@gmail.com</a></span>
+        </li>
+        <li>
+          <span class="icon">💬</span>
+          <span>WhatsApp / Telegram support available after purchase</span>
+        </li>
+        <li>
+          <span class="icon">📦</span>
+          <span>Report bugs or issues via the Envato item comments</span>
+        </li>
+        <li>
+          <span class="icon">🔄</span>
+          <span>Free updates included with your purchase license</span>
+        </li>
+      </ul>
+
+      <div style="margin-top:20px;">
+        <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:8px;"><strong>Common quick-fix commands:</strong></p>
+        <pre class="code" style="font-size:.75rem;padding:12px 16px;margin:0;">
+php artisan config:clear
+php artisan cache:clear
+php artisan view:clear
+php artisan route:clear
+composer dump-autoload</pre>
+      </div>
+    </div>
+
+    <!-- Tech Overview Card -->
+    <div class="card">
+      <div class="card-icon purple">⚙️</div>
+      <h3>Solution Overview</h3>
+      <p>The OneMart complete solution consists of three tightly integrated products sharing a single API.</p>
+
+      <table class="doc-table" style="margin-top:12px;">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Technology</th>
+            <th>Target</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Admin &amp; Web</strong></td>
+            <td>Laravel + Vue 3</td>
+            <td>Server / Web</td>
+          </tr>
+          <tr>
+            <td><strong>Customer App</strong></td>
+            <td>Flutter (Dart)</td>
+            <td>Android / iOS</td>
+          </tr>
+          <tr>
+            <td><strong>Deliveryman App</strong></td>
+            <td>Flutter (Dart)</td>
+            <td>Android / iOS</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="font-size:.82rem;color:var(--text-muted);">
+        The Flutter apps communicate exclusively with the Laravel REST API at
+        <code>/api/v1/customer/*</code> and <code>/api/v1/delivery-man/*</code>.
+      </p>
+    </div>
+
+  </div><!-- /cards-grid -->
+
+</main>
+
+<footer>
+  &copy; 2026 DayOneMart — Documentation for Admin &amp; Web, Customer App, and Deliveryman App.
+  Built by <a href="mailto:thedayonesoft@gmail.com">DayOneSoft</a>.
+</footer>
+
+<script src="source/assets/js/docs.js"></script>
+</body>
+</html>

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deliveryman App — DayOneMart Docs</title>
+  <link rel="stylesheet" href="../assets/css/docs.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚚</text></svg>" />
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+<header class="navbar">
+  <a class="brand" href="../../index.html">
+    <span style="font-size:1.5rem;">🛒</span>
+    <span>DayOneMart<span class="brand-dot">.</span></span>
+  </a>
+  <nav>
+    <a href="../../index.html">Home</a>
+    <a href="admin-and-web.html">Admin &amp; Web</a>
+    <a href="customer-app.html">Customer App</a>
+    <a href="deliveryman-app.html" class="active">Deliveryman App</a>
+  </nav>
+  <div class="nav-actions">
+    <button class="btn-icon menu-toggle" title="Toggle menu" aria-label="Toggle sidebar">☰</button>
+    <button class="btn-icon theme-toggle" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<!-- ============================================================
+     PAGE LAYOUT
+     ============================================================ -->
+<div class="page-doc">
+
+  <!-- ---- Sidebar ---- -->
+  <aside class="sidebar">
+    <div class="sidebar-search">
+      <span class="search-icon">🔍</span>
+      <input id="search" type="search" placeholder="Search sections… ( / )" />
+    </div>
+
+    <h4>Contents</h4>
+    <nav>
+      <ul class="toc">
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#app-features">App Features</a></li>
+        <li><a href="#prerequisites">Prerequisites</a></li>
+        <li><a href="#project-structure">Project Structure</a></li>
+        <li><a href="#quick-start">Quick Start</a></li>
+        <li><a href="#configuration">Configuration</a></li>
+        <li><a href="#firebase-setup">Firebase Setup</a></li>
+        <li><a href="#google-maps-setup">Google Maps Setup</a></li>
+        <li><a href="#localization">Localization</a></li>
+        <li><a href="#build-and-release">Build &amp; Release</a></li>
+        <li><a href="#api-integration">API Integration</a></li>
+        <li><a href="#troubleshooting">Troubleshooting</a></li>
+        <li><a href="#customization">Customization</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ---- Main Content ---- -->
+  <section class="content">
+
+    <!-- ========================================================
+         INTRODUCTION
+         ======================================================== -->
+    <h2 id="introduction">Introduction</h2>
+
+    <p>
+      The <strong>DayOneMart Deliveryman App</strong> is a dedicated Flutter mobile application
+      for delivery personnel. It enables deliverymen to receive and manage assigned orders,
+      navigate to delivery locations via <span class="mark">Google Maps</span>, update order
+      statuses in real-time, communicate with admin via <span class="mark">live chat</span>,
+      and manage their account — all from a single app on Android and iOS.
+    </p>
+
+    <p>
+      The app connects to the <strong>OneMart Admin &amp; Web</strong> backend exclusively via the
+      REST API at <code>/api/v1/delivery-man/*</code>.
+      Push notifications are delivered through <span class="mark">Firebase Cloud Messaging</span>.
+    </p>
+
+    <h3>Technology Stack</h3>
+
+    <table class="doc-table">
+      <thead>
+        <tr><th>Layer</th><th>Package / Technology</th><th>Version</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Framework</td><td>Flutter</td><td>SDK (stable)</td></tr>
+        <tr><td>Language</td><td>Dart</td><td>^3.9.0</td></tr>
+        <tr><td>State Management</td><td>flutter_bloc + BLoC</td><td>^9.1 / ^9.2</td></tr>
+        <tr><td>Navigation</td><td>go_router + go_transitions</td><td>^17.2 / ^0.8</td></tr>
+        <tr><td>Dependency Injection</td><td>get_it + injectable</td><td>^9.2 / ^2.7</td></tr>
+        <tr><td>Code Generation</td><td>freezed + json_serializable</td><td>^3.2 / ^6.13</td></tr>
+        <tr><td>Networking</td><td>http + connectivity_plus</td><td>^1.6 / ^7.1</td></tr>
+        <tr><td>Firebase</td><td>Core, Messaging, Crashlytics, Analytics</td><td>^4.7 / ^16.2</td></tr>
+        <tr><td>Maps &amp; Location</td><td>google_maps_flutter + geolocator + location</td><td>^2.17 / ^14.0 / ^8.0</td></tr>
+        <tr><td>Permissions</td><td>permission_handler</td><td>^12.0</td></tr>
+        <tr><td>Images</td><td>cached_network_image + image_picker</td><td>^3.4 / ^1.2</td></tr>
+        <tr><td>Video</td><td>video_player + chewie</td><td>^2.11 / ^1.13</td></tr>
+        <tr><td>Notifications</td><td>flutter_local_notifications</td><td>^21.0</td></tr>
+        <tr><td>Localization</td><td>flutter_localizations + intl</td><td>SDK / ^0.20</td></tr>
+        <tr><td>Chat</td><td>emoji_keyboard_flutter</td><td>^1.7</td></tr>
+        <tr><td>Error Tracking</td><td>firebase_crashlytics + catcher_2</td><td>^5.2 / ^2.1</td></tr>
+        <tr><td>Storage</td><td>shared_preferences</td><td>^2.5</td></tr>
+        <tr><td>OTP</td><td>otp_autofill</td><td>^4.1</td></tr>
+        <tr><td>UI Utilities</td><td>shimmer_animation, skeletonizer, flutter_svg, animated_digit, sliver_tools, google_fonts</td><td>Latest</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Architecture Overview</h3>
+    <p>
+      The deliveryman app follows the same <span class="mark">feature-first clean architecture</span>
+      pattern as the customer app:
+    </p>
+    <ul class="list">
+      <li><strong>Feature modules</strong> — each feature is self-contained under <code>lib/features/&lt;feature&gt;/</code></li>
+      <li><strong>BLoC pattern</strong> — UI is decoupled from business logic via Blocs and Cubits</li>
+      <li><strong>GetIt / Injectable</strong> — dependency injection with code-generated service locator</li>
+      <li><strong>Freezed</strong> — immutable data classes and sealed union states</li>
+      <li><strong>GoRouter</strong> — declarative navigation with deep-link support and fade transitions</li>
+      <li><strong>Repository pattern</strong> — data sources abstracted behind repository interfaces</li>
+    </ul>
+
+    <!-- ========================================================
+         APP FEATURES
+         ======================================================== -->
+    <h2 id="app-features">App Features</h2>
+
+    <div class="feature-grid">
+      <div class="feature-item">
+        <div class="fi-icon">🚀</div>
+        <strong>Splash &amp; Connectivity</strong>
+        <span>Animated splash screen with network connectivity check</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">🔐</div>
+        <strong>Authentication</strong>
+        <span>Email/phone login, OTP verification, forgot password, password reset</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">🏠</div>
+        <strong>Home / Dashboard</strong>
+        <span>Overview of assigned orders, delivery stats, and earnings summary</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">📦</div>
+        <strong>Order Management</strong>
+        <span>View assigned orders, accept/reject, update status through delivery lifecycle</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">📍</div>
+        <strong>Delivery Navigation</strong>
+        <span>Google Maps route from pickup to delivery with real-time tracking</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">❌</div>
+        <strong>Cancellation Flow</strong>
+        <span>Cancel delivery with reason selection and admin notification</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">✅</div>
+        <strong>Delivery Confirmation</strong>
+        <span>Mark orders as delivered with result confirmation screen</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">💬</div>
+        <strong>Live Chat</strong>
+        <span>Chat with admin support, emoji keyboard, media file sharing</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">🔔</div>
+        <strong>Notifications</strong>
+        <span>Push notifications (Firebase), local notifications, in-app notification list</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">👤</div>
+        <strong>Account &amp; Profile</strong>
+        <span>View/edit profile, change password, delete account</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">⚙️</div>
+        <strong>Settings</strong>
+        <span>Language, theme, notification preferences, password setup</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">📞</div>
+        <strong>Contact Us</strong>
+        <span>Contact support with form submission</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">📄</div>
+        <strong>Terms &amp; Conditions</strong>
+        <span>View terms of service within the app</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">📎</div>
+        <strong>File Viewer</strong>
+        <span>View images and media files shared in chat</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">🌐</div>
+        <strong>Multi-language</strong>
+        <span>English, Spanish, Arabic, Hindi, Bangla</span>
+      </div>
+      <div class="feature-item">
+        <div class="fi-icon">🌙</div>
+        <strong>Dark / Light Theme</strong>
+        <span>System-aware theme with manual toggle</span>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         PREREQUISITES
+         ======================================================== -->
+    <h2 id="prerequisites">Prerequisites</h2>
+
+    <h3>Development Machine Requirements</h3>
+
+    <table class="doc-table">
+      <thead><tr><th>Tool</th><th>Minimum Version</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Flutter SDK</td><td>3.x (stable channel)</td><td>Run <code>flutter --version</code> to check</td></tr>
+        <tr><td>Dart SDK</td><td>^3.9.0</td><td>Bundled with Flutter</td></tr>
+        <tr><td>Android Studio</td><td>Hedgehog (2023.1+)</td><td>Required for Android builds</td></tr>
+        <tr><td>Xcode</td><td>15+</td><td>macOS only — required for iOS builds</td></tr>
+        <tr><td>CocoaPods</td><td>Latest</td><td>macOS only — <code>sudo gem install cocoapods</code></td></tr>
+        <tr><td>Java JDK</td><td>17</td><td>For Android Gradle builds</td></tr>
+      </tbody>
+    </table>
+
+    <h3>External Services Required</h3>
+    <ul class="list">
+      <li><strong>Firebase Project</strong> — push notifications (FCM), analytics, crashlytics</li>
+      <li><strong>Google Maps API Key</strong> — map display, directions, delivery navigation</li>
+      <li><strong>Backend URL</strong> — a running OneMart Admin &amp; Web instance with the deliveryman API enabled</li>
+    </ul>
+
+    <h3>Flutter Environment Check</h3>
+<pre class="code">
+flutter doctor -v
+</pre>
+    <p>Resolve all errors before proceeding. Warnings for unneeded platforms (e.g. Linux, Windows) can be ignored if you only target Android/iOS.</p>
+
+    <!-- ========================================================
+         PROJECT STRUCTURE
+         ======================================================== -->
+    <h2 id="project-structure">Project Structure</h2>
+
+<pre class="code">
+lib/
+├── main.dart                       ← App entry point + Firebase init
+├── firebase_options.dart           ← Generated by FlutterFire CLI
+│
+├── config/
+│   ├── route/
+│   │   └── route_config.dart       ← GoRouter route definitions
+│   ├── theme/                      ← App theme (colors, typography)
+│   └── util/
+│       ├── app_constants.dart      ← API base URL + all endpoints
+│       ├── assets.gen.dart         ← Generated asset references
+│       ├── dimensions.dart         ← Spacing / size constants
+│       └── styles.dart             ← Reusable TextStyles
+│
+├── core/
+│   ├── data/
+│   │   └── api/                    ← Base HTTP client, interceptors
+│   ├── model/
+│   │   └── response/              ← Generic response wrappers
+│   ├── dependency_injection/       ← GetIt setup + injectable config
+│   ├── helper/                     ← Notification helper, extensions, utils
+│   └── catcher_logs/               ← Catcher_2 error reporting config
+│
+├── features/                       ← Feature-first modules
+│   ├── splash/                     ← Splash screen + connectivity check
+│   ├── login/                      ← Auth (login, OTP, forgot password, set password)
+│   ├── home/                       ← Home screen + dashboard BLoC
+│   ├── dashboard/                  ← Bottom nav shell + tab management
+│   ├── order/                      ← Order list, details, delivery location, cancel, result
+│   ├── chat/                       ← Chat list, conversations, message sending
+│   ├── account/                    ← Profile, edit profile, change password, delete account
+│   ├── notification/               ← Notification list + management
+│   ├── settings/                   ← Settings screen, language, theme, password setup
+│   ├── contact_us/                 ← Contact support form
+│   ├── terms_and_condition/        ← Terms of service viewer
+│   ├── file_viewer/                ← Image/media file viewer
+│   ├── html/                       ← Generic HTML content renderer
+│   └── common/                     ← Shared widgets, theme BLoC
+│
+├── l10n/
+│   ├── arb/                        ← ARB localization source files
+│   │   ├── app_en.arb
+│   │   ├── app_es.arb
+│   │   ├── app_ar.arb
+│   │   ├── app_hi.arb
+│   │   └── app_bn.arb
+│   └── gen/                        ← Generated localization classes
+│       └── app_localizations.dart
+│
+assets/
+├── images/                         ← PNG / JPG images
+│   ├── svg/                        ← SVG icons
+│   │   └── flags/                  ← Country flag SVGs
+│   └── gif/                        ← Animated GIFs
+</pre>
+
+    <h3>Feature Module Structure</h3>
+    <p>Each feature follows the same internal layout:</p>
+<pre class="code">
+features/order/
+├── data/
+│   ├── models/             ← Freezed + JSON serializable DTOs
+│   └── repositories/       ← Repository implementation (API calls)
+├── domain/
+│   └── services/           ← Domain service / repository interface
+└── presentation/
+    ├── bloc/               ← BLoC / Cubit + States + Events
+    │   ├── order/          ← Order list & detail BLoC
+    │   └── order_delivery_location/  ← Map tracking BLoC
+    ├── screens/            ← Full-screen widgets
+    ├── widgets/            ← Reusable widgets for this feature
+    └── utils/              ← Feature-specific utilities
+</pre>
+
+    <h3>Navigation Structure</h3>
+    <p>The app uses a <code>ShellRoute</code> for the main dashboard with a bottom navigation bar housing four tabs:</p>
+
+    <table class="doc-table">
+      <thead><tr><th>Tab</th><th>Route</th><th>Screen</th></tr></thead>
+      <tbody>
+        <tr><td>Home</td><td><code>/home</code></td><td>HomeScreen — dashboard with stats</td></tr>
+        <tr><td>Orders</td><td><code>/order</code></td><td>OrdersScreen — active &amp; completed orders</td></tr>
+        <tr><td>Chat</td><td><code>/chat</code></td><td>ChatScreen — chat with admin</td></tr>
+        <tr><td>Account</td><td><code>/account</code></td><td>AccountScreen — profile &amp; settings</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ========================================================
+         QUICK START
+         ======================================================== -->
+    <h2 id="quick-start">Quick Start</h2>
+
+    <h3>Setup Checklist</h3>
+    <ul class="checklist">
+      <li>Flutter SDK installed and <code>flutter doctor</code> passes</li>
+      <li>Android Studio / Xcode configured with emulator/simulator</li>
+      <li>Firebase project created with Android + iOS apps registered (package: <code>com.dayonesoft.onemartdeliveryman</code>)</li>
+      <li>Google Maps API key obtained and enabled for Maps SDK + Directions API</li>
+      <li>Backend (Admin &amp; Web) is deployed and accessible</li>
+    </ul>
+
+    <h3>Install and Run</h3>
+<pre class="code">
+# 1. Get all pub packages
+flutter pub get
+
+# 2. Generate code (freezed models, injectable DI, asset refs)
+dart run build_runner build --delete-conflicting-outputs
+
+# 3. Generate localization files
+flutter gen-l10n
+
+# 4. Run the app
+flutter run
+</pre>
+
+    <!-- ========================================================
+         CONFIGURATION
+         ======================================================== -->
+    <h2 id="configuration">Configuration</h2>
+
+    <h3>API Base URL</h3>
+    <p>
+      Open <code>lib/config/util/app_constants.dart</code> and update the <code>baseUrl</code>
+      to point to your deployed OneMart Admin &amp; Web instance:
+    </p>
+<pre class="code highlight">
+// lib/config/util/app_constants.dart
+
+class AppConstants {
+  static const String baseUrl = 'https://yourdomain.com';
+  // ...
+}
+</pre>
+
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        <strong>This is critical.</strong> The default <code>baseUrl</code> points to the demo server.
+        You <strong>MUST</strong> change it to your own backend URL before building for production.
+        Failure to do so will cause the app to send requests to the wrong server.
+      </div>
+    </div>
+
+    <h3>App Name &amp; Bundle ID</h3>
+
+    <table class="doc-table">
+      <thead><tr><th>Platform</th><th>File</th><th>Key</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Android</td>
+          <td><code>android/app/build.gradle</code></td>
+          <td><code>applicationId</code> (default: <code>com.dayonesoft.onemartdeliveryman</code>)</td>
+        </tr>
+        <tr>
+          <td>Android</td>
+          <td><code>android/app/src/main/AndroidManifest.xml</code></td>
+          <td><code>android:label</code></td>
+        </tr>
+        <tr>
+          <td>iOS</td>
+          <td><code>ios/Runner/Info.plist</code></td>
+          <td><code>CFBundleName</code>, <code>CFBundleIdentifier</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Currency Symbol</h3>
+    <p>The default currency symbol is configured in <code>app_constants.dart</code>:</p>
+<pre class="code">
+static String currencySymbol = "৳";           // Change to your currency
+static String currencySymbolPosition = 'left'; // 'left' or 'right'
+</pre>
+
+    <!-- ========================================================
+         FIREBASE SETUP
+         ======================================================== -->
+    <h2 id="firebase-setup">Firebase Setup</h2>
+
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Create or select your Firebase project</strong>
+          Go to the <a href="https://console.firebase.google.com" target="_blank">Firebase Console</a>.
+          You can reuse the same Firebase project used for the Admin &amp; Web backend and Customer App.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Register Android app</strong>
+          Use the package name <code>com.dayonesoft.onemartdeliveryman</code>.
+          Download <code>google-services.json</code> and place it at:
+<pre class="code">
+android/app/google-services.json
+</pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Register iOS app</strong>
+          Use the bundle ID <code>com.dayonesoft.onemartdeliveryman</code>.
+          Download <code>GoogleService-Info.plist</code> and add it to Xcode at:
+<pre class="code">
+ios/Runner/GoogleService-Info.plist
+</pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Generate firebase_options.dart</strong>
+<pre class="code">
+# Install FlutterFire CLI (if not already installed)
+dart pub global activate flutterfire_cli
+
+# Login to Firebase
+firebase login
+
+# Generate firebase_options.dart
+flutterfire configure
+</pre>
+          This creates/updates <code>lib/firebase_options.dart</code> automatically.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Enable Firebase services</strong>
+          In the Firebase Console, enable:
+          <ul class="list">
+            <li><strong>Cloud Messaging (FCM)</strong> — required for push notifications</li>
+            <li><strong>Crashlytics</strong> — automatic crash reporting</li>
+            <li><strong>Analytics</strong> — usage analytics</li>
+          </ul>
+        </div>
+      </li>
+    </ol>
+
+    <h3>FCM Topics</h3>
+    <p>The app subscribes to the following FCM topics on launch:</p>
+<pre class="code">
+deliveryman-group    // All deliveryman-specific broadcast messages
+all-general          // Platform-wide announcements
+</pre>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        Ensure the FCM Server Key is configured in the Admin Panel under
+        <em>Settings → Firebase Setup</em> so that the backend can send notifications
+        to these topics when new orders are assigned.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         GOOGLE MAPS SETUP
+         ======================================================== -->
+    <h2 id="google-maps-setup">Google Maps Setup</h2>
+
+    <h3>Step 1 — Enable APIs in Google Cloud Console</h3>
+    <ul class="list">
+      <li>Maps SDK for Android</li>
+      <li>Maps SDK for iOS</li>
+      <li>Directions API (for delivery route navigation)</li>
+      <li>Geocoding API</li>
+    </ul>
+
+    <h3>Step 2 — Configure Android (secrets.xml)</h3>
+    <p>Copy the template and fill in your Google Maps API key:</p>
+<pre class="code">
+cp secrets.xml.example android/app/src/main/res/values/secrets.xml
+</pre>
+<pre class="code highlight">
+&lt;!-- android/app/src/main/res/values/secrets.xml --&gt;
+&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;resources&gt;
+    &lt;string name="google_maps_api_key"&gt;YOUR_GOOGLE_MAPS_API_KEY&lt;/string&gt;
+&lt;/resources&gt;
+</pre>
+
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        <code>secrets.xml</code> is <strong>gitignored</strong> and must never be committed.
+        Keep your API keys safe and out of version control.
+      </div>
+    </div>
+
+    <h3>Step 3 — Configure iOS</h3>
+    <p>Add the Google Maps API key to <code>ios/Runner/Info.plist</code>:</p>
+<pre class="code">
+&lt;key&gt;GoogleMapsApiKey&lt;/key&gt;
+&lt;string&gt;YOUR_GOOGLE_MAPS_API_KEY&lt;/string&gt;
+</pre>
+
+    <h3>Location Permissions</h3>
+    <p>
+      The app uses <code>geolocator</code>, <code>location</code>, and <code>permission_handler</code>
+      to request and manage location permissions. On first launch, the user is prompted to grant
+      location access, which is required for delivery navigation. The required permission entries
+      are already included in the <code>AndroidManifest.xml</code> and <code>Info.plist</code>.
+    </p>
+
+    <!-- ========================================================
+         LOCALIZATION
+         ======================================================== -->
+    <h2 id="localization">Localization</h2>
+
+    <p>The app supports <strong>5 languages</strong> out of the box:</p>
+
+    <table class="doc-table">
+      <thead><tr><th>Language</th><th>Code</th><th>ARB File</th></tr></thead>
+      <tbody>
+        <tr><td>English</td><td><code>en</code></td><td><code>lib/l10n/arb/app_en.arb</code></td></tr>
+        <tr><td>Spanish</td><td><code>es</code></td><td><code>lib/l10n/arb/app_es.arb</code></td></tr>
+        <tr><td>Arabic</td><td><code>ar</code></td><td><code>lib/l10n/arb/app_ar.arb</code></td></tr>
+        <tr><td>Hindi</td><td><code>hi</code></td><td><code>lib/l10n/arb/app_hi.arb</code></td></tr>
+        <tr><td>Bangla</td><td><code>bn</code></td><td><code>lib/l10n/arb/app_bn.arb</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Localization Config</h3>
+    <p>The localization configuration is defined in <code>l10n.yaml</code>:</p>
+<pre class="code">
+arb-dir: lib/l10n/arb
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-dir: lib/l10n/gen
+nullable-getter: false
+</pre>
+
+    <h3>Adding a New Language</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Create a new ARB file</strong>, e.g. <code>lib/l10n/arb/app_fr.arb</code>.
+          Copy the structure from <code>app_en.arb</code> and translate all strings.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Add the language</strong> to the <code>languages</code> list in <code>app_constants.dart</code>:
+<pre class="code">
+LanguageModel(code: 'fr', name: 'French', nativeName: 'Français'),
+</pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Regenerate localization files:</strong>
+<pre class="code">
+flutter gen-l10n
+</pre>
+        </div>
+      </li>
+    </ol>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        Arabic (<code>ar</code>) is an RTL language. Flutter handles layout mirroring automatically
+        when the <code>ar</code> locale is active. Untranslated strings are tracked in
+        <code>untranslated.txt</code> at the project root.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         BUILD & RELEASE
+         ======================================================== -->
+    <h2 id="build-and-release">Build &amp; Release</h2>
+
+    <h3>Android — Signing Setup</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Create a release keystore:</strong>
+<pre class="code">
+keytool -genkey -v -keystore android/app/upload-keystore.jks \
+  -keyalg RSA -keysize 2048 -validity 10000 -alias upload
+</pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Create <code>android/key.properties</code>:</strong>
+<pre class="code highlight">
+storePassword=&lt;your-store-password&gt;
+keyPassword=&lt;your-key-password&gt;
+keyAlias=upload
+storeFile=upload-keystore.jks
+</pre>
+        </div>
+      </li>
+    </ol>
+
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        Keep the keystore (<code>.jks</code>) and <code>key.properties</code> file safe.
+        You need them for every future app update on Google Play. Losing the keystore means
+        you cannot publish updates to the same listing.
+      </div>
+    </div>
+
+    <h3>Android — Debug APK</h3>
+<pre class="code">
+flutter build apk --debug
+# Output: build/app/outputs/flutter-apk/app-debug.apk
+</pre>
+
+    <h3>Android — Release APK</h3>
+<pre class="code">
+flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols
+# Output: build/app/outputs/flutter-apk/app-release.apk
+</pre>
+
+    <h3>Android — App Bundle (Google Play)</h3>
+<pre class="code">
+flutter build appbundle --release --obfuscate --split-debug-info=build/app/outputs/symbols
+# Output: build/app/outputs/bundle/release/app-release.aab
+</pre>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        <code>--obfuscate</code> shrinks and obfuscates Dart code for production.
+        <code>--split-debug-info</code> saves debug symbols needed for deobfuscating
+        crash reports in Firebase Crashlytics and Google Play Console.
+        <strong>Always keep the symbols directory alongside your release.</strong>
+      </div>
+    </div>
+
+    <h3>iOS — Release (App Store)</h3>
+<pre class="code">
+flutter build ipa --release --obfuscate --split-debug-info=build/ios/symbols
+</pre>
+    <p>
+      Then open <code>build/ios/ipa</code> in Xcode Organizer or use Transporter to upload
+      to App Store Connect.
+    </p>
+
+    <!-- ========================================================
+         API INTEGRATION
+         ======================================================== -->
+    <h2 id="api-integration">API Integration</h2>
+
+    <p>
+      All API endpoints are declared in <code>lib/config/util/app_constants.dart</code>.
+      The HTTP client in <code>lib/core/data/api/</code> prepends the <code>baseUrl</code>
+      and handles JWT token attachment, refresh, and error handling automatically.
+    </p>
+
+    <h3>Authentication Flow</h3>
+<pre class="code">
+POST /api/v1/delivery-man/auth/login               ← Email/phone + password
+POST /api/v1/delivery-man/auth/send-login-otp       ← Request login OTP
+POST /api/v1/delivery-man/auth/verify-login-otp     ← Verify OTP → returns JWT
+POST /api/v1/delivery-man/auth/forgot-password       ← Initiate password reset
+POST /api/v1/delivery-man/auth/verify-otp            ← Verify reset OTP
+POST /api/v1/delivery-man/auth/reset-password        ← Set new password
+POST /api/v1/delivery-man/auth/refresh               ← Refresh JWT token
+POST /api/v1/delivery-man/auth/logout                ← Invalidate session
+</pre>
+
+    <h3>Core Endpoints</h3>
+
+    <table class="doc-table">
+      <thead><tr><th>Feature</th><th>Method</th><th>Endpoint</th></tr></thead>
+      <tbody>
+        <tr><td><strong>App Config</strong></td><td>GET</td><td><code>/api/v1/delivery-man/config</code></td></tr>
+        <tr><td><strong>Dashboard</strong></td><td>GET</td><td><code>/api/v1/delivery-man/dashboard</code></td></tr>
+        <tr><td><strong>Orders</strong></td><td>GET/PUT</td><td><code>/api/v1/delivery-man/orders</code></td></tr>
+        <tr><td><strong>Map Direction</strong></td><td>GET</td><td><code>/api/v1/delivery-man/config/map-direction</code></td></tr>
+        <tr><td><strong>Profile</strong></td><td>GET/PUT</td><td><code>/api/v1/delivery-man/profile</code></td></tr>
+        <tr><td><strong>FCM Token</strong></td><td>PUT</td><td><code>/api/v1/delivery-man/profile/fcm-token</code></td></tr>
+        <tr><td><strong>Change Password</strong></td><td>PUT</td><td><code>/api/v1/delivery-man/profile/change-password</code></td></tr>
+        <tr><td><strong>Delete Account</strong></td><td>DELETE</td><td><code>/api/v1/delivery-man/profile/delete-account</code></td></tr>
+        <tr><td><strong>Settings</strong></td><td>GET/PUT</td><td><code>/api/v1/delivery-man/profile/settings</code></td></tr>
+        <tr><td><strong>Chat</strong></td><td>GET/POST</td><td><code>/api/v1/delivery-man/chats</code></td></tr>
+        <tr><td><strong>Notifications</strong></td><td>GET/PUT/DELETE</td><td><code>/api/v1/delivery-man/notifications</code></td></tr>
+        <tr><td><strong>Terms</strong></td><td>GET</td><td><code>/api/v1/delivery-man/config/terms</code></td></tr>
+        <tr><td><strong>Support / Contact</strong></td><td>GET</td><td><code>/api/v1/delivery-man/config/support</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Request Headers</h3>
+<pre class="code">
+Authorization: Bearer {jwt_token}
+Accept: application/json
+Content-Type: application/json
+X-localization: en         ← Current language code
+</pre>
+
+    <!-- ========================================================
+         TROUBLESHOOTING
+         ======================================================== -->
+    <h2 id="troubleshooting">Troubleshooting</h2>
+
+    <h3>"google-services.json not found"</h3>
+    <p>Ensure you have downloaded the file from Firebase Console and placed it at:</p>
+<pre class="code">
+android/app/google-services.json
+</pre>
+
+    <h3>"Cannot resolve symbol '@string/google_maps_api_key'"</h3>
+    <p>Create <code>secrets.xml</code> from the template:</p>
+<pre class="code">
+cp secrets.xml.example android/app/src/main/res/values/secrets.xml
+# Then edit secrets.xml and add your real API key
+</pre>
+
+    <h3>Firebase Initialization Failed</h3>
+<pre class="code">
+dart pub global activate flutterfire_cli
+flutterfire configure
+</pre>
+
+    <h3>Build Runner Conflicts</h3>
+<pre class="code">
+dart run build_runner clean
+dart run build_runner build --delete-conflicting-outputs
+</pre>
+
+    <h3>Gradle Build Failures (Android)</h3>
+    <ul class="list">
+      <li>Run <code>flutter clean &amp;&amp; flutter pub get</code> and try again</li>
+      <li>Ensure <code>JAVA_HOME</code> points to JDK 17</li>
+      <li>Check that <code>google-services.json</code> is present</li>
+      <li>Invalidate Android Studio caches: <em>File → Invalidate Caches</em></li>
+    </ul>
+
+    <h3>CocoaPods Issues (iOS)</h3>
+<pre class="code">
+cd ios
+pod deintegrate
+pod install --repo-update
+cd ..
+flutter build ios
+</pre>
+
+    <h3>Google Maps Not Showing</h3>
+    <ul class="list">
+      <li>Verify the API key in <code>secrets.xml</code> (Android) and <code>Info.plist</code> (iOS)</li>
+      <li>Ensure Maps SDK + Directions API are enabled in Google Cloud Console</li>
+      <li>Check that billing is enabled on the Google Cloud project</li>
+      <li>On Android, check <code>logcat</code> for "API key not valid" errors</li>
+    </ul>
+
+    <h3>Push Notifications Not Received</h3>
+    <ul class="list">
+      <li>Verify Firebase config files are up to date</li>
+      <li>Ensure FCM Server Key is configured in Admin Panel under <em>Settings → Firebase Setup</em></li>
+      <li>On iOS: push notifications require a physical device and a valid APNs key in Firebase</li>
+      <li>Test FCM delivery directly from Firebase Console → Cloud Messaging</li>
+    </ul>
+
+    <h3>Location Permission Denied</h3>
+    <ul class="list">
+      <li>On Android: check <code>AndroidManifest.xml</code> has <code>ACCESS_FINE_LOCATION</code> and <code>ACCESS_COARSE_LOCATION</code></li>
+      <li>On iOS: check <code>Info.plist</code> has <code>NSLocationWhenInUseUsageDescription</code> and <code>NSLocationAlwaysUsageDescription</code></li>
+      <li>If the user denied permission, guide them to Settings → App → Permissions</li>
+    </ul>
+
+    <h3>General Reset</h3>
+<pre class="code">
+flutter clean
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs
+flutter gen-l10n
+flutter run
+</pre>
+
+    <!-- ========================================================
+         CUSTOMIZATION
+         ======================================================== -->
+    <h2 id="customization">Customization</h2>
+
+    <h3>App Theme &amp; Colors</h3>
+    <p>
+      The global theme is defined in <code>lib/config/theme/</code>. The app supports both
+      light and dark themes with a <code>ThemeBLoC</code> in <code>features/common/</code>.
+      Update color values and typography in the theme files — changes propagate automatically
+      via Flutter's <code>Theme.of(context)</code>.
+    </p>
+
+    <h3>App Icon</h3>
+<pre class="code">
+# Replace the icon images:
+# Android: android/app/src/main/res/mipmap-*/ic_launcher.png
+# iOS: ios/Runner/Assets.xcassets/AppIcon.appiconset/
+
+# Or use the flutter_launcher_icons package for automated generation
+</pre>
+
+    <h3>Adding a New Feature</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Create the feature folder</strong> under <code>lib/features/&lt;feature_name&gt;/</code>
+          with <code>data/</code>, <code>domain/</code>, and <code>presentation/</code> sub-directories.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Define Freezed models</strong> in <code>data/models/</code> and run
+          <code>dart run build_runner build</code>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Create the BLoC/Cubit</strong> in <code>presentation/bloc/</code> and register
+          it with GetIt using the <code>@injectable</code> annotation.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Add routes</strong> in <code>lib/config/route/route_config.dart</code>.
+          If the screen should be a dashboard tab, nest it inside the <code>ShellRoute</code>.
+        </div>
+      </li>
+    </ol>
+
+    <h3>Modifying the Dashboard Tabs</h3>
+    <p>
+      The bottom navigation is managed by <code>DashboardScreen</code> in
+      <code>lib/features/dashboard/presentation/screens/dashboard_screen.dart</code>.
+      The four tabs (Home, Orders, Chat, Account) are defined as <code>ShellRoute</code>
+      children in <code>route_config.dart</code>. To add or remove a tab, update both
+      the <code>ShellRoute</code> routes list and the <code>BottomNavigationBar</code> items.
+    </p>
+
+    <hr class="section-divider" />
+    <p style="color:var(--text-muted);font-size:.85rem;">
+      Need help? Contact <a href="mailto:thedayonesoft@gmail.com">thedayonesoft@gmail.com</a>
+      or open a support ticket via the Envato item page.
+    </p>
+
+  </section>
+</div>
+
+<script src="../assets/js/docs.js"></script>
+</body>
+</html>
