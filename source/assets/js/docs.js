@@ -145,5 +145,36 @@
         }
       });
     });
+
+    /* ---- Scroll progress bar ---- */
+    const progressWrap = document.querySelector('.scroll-progress');
+    if (progressWrap) {
+      const progressBar = progressWrap.querySelector('.scroll-progress-bar');
+      window.addEventListener('scroll', function () {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        progressBar.style.width = pct + '%';
+      }, { passive: true });
+    }
+
+    /* ---- Back to top button ---- */
+    const btt = document.querySelector('.back-to-top');
+    if (btt) {
+      window.addEventListener('scroll', function () {
+        btt.classList.toggle('visible', window.scrollY > 400);
+      }, { passive: true });
+      btt.addEventListener('click', function () {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+
+    /* ---- Close sidebar on link click (mobile) ---- */
+    document.querySelectorAll('.toc a').forEach(a => {
+      a.addEventListener('click', function () {
+        const sidebar = document.querySelector('.sidebar');
+        if (sidebar && window.innerWidth <= 680) sidebar.classList.remove('open');
+      });
+    });
   });
 })();

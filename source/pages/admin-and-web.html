@@ -32,6 +32,7 @@
 <!-- ============================================================
      PAGE LAYOUT
      ============================================================ -->
+<div class="scroll-progress"><div class="scroll-progress-bar"></div></div>
 <div class="page-doc">
 
   <!-- ---- Sidebar ---- -->
@@ -53,6 +54,8 @@
         <li><a href="#server-configuration">Server Configuration</a></li>
         <li><a href="#deployment">Deployment</a></li>
         <li><a href="#update-procedure">Update Procedure</a></li>
+        <li><a href="#docker">Docker</a></li>
+        <li><a href="#localization">Localization</a></li>
         <li><a href="#api-reference">API Reference</a></li>
         <li><a href="#default-credentials">Default Credentials</a></li>
         <li><a href="#troubleshooting">Troubleshooting</a></li>
@@ -79,7 +82,7 @@
     <ul class="list">
       <li><strong>Admin Panel</strong> — Full business management interface (orders, products, users, analytics, settings)</li>
       <li><strong>Customer Storefront</strong> — SEO-friendly web shopping experience served via Inertia</li>
-      <li><strong>REST API</strong> — Versioned JSON API consumed by the Flutter Customer App</li>
+      <li><strong>REST API</strong> — Versioned JSON API consumed by the Flutter Customer App and Deliveryman App</li>
     </ul>
 
     <h3>Technology Stack</h3>
@@ -642,14 +645,43 @@ supervisorctl start onemart-worker:*
 php artisan reverb:start --host=0.0.0.0 --port=8080
 </pre>
 
+    <p>For HTTPS setups, add this Nginx proxy block to your server configuration:</p>
+<pre class="code highlight">
+# WebSocket proxy — add inside the HTTPS server {} block
+location /app/ {
+    proxy_pass             http://127.0.0.1:8080;
+    proxy_http_version     1.1;
+    proxy_set_header       Upgrade $http_upgrade;
+    proxy_set_header       Connection "upgrade";
+    proxy_set_header       Host $host;
+    proxy_set_header       X-Real-IP $remote_addr;
+    proxy_set_header       X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header       X-Forwarded-Proto $scheme;
+    proxy_read_timeout     60s;
+    proxy_send_timeout     60s;
+}
+</pre>
+
     <div class="alert alert-warning">
       <span class="alert-icon">⚠️</span>
       <div>
         Open port <strong>8080</strong> (or your configured Reverb port) in your firewall.
-        For HTTPS setups, proxy the WebSocket through Nginx with a <code>location /app/</code>
-        block to avoid mixed-content browser errors.
+        The WebSocket proxy block above is <strong>required</strong> for HTTPS setups to avoid
+        mixed-content browser errors when the frontend connects via <code>wss://</code>.
       </div>
     </div>
+
+    <h3>CORS Configuration</h3>
+    <p>
+      CORS headers are managed by Laravel's built-in CORS middleware (<code>config/cors.php</code>).
+      If the Flutter apps or external services cannot reach the API, verify:
+    </p>
+    <ul class="list">
+      <li><code>allowed_origins</code> includes your Flutter app's origin (or <code>*</code> for development)</li>
+      <li><code>allowed_methods</code> includes <code>GET, POST, PUT, DELETE, OPTIONS</code></li>
+      <li><code>allowed_headers</code> includes <code>Authorization, Content-Type, X-Requested-With, X-localization</code></li>
+      <li>For production, restrict <code>allowed_origins</code> to your actual domains</li>
+    </ul>
 
     <!-- ========================================================
          DEPLOYMENT
@@ -785,6 +817,96 @@ php artisan up
 </pre>
 
     <!-- ========================================================
+         DOCKER
+         ======================================================== -->
+    <h2 id="docker">Docker</h2>
+
+    <p>
+      The application ships with a <code>docker-compose.yml</code> and a <code>.docker/</code>
+      folder containing Nginx configuration for containerized deployments.
+    </p>
+
+    <h3>Quick Start with Docker</h3>
+<pre class="code">
+# Build and start containers
+docker-compose up -d
+
+# Install dependencies inside the container
+docker-compose exec app composer install --optimize-autoloader --no-dev
+docker-compose exec app npm ci && npm run build
+
+# Run migrations
+docker-compose exec app php artisan migrate --force
+docker-compose exec app php artisan db:seed --force
+
+# Create storage link
+docker-compose exec app php artisan storage:link
+</pre>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        The default Docker setup maps port <strong>8000</strong> for the application.
+        Access it at <code>http://localhost:8000</code> after the containers start.
+        Adjust <code>docker-compose.yml</code> ports and environment variables as needed for
+        your infrastructure.
+      </div>
+    </div>
+
+    <h3>Docker Environment Variables</h3>
+    <p>
+      Mount your <code>.env</code> file into the container or use <code>docker-compose.yml</code>
+      environment directives. Ensure database host points to the correct container hostname
+      (e.g. <code>DB_HOST=db</code> if using a linked MySQL container).
+    </p>
+
+    <!-- ========================================================
+         LOCALIZATION
+         ======================================================== -->
+    <h2 id="localization">Localization</h2>
+
+    <p>The application supports <strong>5 languages</strong> out of the box with full RTL support for Arabic:</p>
+
+    <table class="doc-table">
+      <thead><tr><th>Language</th><th>Code</th><th>Backend</th><th>Admin Frontend</th><th>Storefront</th></tr></thead>
+      <tbody>
+        <tr><td>English</td><td><code>en</code></td><td><code>lang/en/</code></td><td><code>AdminPanel/locales/en.json</code></td><td><code>StoreFront/locales/en.json</code></td></tr>
+        <tr><td>Bengali</td><td><code>bn</code></td><td><code>lang/bn/</code></td><td><code>AdminPanel/locales/bn.json</code></td><td><code>StoreFront/locales/bn.json</code></td></tr>
+        <tr><td>Hindi</td><td><code>hi</code></td><td><code>lang/hi/</code></td><td><code>AdminPanel/locales/hi.json</code></td><td><code>StoreFront/locales/hi.json</code></td></tr>
+        <tr><td>Arabic</td><td><code>ar</code></td><td><code>lang/ar/</code></td><td><code>AdminPanel/locales/ar.json</code></td><td><code>StoreFront/locales/ar.json</code></td></tr>
+        <tr><td>Spanish</td><td><code>es</code></td><td><code>lang/es/</code></td><td><code>AdminPanel/locales/es.json</code></td><td><code>StoreFront/locales/es.json</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Adding a New Language</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Backend:</strong> Copy the <code>lang/en/</code> folder to <code>lang/{code}/</code>
+          and translate all PHP files.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Admin frontend:</strong> Copy <code>resources/js/AdminPanel/locales/en.json</code>
+          to <code>{code}.json</code> and translate.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Storefront:</strong> Copy <code>resources/js/StoreFront/locales/en.json</code>
+          to <code>{code}.json</code> and translate.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Sort locale files:</strong> Run <code>npm run sort:locales</code> to ensure
+          consistent key ordering across all files.
+        </div>
+      </li>
+    </ol>
+
+    <!-- ========================================================
          API REFERENCE
          ======================================================== -->
     <h2 id="api-reference">API Reference</h2>
@@ -840,6 +962,21 @@ Auth:      Bearer JWT token (Authorization: Bearer {token})
         <tr><td><strong>Settings</strong></td><td>business setup, payment gateways, SMS gateways, Firebase, social auth, email, tax, currency, delivery charges, cookies, marketing tools</td></tr>
         <tr><td><strong>Analytics</strong></td><td>sales, category performance, user activity</td></tr>
         <tr><td><strong>System</strong></td><td>cache clear, env variable CRUD, DB backups</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Deliveryman API Endpoints</h3>
+
+    <table class="doc-table">
+      <thead><tr><th>Group</th><th>Endpoints</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Auth</strong></td><td>login, OTP login, forgot-password, verify-OTP, reset-password, logout, refresh</td></tr>
+        <tr><td><strong>Dashboard</strong></td><td>summary stats, earnings, delivery overview</td></tr>
+        <tr><td><strong>Orders</strong></td><td>list assigned orders, show details, update status, accept/reject</td></tr>
+        <tr><td><strong>Profile</strong></td><td>show, update, FCM token, change-password, delete-account, settings</td></tr>
+        <tr><td><strong>Chat</strong></td><td>list, conversations, messages, send-message</td></tr>
+        <tr><td><strong>Notifications</strong></td><td>list, mark-read, mark-all-read, delete</td></tr>
+        <tr><td><strong>Config</strong></td><td>app config, terms, support, map-direction</td></tr>
       </tbody>
     </table>
 
@@ -1017,6 +1154,18 @@ php artisan pail           # Tail logs in terminal
 
   </section>
 </div>
+
+<div class="doc-footer">
+  <p>&copy; 2026 DayOneMart — Complete E-Commerce Solution Documentation</p>
+  <p style="margin-top:4px;">
+    <a href="../../index.html">Home</a> &nbsp;|&nbsp;
+    <a href="customer-app.html">Customer App</a> &nbsp;|&nbsp;
+    <a href="deliveryman-app.html">Deliveryman App</a> &nbsp;|&nbsp;
+    <a href="mailto:thedayonesoft@gmail.com">Contact Support</a>
+  </p>
+</div>
+
+<button class="back-to-top" aria-label="Back to top" title="Back to top">&#8593;</button>
 
 <script src="../assets/js/docs.js"></script>
 </body>
