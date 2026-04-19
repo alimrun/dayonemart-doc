@@ -834,12 +834,131 @@ supervisorctl restart onemart-worker:*
     <div class="alert alert-warning">
       <span class="alert-icon">⚠️</span>
       <div>
-        Shared hosting is <strong>not recommended</strong> for production. If you must use cPanel,
-        ensure PHP 8.2+, Composer, and Node.js are available via SSH. Set the document root to the
-        <code>public/</code> subdirectory using cPanel's "Subdomains" or "Addon Domains" settings.
-        Laravel Octane and Reverb WebSockets will not be available on shared hosting.
+        Shared hosting has limitations compared to VPS/dedicated servers. Laravel Octane (Swoole)
+        and Reverb WebSockets will <strong>not</strong> be available. Ensure your hosting plan
+        provides <strong>PHP 8.2+</strong>, <strong>SSH access</strong>, and all required PHP extensions
+        before proceeding.
       </div>
     </div>
+
+    <h4>Step 1 — Create a Database</h4>
+    <ul class="list">
+      <li>Open <strong>cPanel → MySQL Database Wizard</strong></li>
+      <li>Create a new database (e.g. <code>youruser_onemart</code>)</li>
+      <li>Create a database user and set a strong password</li>
+      <li>Assign <strong>ALL PRIVILEGES</strong> to the user on that database</li>
+    </ul>
+
+    <h4>Step 2 — Upload &amp; Extract Files</h4>
+    <ul class="list">
+      <li>Open <strong>cPanel → File Manager</strong></li>
+      <li>Upload <code>install.zip</code> to <code>/home/youruser/</code> (above <code>public_html</code>)</li>
+      <li>Extract the archive — this creates a project folder (e.g. <code>/home/youruser/onemart/</code>)</li>
+    </ul>
+
+    <h4>Step 3 — Set the Document Root</h4>
+    <p>
+      Laravel requires the domain to point to the <code>/public</code> folder. On cPanel you have two options:
+    </p>
+    <p><strong>Option A — Subdomain / Addon Domain (Recommended)</strong></p>
+    <ul class="list">
+      <li>Go to <strong>cPanel → Domains</strong> (or Subdomains / Addon Domains)</li>
+      <li>Set the document root to <code>/home/youruser/onemart/public</code></li>
+      <li>This is the cleanest approach — no file moving required</li>
+    </ul>
+    <p><strong>Option B — Move Public Files (if document root cannot be changed)</strong></p>
+    <ul class="list">
+      <li>Move all contents from <code>/onemart/public/</code> into <code>/public_html/</code></li>
+      <li>Edit <code>public_html/index.php</code> and update the paths:</li>
+    </ul>
+<pre class="code">
+// Change these two lines:
+require __DIR__.'/../vendor/autoload.php';
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+// To point to the project folder:
+require __DIR__.'/../onemart/vendor/autoload.php';
+$app = require_once __DIR__.'/../onemart/bootstrap/app.php';
+</pre>
+
+    <h4>Step 4 — Set Permissions</h4>
+    <p>Via <strong>cPanel → Terminal</strong> (SSH) or File Manager:</p>
+<pre class="code">
+cd /home/youruser/onemart
+chmod -R 775 storage bootstrap/cache
+chmod 644 .env
+</pre>
+
+    <h4>Step 5 — Install Dependencies</h4>
+    <p>Connect via SSH and run:</p>
+<pre class="code">
+cd /home/youruser/onemart
+composer install --optimize-autoloader --no-dev
+cp .env.example .env
+php artisan key:generate
+php artisan jwt:secret
+</pre>
+
+    <h4>Step 6 — Build Frontend Assets</h4>
+    <p>If your hosting provides Node.js via SSH:</p>
+<pre class="code">
+npm install
+npm run build
+</pre>
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        If Node.js is <strong>not available</strong> on your hosting, build assets locally on your
+        computer and upload the <code>public/build/</code> folder via File Manager or FTP.
+      </div>
+    </div>
+
+    <h4>Step 7 — Run the Installer Wizard</h4>
+    <ul class="list">
+      <li>Visit <code>https://yourdomain.com/install/requirements</code> in your browser</li>
+      <li>Follow the 5-step wizard: requirements check → purchase verification → database setup → business &amp; admin setup → finalize</li>
+    </ul>
+
+    <h4>Step 8 — Create the Storage Symlink</h4>
+<pre class="code">
+php artisan storage:link
+</pre>
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        If <code>symlink()</code> is disabled on your hosting, manually create the link via
+        File Manager or ask your hosting provider to enable it.
+      </div>
+    </div>
+
+    <h4>Step 9 — Set Up the Cron Job</h4>
+    <ul class="list">
+      <li>Open <strong>cPanel → Cron Jobs</strong></li>
+      <li>Set the interval to <strong>Once Per Minute (* * * * *)</strong></li>
+      <li>Enter the command:</li>
+    </ul>
+<pre class="code">
+php /home/youruser/onemart/artisan schedule:run >> /dev/null 2>&1
+</pre>
+
+    <h4>Step 10 — Production Optimization</h4>
+<pre class="code">
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+</pre>
+
+    <h4>cPanel Limitations</h4>
+    <table class="doc-table">
+      <thead><tr><th>Feature</th><th>VPS / Dedicated</th><th>Shared Hosting</th></tr></thead>
+      <tbody>
+        <tr><td>Laravel Octane (Swoole)</td><td>Available</td><td>Not available</td></tr>
+        <tr><td>Reverb WebSockets</td><td>Available</td><td>Not available</td></tr>
+        <tr><td>Supervisor (queue workers)</td><td>Available</td><td>Not available — use <code>QUEUE_CONNECTION=sync</code></td></tr>
+        <tr><td>Custom Nginx config</td><td>Full control</td><td>Not available — uses Apache</td></tr>
+        <tr><td>Node.js / npm</td><td>Available</td><td>May not be available — build locally</td></tr>
+      </tbody>
+    </table>
 
     <!-- ========================================================
          UPDATE PROCEDURE
