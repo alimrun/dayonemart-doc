@@ -98,7 +98,7 @@
         <tr><td>UI Components</td><td>Shadcn Vue / Reka UI</td><td>^2.2 / ^2.6</td></tr>
         <tr><td>Authentication</td><td>JWT (tymon/jwt-auth)</td><td>^2.2</td></tr>
         <tr><td>2FA</td><td>Google TOTP (pragmarx/google2fa)</td><td>^9.0</td></tr>
-        <tr><td>Real-time</td><td>Laravel Reverb + Echo</td><td>^1.6</td></tr>
+        <tr><td>Real-time</td><td>Firebase Cloud Messaging (Push Notifications)</td><td>^10.14</td></tr>
         <tr><td>Performance</td><td>Laravel Octane (Swoole)</td><td>^2.12</td></tr>
         <tr><td>Storage</td><td>AWS S3 / Local</td><td>—</td></tr>
         <tr><td>Payments</td><td>Stripe + multiple gateways</td><td>^17.6</td></tr>
@@ -244,7 +244,7 @@
 
     <h3>Communication</h3>
     <ul class="list">
-      <li>Live chat between admin ↔ customer and admin ↔ deliveryman (real-time via Reverb)</li>
+      <li>Live chat between admin ↔ customer and admin ↔ deliveryman</li>
       <li>Order-specific customer support</li>
       <li>Push notification campaigns with target selection</li>
     </ul>
@@ -518,9 +518,6 @@ php artisan view:cache
 # Start queue worker (use Supervisor in production)
 php artisan queue:work --sleep=3 --tries=3 --max-time=3600
 
-# Optional: Start broadcasting (Reverb)
-php artisan reverb:start --host=0.0.0.0 --port=8080
-
 # Optional: Start Octane for high performance
 php artisan octane:start
 </pre>
@@ -557,8 +554,6 @@ SESSION_DRIVER=file
 CACHE_STORE=file
 QUEUE_CONNECTION=sync
 
-# Broadcasting (optional — set to 'reverb' to enable real-time)
-BROADCAST_CONNECTION=reverb
 FILESYSTEM_DISK=local
 
 # Octane (optional — remove if not using Swoole)
@@ -566,14 +561,6 @@ OCTANE_SERVER=swoole
 
 # JWT (generated via: php artisan jwt:secret)
 JWT_SECRET=your_jwt_secret_here
-
-# Reverb — real-time broadcasting (optional)
-REVERB_APP_ID=999114
-REVERB_APP_KEY=your_reverb_key
-REVERB_APP_SECRET=your_reverb_secret
-REVERB_HOST=localhost
-REVERB_PORT=8080
-REVERB_SCHEME=http
 
 # License (set automatically by installer)
 INSTALLED=true
@@ -722,38 +709,6 @@ supervisorctl start onemart-worker:*
 * * * * * cd /var/www/onemart && php artisan schedule:run >> /dev/null 2>&1
 </pre>
 
-    <h3>Laravel Reverb (Real-time)</h3>
-    <p>Start the Reverb WebSocket server (use Supervisor or a systemd service in production):</p>
-<pre class="code">
-php artisan reverb:start --host=0.0.0.0 --port=8080
-</pre>
-
-    <p>For HTTPS setups, add this Nginx proxy block to your server configuration:</p>
-<pre class="code highlight">
-# WebSocket proxy — add inside the HTTPS server {} block
-location /app/ {
-    proxy_pass             http://127.0.0.1:8080;
-    proxy_http_version     1.1;
-    proxy_set_header       Upgrade $http_upgrade;
-    proxy_set_header       Connection "upgrade";
-    proxy_set_header       Host $host;
-    proxy_set_header       X-Real-IP $remote_addr;
-    proxy_set_header       X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header       X-Forwarded-Proto $scheme;
-    proxy_read_timeout     60s;
-    proxy_send_timeout     60s;
-}
-</pre>
-
-    <div class="alert alert-warning">
-      <span class="alert-icon">⚠️</span>
-      <div>
-        Open port <strong>8080</strong> (or your configured Reverb port) in your firewall.
-        The WebSocket proxy block above is <strong>required</strong> for HTTPS setups to avoid
-        mixed-content browser errors when the frontend connects via <code>wss://</code>.
-      </div>
-    </div>
-
     <h3>CORS Configuration</h3>
     <p>
       CORS headers are managed by Laravel's built-in CORS middleware (<code>config/cors.php</code>).
@@ -826,7 +781,7 @@ supervisorctl restart onemart-worker:*
       <li>Place a test order end-to-end</li>
       <li>Check queue worker is processing jobs (<code>php artisan queue:monitor</code>)</li>
       <li>Verify email notifications are delivered</li>
-      <li>Test WebSocket / real-time chat connectivity</li>
+      <li>Test push notifications are delivered (Firebase)</li>
       <li>Confirm file uploads and storage links work</li>
     </ul>
 
@@ -835,7 +790,7 @@ supervisorctl restart onemart-worker:*
       <span class="alert-icon">⚠️</span>
       <div>
         Shared hosting has limitations compared to VPS/dedicated servers. Laravel Octane (Swoole)
-        and Reverb WebSockets will <strong>not</strong> be available. Ensure your hosting plan
+        will <strong>not</strong> be available. Ensure your hosting plan
         provides <strong>PHP 8.2+</strong>, <strong>SSH access</strong>, and all required PHP extensions
         before proceeding.
       </div>
@@ -953,7 +908,7 @@ php artisan view:cache
       <thead><tr><th>Feature</th><th>VPS / Dedicated</th><th>Shared Hosting</th></tr></thead>
       <tbody>
         <tr><td>Laravel Octane (Swoole)</td><td>Available</td><td>Not available</td></tr>
-        <tr><td>Reverb WebSockets</td><td>Available</td><td>Not available</td></tr>
+        <tr><td>Push Notifications (Firebase)</td><td>Available</td><td>Available</td></tr>
         <tr><td>Supervisor (queue workers)</td><td>Available</td><td>Not available — use <code>QUEUE_CONNECTION=sync</code></td></tr>
         <tr><td>Custom Nginx config</td><td>Full control</td><td>Not available — uses Apache</td></tr>
         <tr><td>Node.js / npm</td><td>Available</td><td>May not be available — build locally</td></tr>
@@ -1209,12 +1164,13 @@ supervisorctl restart onemart-worker:*
 php artisan queue:work --verbose
 </pre>
 
-    <h3>Real-time / Chat Not Working</h3>
+    <h3>Push Notifications Not Working</h3>
     <ul class="list">
-      <li>Ensure Reverb is running: <code>php artisan reverb:start</code></li>
-      <li>Check that the Reverb port (default 8080) is open in your firewall</li>
-      <li>Verify <code>REVERB_*</code> variables in <code>.env</code> match your frontend config</li>
-      <li>For HTTPS sites, ensure WebSocket connections are proxied through Nginx with <code>Upgrade</code> and <code>Connection</code> headers</li>
+      <li>Verify Firebase credentials are configured correctly in <strong>Admin Panel → Settings → Firebase</strong></li>
+      <li>Ensure the Firebase service account JSON file is uploaded and valid</li>
+      <li>Check that the FCM server key matches your Firebase project</li>
+      <li>Confirm the device has granted notification permissions</li>
+      <li>Check <code>storage/logs/laravel.log</code> for FCM errors</li>
     </ul>
 
     <h3>Permission Errors</h3>
@@ -1291,13 +1247,12 @@ php artisan queue:listen --tries=1   # Queue listener
 php artisan pail                     # Tail logs in terminal
 
 # Optional services:
-php artisan reverb:start             # Real-time broadcasting (if enabled)
 php artisan octane:start             # Octane performance server (if enabled)
 </pre>
 
     <hr class="section-divider" />
     <p style="color:var(--text-muted);font-size:.85rem;">
-      Need help? Contact <a href="mailto:thedayonesoft@gmail.com">thedayonesoft@gmail.com</a>
+      Need help? Contact <a href="mailto:contact@6amtech.com">contact@6amtech.com</a>
       or visit our website for support.
     </p>
 
@@ -1310,7 +1265,7 @@ php artisan octane:start             # Octane performance server (if enabled)
     <a href="../../index.html">Home</a> &nbsp;|&nbsp;
     <a href="customer-app.html">Customer App</a> &nbsp;|&nbsp;
     <a href="deliveryman-app.html">Deliveryman App</a> &nbsp;|&nbsp;
-    <a href="mailto:thedayonesoft@gmail.com">Contact Support</a>
+    <a href="mailto:contact@6amtech.com">Contact Support</a>
   </p>
 </div>
 
