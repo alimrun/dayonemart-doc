@@ -376,8 +376,9 @@ chown -R www-data:www-data .
       <li>
         <div class="step-body">
           <strong>Install dependencies &amp; prepare environment</strong>
+          The ZIP does <strong>not</strong> include the <code>vendor/</code> folder — run <code>composer update</code> to generate it before continuing.
 <pre class="code">
-composer install --optimize-autoloader --no-dev
+composer update --optimize-autoloader --no-dev
 npm install
 npm run build
 cp .env.example .env
@@ -430,12 +431,20 @@ FLUSH PRIVILEGES;
 </pre>
 
     <h3>Pre-Install: Environment &amp; Dependencies</h3>
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        The install package <strong>does not ship with the <code>vendor/</code> folder</strong>.
+        You must run <code>composer update</code> after extracting the ZIP to generate it,
+        otherwise the application will fail to boot.
+      </div>
+    </div>
     <p>Copy the example environment file, generate keys, and install dependencies:</p>
 <pre class="code">
 cp .env.example .env
 php artisan key:generate
 php artisan jwt:secret
-composer install --optimize-autoloader --no-dev
+composer update --optimize-autoloader --no-dev
 npm install && npm run build
 </pre>
 
@@ -845,14 +854,24 @@ chmod 644 .env
 </pre>
 
     <h4>Step 5 — Install Dependencies</h4>
-    <p>Connect via SSH and run:</p>
+    <p>
+      The install package <strong>does not include the <code>vendor/</code> folder</strong>, so you must
+      generate it with <code>composer update</code>. Connect via SSH and run:
+    </p>
 <pre class="code">
 cd /home/youruser/onemart
-composer install --optimize-autoloader --no-dev
+composer update --optimize-autoloader --no-dev
 cp .env.example .env
 php artisan key:generate
 php artisan jwt:secret
 </pre>
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        If your shared host does not provide SSH or Composer, run <code>composer update</code> on
+        your local machine and upload the resulting <code>vendor/</code> folder via File Manager / FTP.
+      </div>
+    </div>
 
     <h4>Step 6 — Build Frontend Assets</h4>
     <p>If your hosting provides Node.js via SSH:</p>
@@ -928,6 +947,15 @@ php artisan view:cache
         It is accessible at <code>/updater</code>.
       </div>
     </div>
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        The update package <strong>does not include the <code>vendor/</code> folder</strong>.
+        After the updater finishes, you must run <code>composer update</code> via SSH so the new
+        PHP dependencies are installed — otherwise the application may fail to boot or behave
+        unpredictably after the update.
+      </div>
+    </div>
     <ol class="steps">
       <li>
         <div class="step-body">
@@ -955,9 +983,29 @@ php artisan view:cache
           You will be redirected to a success page upon completion.
         </div>
       </li>
+      <li>
+        <div class="step-body">
+          <strong>Regenerate the <code>vendor/</code> folder</strong>
+          Connect via SSH and run <code>composer update</code> in the project root to install the
+          new PHP dependencies that ship with the update:
+<pre class="code">
+cd /path/to/onemart
+composer update --optimize-autoloader --no-dev
+php artisan optimize:clear
+php artisan optimize
+</pre>
+          On shared hosting without SSH/Composer, run <code>composer update</code> locally and
+          upload the regenerated <code>vendor/</code> folder via File Manager or FTP.
+        </div>
+      </li>
     </ol>
 
     <h3>Manual Update via SSH</h3>
+    <p>
+      The update ZIP <strong>does not contain the <code>vendor/</code> folder</strong> — Step 4
+      below regenerates it with <code>composer update</code>. Skipping that step will leave the
+      site broken.
+    </p>
 <pre class="code">
 # 1. Put application in maintenance mode
 php artisan down --message="Updating, back in 5 minutes" --retry=300
@@ -968,8 +1016,9 @@ mysqldump -u root -p onemart > backup_$(date +%Y%m%d).sql
 # 3. Extract and overwrite files (keep your .env and storage/)
 # Do NOT overwrite .env or storage/
 
-# 4. Update dependencies
-composer install --optimize-autoloader --no-dev
+# 4. Regenerate vendor/ and rebuild frontend assets
+#    (the update package does not ship with vendor/)
+composer update --optimize-autoloader --no-dev
 npm ci && npm run build
 
 # 5. Run migrations
