@@ -57,6 +57,7 @@
         <li><a href="#localization">Localization</a></li>
         <li><a href="#api-reference">API Reference</a></li>
         <li><a href="#troubleshooting">Troubleshooting</a></li>
+        <li><a href="#faq">FAQ &amp; Environment Issues</a></li>
         <li><a href="#customization">Customization</a></li>
       </ul>
     </nav>
@@ -263,6 +264,23 @@
       <li>Environment variable management (in-app editor)</li>
     </ul>
 
+    <figure class="doc-figure">
+      <img src="../assets/images/screenshots/admin-settings.png"
+           alt="Admin Panel Settings — Business Setup Basic Info form with the settings sidebar (System Modules, Delivery, Vat/Tax, 3rd Party Setup)"
+           class="doc-img"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+      <div class="img-placeholder" style="display:none;">
+        <span class="ph-icon">🖼️</span>
+        <span>Add <code>admin-settings.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of <strong>Admin Panel → Settings</strong>.</span>
+      </div>
+      <figcaption>
+        <strong>Admin Panel → Settings → Business Setup.</strong> The Settings area is where you
+        configure business details (name, email, phone, address, time zone), plus System Modules,
+        Delivery, Vat/Tax, email templates, and 3rd-party integrations (payment gateways, SMS,
+        Firebase, social login) from the left-hand menu after installation.
+      </figcaption>
+    </figure>
+
     <h3>System &amp; Security</h3>
     <ul class="list">
       <li>Built-in database backup &amp; restore</li>
@@ -360,7 +378,7 @@
       <li>
         <div class="step-body">
           <strong>Extract the archive</strong>
-          Extract the downloaded ZIP to your server's web directory (e.g. <code>/var/www/onemart</code>).
+          Extract the downloaded ZIP to your server's web directory (e.g. <code>/path/to/your-project</code>).
           Point your Nginx/Apache document root to the <code>/public</code> folder.
         </div>
       </li>
@@ -636,7 +654,7 @@ server {
     listen [::]:443 ssl http2;
     server_name yourdomain.com www.yourdomain.com;
 
-    root /var/www/onemart/public;
+    root /path/to/your-project/public;
     index index.php;
 
     ssl_certificate     /etc/ssl/certs/yourdomain.crt;
@@ -695,7 +713,7 @@ certbot --nginx -d yourdomain.com -d www.yourdomain.com
 
 [program:onemart-worker]
 process_name=%(program_name)s_%(process_num)02d
-command=php /var/www/onemart/artisan queue:work --sleep=3 --tries=3 --max-time=3600
+command=php /path/to/your-project/artisan queue:work --sleep=3 --tries=3 --max-time=3600
 autostart=true
 autorestart=true
 stopasgroup=true
@@ -715,7 +733,7 @@ supervisorctl start onemart-worker:*
     <h3>Cron Job</h3>
     <p>Add the Laravel scheduler to your crontab (<code>crontab -e</code>):</p>
 <pre class="code">
-* * * * * cd /var/www/onemart && php artisan schedule:run >> /dev/null 2>&1
+* * * * * cd /path/to/your-project && php artisan schedule:run >> /dev/null 2>&1
 </pre>
 
     <h3>CORS Configuration</h3>
@@ -816,8 +834,8 @@ supervisorctl restart onemart-worker:*
     <h4>Step 2 — Upload &amp; Extract Files</h4>
     <ul class="list">
       <li>Open <strong>cPanel → File Manager</strong></li>
-      <li>Upload <code>install.zip</code> to <code>/home/youruser/</code> (above <code>public_html</code>)</li>
-      <li>Extract the archive — this creates a project folder (e.g. <code>/home/youruser/onemart/</code>)</li>
+      <li>Upload <code>install.zip</code> to <code>/home/username/</code> (above <code>public_html</code>)</li>
+      <li>Extract the archive — this creates a project folder (e.g. <code>/home/username/your-project/</code>)</li>
     </ul>
 
     <h4>Step 3 — Set the Document Root</h4>
@@ -827,7 +845,7 @@ supervisorctl restart onemart-worker:*
     <p><strong>Option A — Subdomain / Addon Domain (Recommended)</strong></p>
     <ul class="list">
       <li>Go to <strong>cPanel → Domains</strong> (or Subdomains / Addon Domains)</li>
-      <li>Set the document root to <code>/home/youruser/onemart/public</code></li>
+      <li>Set the document root to <code>/home/username/your-project/public</code></li>
       <li>This is the cleanest approach — no file moving required</li>
     </ul>
     <p><strong>Option B — Move Public Files (if document root cannot be changed)</strong></p>
@@ -848,7 +866,7 @@ $app = require_once __DIR__.'/../onemart/bootstrap/app.php';
     <h4>Step 4 — Set Permissions</h4>
     <p>Via <strong>cPanel → Terminal</strong> (SSH) or File Manager:</p>
 <pre class="code">
-cd /home/youruser/onemart
+cd /home/username/your-project
 chmod -R 775 storage bootstrap/cache
 chmod 644 .env
 </pre>
@@ -859,7 +877,7 @@ chmod 644 .env
       generate it with <code>composer update</code>. Connect via SSH and run:
     </p>
 <pre class="code">
-cd /home/youruser/onemart
+cd /home/username/your-project
 composer update --optimize-autoloader --no-dev
 cp .env.example .env
 php artisan key:generate
@@ -912,7 +930,7 @@ php artisan storage:link
       <li>Enter the command:</li>
     </ul>
 <pre class="code">
-php /home/youruser/onemart/artisan schedule:run >> /dev/null 2>&1
+php /home/username/your-project/artisan schedule:run >> /dev/null 2>&1
 </pre>
 
     <h4>Step 10 — Production Optimization</h4>
@@ -989,7 +1007,7 @@ php artisan view:cache
           Connect via SSH and run <code>composer update</code> in the project root to install the
           new PHP dependencies that ship with the update:
 <pre class="code">
-cd /path/to/onemart
+cd /path/to/your-project
 composer update --optimize-autoloader --no-dev
 php artisan optimize:clear
 php artisan optimize
@@ -1083,7 +1101,7 @@ php artisan up
     <h2 id="api-reference">API Reference</h2>
 
     <p>
-      The application ships with a complete <span class="mark">Postman collection</span>
+      The application ships with a <span class="mark">Postman collection</span>
       (<code>postman-collection.json</code>, ~485 KB) covering all API endpoints.
       Import it into Postman or Insomnia for interactive exploration.
     </p>
@@ -1229,6 +1247,116 @@ chown -R www-data:www-data storage bootstrap/cache
 </pre>
 
     <!-- ========================================================
+         FAQ
+         ======================================================== -->
+    <h2 id="faq">FAQ &amp; Environment-Specific Issues</h2>
+
+    <p>
+      Answers to the most common questions and environment-specific hurdles encountered during
+      installation and deployment across different hosting setups (VPS, shared hosting, cloud, and
+      local development).
+    </p>
+
+    <h3>Database connection timeouts</h3>
+    <p>
+      Symptoms: <code>SQLSTATE[HY000] [2002] Connection timed out</code>,
+      <code>[2002] Connection refused</code>, or <code>[2006] MySQL server has gone away</code>
+      during the installer's database step or while the app is running.
+    </p>
+    <ul class="list">
+      <li>Confirm <code>DB_HOST</code> is correct. On many managed/cloud databases the host is a
+        remote endpoint, <strong>not</strong> <code>127.0.0.1</code>. Using <code>localhost</code>
+        forces a socket connection — use <code>127.0.0.1</code> to force TCP if the socket path differs.</li>
+      <li>Verify the database server is reachable from the web server:
+        <code>telnet DB_HOST 3306</code> or <code>nc -zv DB_HOST 3306</code>.</li>
+      <li>Open port <strong>3306</strong> in the firewall / security group, and whitelist the web
+        server's IP in your cloud database's access list.</li>
+      <li>For large seeders/imports timing out, raise MySQL <code>wait_timeout</code> and
+        <code>max_allowed_packet</code>, and PHP <code>max_execution_time</code> (see below).</li>
+      <li>Double-check the credentials and database name match exactly what you created in
+        <em>Installation Process → Pre-Install: Create a MySQL Database</em>.</li>
+    </ul>
+
+    <h3>Permission errors (storage / bootstrap / cache)</h3>
+    <p>
+      Symptoms: <code>The stream or file "storage/logs/laravel.log" could not be opened: failed to
+      open stream: Permission denied</code>, or a white screen after install.
+    </p>
+<pre class="code">
+# Grant read/write to the framework-managed directories
+chmod -R 775 storage bootstrap/cache
+
+# Give ownership to the web-server user
+#   Nginx/Apache on Ubuntu/Debian: www-data
+#   Apache on CentOS/RHEL:          apache
+#   cPanel/shared hosting:          your cPanel username
+chown -R www-data:www-data storage bootstrap/cache
+</pre>
+    <ul class="list">
+      <li>Use the correct web-server user for your OS (see the comments above).</li>
+      <li>On <strong>SELinux</strong> systems (CentOS/RHEL), also allow httpd write access:
+        <code>chcon -R -t httpd_sys_rw_content_t storage bootstrap/cache</code>.</li>
+      <li>On shared hosting, set folders to <code>755</code> and files to <code>644</code> if
+        <code>775</code> is rejected by the host's security policy.</li>
+    </ul>
+
+    <h3>"No application encryption key has been specified"</h3>
+<pre class="code">
+php artisan key:generate
+php artisan config:clear
+</pre>
+
+    <h3>Installer times out or fails midway (max_execution_time / memory_limit)</h3>
+    <p>
+      Migrations and seeders can exceed conservative PHP limits on shared hosting. Raise these in
+      <code>php.ini</code> (or via <code>.user.ini</code> / cPanel → MultiPHP INI Editor):
+    </p>
+<pre class="code">
+max_execution_time = 300
+memory_limit = 512M
+max_input_time = 300
+</pre>
+
+    <h3>Large update ZIP or CSV import is rejected</h3>
+    <p>Increase the upload limits so the updater and bulk import can accept larger files:</p>
+<pre class="code">
+upload_max_filesize = 128M
+post_max_size = 128M
+</pre>
+
+    <h3>419 — Page Expired on login</h3>
+    <ul class="list">
+      <li>Ensure <code>APP_URL</code> exactly matches the address in the browser, including
+        <code>https://</code> and any subdomain.</li>
+      <li>Confirm <code>storage/framework/sessions</code> is writable (see permission errors above).</li>
+      <li>Clear browser cookies for the domain, then run <code>php artisan config:clear</code>.</li>
+    </ul>
+
+    <h3>Assets load over HTTP / mixed-content warnings behind a proxy or load balancer</h3>
+    <ul class="list">
+      <li>Set <code>APP_URL=https://yourdomain.com</code> in <code>.env</code>.</li>
+      <li>Behind a reverse proxy/load balancer terminating SSL, ensure the
+        <code>X-Forwarded-Proto</code> header is forwarded so Laravel generates <code>https</code> URLs.</li>
+      <li>Run <code>php artisan config:cache</code> after changing <code>APP_URL</code>.</li>
+    </ul>
+
+    <h3>Composer runs out of memory on shared hosting</h3>
+<pre class="code">
+php -d memory_limit=-1 $(which composer) update --optimize-autoloader --no-dev
+</pre>
+    <p>
+      If Composer or SSH is unavailable, run <code>composer update</code> locally and upload the
+      generated <code>vendor/</code> folder — the package ships without it by design.
+    </p>
+
+    <h3>Emails, push notifications, or payments are not working after install</h3>
+    <p>
+      These integrations are configured in <strong>Admin Panel → Settings</strong> after
+      installation, not in <code>.env</code>. See the <a href="#troubleshooting">Troubleshooting</a>
+      section for driver-specific checks.
+    </p>
+
+    <!-- ========================================================
          CUSTOMIZATION
          ======================================================== -->
     <h2 id="customization">Customization</h2>
@@ -1309,7 +1437,7 @@ php artisan octane:start             # Octane performance server (if enabled)
 </div>
 
 <div class="doc-footer">
-  <p>&copy; 2026 DayOneMart — Complete E-Commerce Solution Documentation</p>
+  <p>&copy; 2026 DayOneMart — E-Commerce Solution Documentation</p>
   <p style="margin-top:4px;">
     <a href="../../index.html">Home</a> &nbsp;|&nbsp;
     <a href="customer-app.html">Customer App</a> &nbsp;|&nbsp;

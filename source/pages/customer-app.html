@@ -55,11 +55,13 @@
         <li><a href="#google-maps-setup">Google Maps Setup</a></li>
         <li><a href="#social-auth">Social Auth Setup</a></li>
         <li><a href="#localization">Localization</a></li>
+        <li><a href="#build-requirements">Build Requirements (iOS &amp; Android)</a></li>
         <li><a href="#build-and-release">Build &amp; Release</a></li>
         <li><a href="#secure-storage">Secure Storage</a></li>
         <li><a href="#crash-reporting">Crash Reporting</a></li>
         <li><a href="#api-integration">API Integration</a></li>
         <li><a href="#troubleshooting">Troubleshooting</a></li>
+        <li><a href="#faq">FAQ &amp; Environment Issues</a></li>
         <li><a href="#customization">Customization</a></li>
       </ul>
     </nav>
@@ -75,7 +77,7 @@
 
     <p>
       The <strong>DayOneMart Customer App</strong> is a cross-platform mobile application built with
-      <span class="mark">Flutter</span> for Android and iOS. It provides customers with a complete
+      <span class="mark">Flutter</span> for Android and iOS. It provides customers with an end-to-end
       shopping experience — browsing products, placing orders, real-time tracking, live chat,
       wallet management, loyalty points, and more.
     </p>
@@ -455,6 +457,23 @@ static const AppModule defaultModule = AppModule.grocery;
 </pre>
     <p>Change this enum value to match your business type if needed.</p>
 
+    <figure class="doc-figure">
+      <img src="../assets/images/screenshots/customer-app-settings.png"
+           alt="Customer App in-app Settings screen — Language, Setup Password, offer preferences, and Notification / Location / Microphone permission toggles"
+           class="doc-img"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
+      <div class="img-placeholder" style="display:none;">
+        <span class="ph-icon">📱</span>
+        <span>Add <code>customer-app-settings.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of the Customer App Settings screen.</span>
+      </div>
+      <figcaption>
+        <strong>Customer App → Settings.</strong> The in-app Settings screen lets users switch
+        language, set up a password, opt in to email/SMS offers, and toggle notification, location,
+        and microphone permissions. The backend URL the app connects to is set separately in
+        <code>lib/config/util/app_constants.dart</code> (see above).
+      </figcaption>
+    </figure>
+
     <h3>App Name &amp; Bundle ID</h3>
 
     <table class="doc-table">
@@ -677,6 +696,124 @@ flutter gen-l10n
         Arabic (<code>ar</code>) is an RTL language. Flutter handles layout mirroring automatically
         when the <code>ar</code> locale is active. Untranslated strings are tracked in
         <code>untranslated.txt</code> at the project root.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         BUILD REQUIREMENTS
+         ======================================================== -->
+    <h2 id="build-requirements">Mobile App Build Requirements</h2>
+
+    <p>
+      Before you can produce a store-ready build of the app, both platforms require their own
+      code-signing setup. This section walks through <strong>Android keystore generation</strong>
+      and <strong>iOS code signing</strong> end to end. Complete these once per app; the signing
+      material is then reused for every future release and update.
+    </p>
+
+    <table class="doc-table">
+      <thead><tr><th>Platform</th><th>You need</th><th>Where it is used</th></tr></thead>
+      <tbody>
+        <tr><td>Android</td><td>An upload/release <strong>keystore</strong> (<code>.jks</code>) + <code>key.properties</code></td><td>Signs the <code>.aab</code> / <code>.apk</code> for Google Play</td></tr>
+        <tr><td>iOS</td><td>Apple Developer Program membership, a <strong>Distribution certificate</strong>, an <strong>App ID</strong>, and a <strong>provisioning profile</strong></td><td>Signs the <code>.ipa</code> for the App Store / TestFlight</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Android — Keystore Generation</h3>
+    <p>
+      Google Play requires every release build to be digitally signed with a keystore you own.
+      Generate one with the JDK's <code>keytool</code> utility:
+    </p>
+<pre class="code">
+keytool -genkey -v \
+  -keystore upload-keystore.jks \
+  -keyalg RSA -keysize 2048 -validity 10000 \
+  -alias upload
+</pre>
+    <p>
+      You will be prompted for a keystore password, a key password, and your organisation details.
+      This produces an <code>upload-keystore.jks</code> file. Move it into the Android app module
+      (for example <code>android/app/upload-keystore.jks</code>), then create
+      <code>android/key.properties</code> so Gradle can locate and use it:
+    </p>
+<pre class="code highlight">
+# android/key.properties
+storePassword=&lt;your-store-password&gt;
+keyPassword=&lt;your-key-password&gt;
+keyAlias=upload
+storeFile=upload-keystore.jks
+</pre>
+    <p>
+      The app's <code>android/app/build.gradle.kts</code> is already wired to read
+      <code>key.properties</code> and apply the release signing config automatically — no further
+      Gradle edits are needed. Once the file is in place, <code>flutter build appbundle --release</code>
+      produces a signed, upload-ready bundle.
+    </p>
+
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        Store the <code>.jks</code> keystore and its passwords somewhere safe and backed up, and
+        keep <code>key.properties</code> out of version control. If you lose the keystore you can
+        never publish an update to the same Google Play listing again.
+      </div>
+    </div>
+
+    <h3>iOS — Code Signing</h3>
+    <p>
+      iOS builds must be signed with credentials issued by Apple. You need a paid
+      <strong>Apple Developer Program</strong> membership before you can create a distributable build.
+    </p>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Register an App ID (Bundle Identifier)</strong>
+          In the <a href="https://developer.apple.com/account" target="_blank">Apple Developer portal</a>
+          → Certificates, Identifiers &amp; Profiles → Identifiers, register a unique bundle ID
+          (e.g. <code>com.yourcompany.onemartcustomer</code>). Enable the capabilities the app uses
+          (Push Notifications, Sign in with Apple).
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Create a Distribution certificate</strong>
+          Under Certificates, create an <strong>Apple Distribution</strong> certificate and install
+          it into your Mac's login Keychain. This is the identity that signs release builds.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Create a provisioning profile</strong>
+          Create an <strong>App Store</strong> distribution provisioning profile that links your
+          App ID to your distribution certificate, then download and double-click it to install.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Configure signing in Xcode</strong>
+          Open <code>ios/Runner.xcworkspace</code> → select the <em>Runner</em> target →
+          <em>Signing &amp; Capabilities</em>. Set your <strong>Team</strong> and the
+          <strong>Bundle Identifier</strong> to match the App ID above. For most users,
+          <strong>Automatically manage signing</strong> is the simplest option; choose manual signing
+          only if you manage profiles yourself.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Create the app record in App Store Connect</strong>
+          In <a href="https://appstoreconnect.apple.com" target="_blank">App Store Connect</a>,
+          create a new app using the same bundle ID so you can upload builds to TestFlight and the
+          App Store.
+        </div>
+      </li>
+    </ol>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        You only need a Mac with Xcode to build and sign iOS apps. Android keystore generation works
+        on any platform (Windows, macOS, or Linux) as long as the JDK is installed. Concrete build
+        commands for both platforms follow in the next section.
       </div>
     </div>
 
@@ -959,6 +1096,59 @@ flutter run
 </pre>
 
     <!-- ========================================================
+         FAQ
+         ======================================================== -->
+    <h2 id="faq">FAQ &amp; Environment-Specific Issues</h2>
+
+    <p>Common environment-specific hurdles when setting up and building the Flutter app.</p>
+
+    <h3>API requests time out or fail to connect</h3>
+    <ul class="list">
+      <li>Confirm <code>baseUrl</code> in <code>app_constants.dart</code> is correct and starts with
+        <code>https://</code>.</li>
+      <li>Ensure the backend allows connections from the device's network and that any firewall or
+        cloud security group permits inbound traffic on the API port.</li>
+      <li>Android emulator reaching a server on your own machine must use <code>10.0.2.2</code>
+        instead of <code>localhost</code>; the iOS simulator can use <code>localhost</code>.</li>
+      <li>Android 9+ and iOS block plaintext HTTP by default — always serve the API over HTTPS.</li>
+    </ul>
+
+    <h3>Gradle / Android build fails on a fresh machine</h3>
+    <ul class="list">
+      <li>Point <code>JAVA_HOME</code> at <strong>JDK 17</strong> — newer or older JDKs commonly break the Android Gradle Plugin.</li>
+      <li>Run <code>flutter clean &amp;&amp; flutter pub get</code>, then rebuild.</li>
+      <li>Behind a proxy or firewall, Gradle may fail to download dependencies — configure your proxy
+        in <code>~/.gradle/gradle.properties</code>.</li>
+    </ul>
+
+    <h3>CocoaPods / iOS build fails</h3>
+<pre class="code">
+cd ios
+pod repo update
+pod install --repo-update
+cd ..
+flutter build ios
+</pre>
+    <p>On Apple Silicon, if pods fail to install, retry under Rosetta:
+      <code>arch -x86_64 pod install</code>.</p>
+
+    <h3>build_runner or code generation errors</h3>
+<pre class="code">
+dart run build_runner clean
+dart run build_runner build --delete-conflicting-outputs
+flutter gen-l10n
+</pre>
+
+    <h3>Firebase / Google Maps features do nothing at runtime</h3>
+    <ul class="list">
+      <li>Verify <code>google-services.json</code> (Android) and <code>GoogleService-Info.plist</code>
+        (iOS) are present and match your Firebase project.</li>
+      <li>Ensure the required Google Cloud APIs are enabled and that <strong>billing is active</strong>
+        on the project — maps render blank without it.</li>
+      <li>Confirm the bundle ID / package name registered in Firebase and Google Cloud matches the app.</li>
+    </ul>
+
+    <!-- ========================================================
          CUSTOMIZATION
          ======================================================== -->
     <h2 id="customization">Customization</h2>
@@ -1035,7 +1225,7 @@ flutter_launcher_icons
 </div>
 
 <div class="doc-footer">
-  <p>&copy; 2026 DayOneMart — Complete E-Commerce Solution Documentation</p>
+  <p>&copy; 2026 DayOneMart — E-Commerce Solution Documentation</p>
   <p style="margin-top:4px;">
     <a href="../../index.html">Home</a> &nbsp;|&nbsp;
     <a href="admin-and-web.html">Admin &amp; Web</a> &nbsp;|&nbsp;
