@@ -55,10 +55,11 @@
         <li><a href="#deployment">Deployment</a></li>
         <li><a href="#update-procedure">Update Procedure</a></li>
         <li><a href="#localization">Localization</a></li>
-        <li><a href="#api-reference">API Reference</a></li>
+        <li><a href="#branding">Branding &amp; Customization</a></li>
+        <li><a href="#api-reference">API Reference (Developers)</a></li>
         <li><a href="#troubleshooting">Troubleshooting</a></li>
         <li><a href="#faq">FAQ &amp; Environment Issues</a></li>
-        <li><a href="#customization">Customization</a></li>
+        <li><a href="#extending">Extending the Platform</a></li>
       </ul>
     </nav>
   </aside>
@@ -194,6 +195,34 @@
       <li>Top-selling products and revenue breakdown</li>
     </ul>
 
+    <figure class="doc-figure">
+      <div class="shot">
+        <img src="../assets/images/screenshots/admin-dashboard.png"
+             alt="Admin Panel Dashboard — business analytics KPI cards, order status overview, sales trend, and order type breakdown"
+             class="doc-img"
+             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+        <span class="pin" style="left:27%;top:27%;">1</span>
+        <span class="pin" style="left:27%;top:59%;">2</span>
+        <span class="pin" style="left:26%;top:88%;">3</span>
+        <span class="pin" style="left:77%;top:88%;">4</span>
+      </div>
+      <div class="img-placeholder" style="display:none;">
+        <span class="ph-icon">🖼️</span>
+        <span>Add <code>admin-dashboard.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of the <strong>Admin Panel → Dashboard</strong>.</span>
+      </div>
+      <p class="callout-title">Key areas of this screen</p>
+      <ol class="callout-legend">
+        <li><strong>Business Analytics KPI cards</strong> — live totals for sales, orders, average order value, customers, employees, deliverymen, active promotions, and wallet flow.</li>
+        <li><strong>Order Status Overview</strong> — a breakdown of orders by stage: Pending, Confirmed, Ready to Handover, Out for Delivery, Delivered, Failed, Cancelled, and Refunded.</li>
+        <li><strong>Sales Trend</strong> — revenue over the selected period versus the previous period.</li>
+        <li><strong>Order Type Breakdown</strong> — the mix of order types shown as a donut chart.</li>
+      </ol>
+      <figcaption>
+        <strong>Admin Panel → Dashboard.</strong> The landing screen after login gives an at-a-glance
+        view of business health. Numbered markers highlight the four key areas.
+      </figcaption>
+    </figure>
+
     <h3>Order Management</h3>
     <ul class="list">
       <li>Full order lifecycle: <span class="mark">Pending → Confirmed → Processing → Handover → Picked Up → Delivered</span></li>
@@ -206,6 +235,34 @@
       <li>Bulk order actions</li>
     </ul>
 
+    <figure class="doc-figure">
+      <div class="shot">
+        <img src="../assets/images/screenshots/admin-orders.png"
+             alt="Admin Panel Order Management — order list with status filters, search, order-status dropdowns, and per-order actions"
+             class="doc-img"
+             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+        <span class="pin" style="left:8%;top:33%;">1</span>
+        <span class="pin" style="left:70%;top:12%;">2</span>
+        <span class="pin" style="left:84%;top:24%;">3</span>
+        <span class="pin" style="left:95%;top:24%;">4</span>
+      </div>
+      <div class="img-placeholder" style="display:none;">
+        <span class="ph-icon">🖼️</span>
+        <span>Add <code>admin-orders.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of <strong>Admin Panel → Orders</strong>.</span>
+      </div>
+      <p class="callout-title">Key areas of this screen</p>
+      <ol class="callout-legend">
+        <li><strong>Status filters (left menu)</strong> — jump to All Orders, Pending, Confirmed, Ready to Handover, On the Way, Delivered, Cancelled, Refunded, and Refund Requests, each with a live count.</li>
+        <li><strong>Search bar</strong> — find an order by ID or any related keyword.</li>
+        <li><strong>Order Status column</strong> — update each order's stage inline via the dropdown (or the Confirm button on new orders).</li>
+        <li><strong>Action buttons</strong> — view the order detail (eye icon) or download the invoice.</li>
+      </ol>
+      <figcaption>
+        <strong>Admin Panel → Orders.</strong> Central hub for the full order lifecycle — filter, search,
+        update status, and open any order. Numbered markers highlight the four key areas.
+      </figcaption>
+    </figure>
+
     <h3>Product &amp; Menu Management</h3>
     <ul class="list">
       <li>Product items with variations, add-ons, stock levels, and pricing</li>
@@ -216,6 +273,34 @@
       <li>Toggle product availability and featured status</li>
     </ul>
 
+    <figure class="doc-figure">
+      <div class="shot">
+        <img src="../assets/images/screenshots/admin-products.png"
+             alt="Admin Panel Item List — products with image, name, category, price, stock, status toggle, and row actions"
+             class="doc-img"
+             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+        <span class="pin" style="left:32%;top:23%;">1</span>
+        <span class="pin" style="left:49%;top:23%;">2</span>
+        <span class="pin" style="left:70%;top:23%;">3</span>
+        <span class="pin" style="left:87%;top:23%;">4</span>
+      </div>
+      <div class="img-placeholder" style="display:none;">
+        <span class="ph-icon">🖼️</span>
+        <span>Add <code>admin-products.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of <strong>Admin Panel → Item List</strong>.</span>
+      </div>
+      <p class="callout-title">Key areas of this screen</p>
+      <ol class="callout-legend">
+        <li><strong>Item info</strong> — the product thumbnail, name, and ID. Use <em>Create New</em> (top right) to add a product with images, pricing, variations, and add-ons.</li>
+        <li><strong>Category</strong> — the category and sub-category each item belongs to.</li>
+        <li><strong>Price</strong> — the selling price per item.</li>
+        <li><strong>Stock &amp; Status</strong> — inventory level and the availability toggle; row actions (view / edit / more) sit on the far right.</li>
+      </ol>
+      <figcaption>
+        <strong>Admin Panel → Item List.</strong> The catalog manager across Grocery, Pharmacy, and Shop
+        modules. Numbered markers highlight the four key columns.
+      </figcaption>
+    </figure>
+
     <h3>Marketing &amp; Promotions</h3>
     <ul class="list">
       <li>Coupon codes with usage limits, minimum order value, and expiry</li>
@@ -225,6 +310,34 @@
       <li>Marketing tools &amp; sales popup configuration</li>
       <li>Newsletter subscriber management</li>
     </ul>
+
+    <figure class="doc-figure">
+      <div class="shot">
+        <img src="../assets/images/screenshots/admin-promotions.png"
+             alt="Admin Panel Coupon List — coupon name and code, coupon info, validity, status toggle, and actions"
+             class="doc-img"
+             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+        <span class="pin" style="left:27%;top:24%;">1</span>
+        <span class="pin" style="left:49%;top:24%;">2</span>
+        <span class="pin" style="left:78%;top:24%;">3</span>
+        <span class="pin" style="left:86%;top:24%;">4</span>
+      </div>
+      <div class="img-placeholder" style="display:none;">
+        <span class="ph-icon">🖼️</span>
+        <span>Add <code>admin-promotions.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of <strong>Admin Panel → Promotions → Coupons</strong>.</span>
+      </div>
+      <p class="callout-title">Key areas of this screen</p>
+      <ol class="callout-legend">
+        <li><strong>Coupon name &amp; code</strong> — the display name and the code customers enter at checkout.</li>
+        <li><strong>Coupon info</strong> — discount type (Discount on Order, Free Shipping, Free Item, First Order), amount, and the modules it applies to.</li>
+        <li><strong>Validity</strong> — how long the coupon is active (Unlimited or a countdown of days left).</li>
+        <li><strong>Status &amp; actions</strong> — enable/disable toggle plus view, edit, and delete; use <em>Create New</em> (top right) to add a coupon, and the <em>Flash Sales</em> menu for time-limited campaigns.</li>
+      </ol>
+      <figcaption>
+        <strong>Admin Panel → Promotions.</strong> Coupons, flash sales, loyalty points, and marketing
+        tools live here. Numbered markers highlight the four key columns.
+      </figcaption>
+    </figure>
 
     <h3>User Management</h3>
     <ul class="list">
@@ -1096,9 +1209,149 @@ php artisan up
     </ol>
 
     <!-- ========================================================
+         BRANDING & CUSTOMIZATION (no-code)
+         ======================================================== -->
+    <h2 id="branding">Branding &amp; Customization</h2>
+
+    <p>
+      This section is for <strong>store owners</strong> — no coding required. Everything below is done
+      from the <strong>Admin Panel → Settings</strong> after installation, so you can make the platform
+      your own: your business name, logo, favicon, and brand colors. A developer-level theming guide
+      (for deeper visual changes) follows at the end.
+    </p>
+
+    <figure class="doc-figure">
+      <div class="shot">
+        <img src="../assets/images/screenshots/admin-branding.png"
+             alt="Admin Panel Business Setup — business name, logo, icon/favicon, and admin primary/secondary color fields"
+             class="doc-img"
+             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+        <span class="pin" style="left:51%;top:27%;">1</span>
+        <span class="pin" style="left:51%;top:74%;">2</span>
+        <span class="pin" style="left:82%;top:74%;">3</span>
+        <span class="pin" style="left:40%;top:93%;">4</span>
+      </div>
+      <div class="img-placeholder" style="display:none;">
+        <span class="ph-icon">🖼️</span>
+        <span>Add <code>admin-branding.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of <strong>Admin Panel → Settings → Business Setup</strong>.</span>
+      </div>
+      <p class="callout-title">Fields on this screen</p>
+      <ol class="callout-legend">
+        <li><strong>Business Name</strong> — displayed across the storefront header, emails, and browser tab title (alongside email, phone, country, time zone, and address).</li>
+        <li><strong>Logo</strong> — your main brand logo shown in the storefront and admin header (JPG/PNG/JPEG, max 2 MB, ~120 × 80 px).</li>
+        <li><strong>Icon</strong> — the favicon shown in the browser tab (JPG/PNG/JPEG, max 2 MB).</li>
+        <li><strong>Admin Primary &amp; Secondary Color</strong> — the accent colors (hex) used for buttons, links, and highlights.</li>
+      </ol>
+      <figcaption>
+        <strong>Admin Panel → Settings → Business Setup → Basic Info.</strong> The single place where a
+        store owner rebrands the platform without touching code. Numbered markers highlight the four key fields.
+      </figcaption>
+    </figure>
+
+    <h3>1. Business Name &amp; Identity</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Open Business Setup</strong>
+          Go to <em>Admin Panel → Settings → Business Setup → Basic Info</em>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Set your business name, email, phone, and address</strong>
+          These appear in the storefront header/footer, on invoices, and in transactional emails.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Save</strong>
+          Changes take effect immediately on the storefront — no rebuild or redeploy required.
+        </div>
+      </li>
+    </ol>
+
+    <h3>2. Logo &amp; Favicon</h3>
+    <p>Upload your brand images from <em>Admin Panel → Settings → Business Setup</em>:</p>
+    <table class="doc-table">
+      <thead><tr><th>Asset</th><th>Where it appears</th><th>Recommended size</th><th>Format</th></tr></thead>
+      <tbody>
+        <tr><td>Main logo</td><td>Storefront &amp; admin header</td><td>~300 × 80 px (transparent)</td><td>PNG / SVG</td></tr>
+        <tr><td>Favicon</td><td>Browser tab</td><td>512 × 512 px (square)</td><td>PNG / ICO</td></tr>
+        <tr><td>Email logo</td><td>Header of transactional emails</td><td>~300 × 80 px</td><td>PNG</td></tr>
+        <tr><td>Login/app banner</td><td>Auth &amp; splash areas</td><td>1200 × 600 px</td><td>PNG / JPG</td></tr>
+      </tbody>
+    </table>
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        Use a <strong>transparent PNG</strong> for the logo so it looks correct in both light and dark
+        headers. Keep file sizes small (under ~200 KB) for fast page loads.
+      </div>
+    </div>
+
+    <h3>3. Primary Color Scheme</h3>
+    <p>
+      The brand colors set the accent used for buttons, links, badges, and highlights across the
+      storefront and mobile apps.
+    </p>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Set the colors during install</strong>
+          The installer's <em>Step 4 — Theme Setup</em> asks for a <strong>primary</strong> and
+          <strong>secondary</strong> color as hex values (for example <code>#6366F1</code>).
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Change them any time later</strong>
+          Update the primary/secondary colors from <em>Admin Panel → Settings → Business Setup</em>.
+          The storefront picks up the new colors on the next page load.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Match your mobile apps</strong>
+          To keep branding consistent, set the same hex values in each Flutter app's theme file — see
+          <em>App Theme &amp; Colors</em> in the
+          <a href="customer-app.html#customization">Customer App</a> and
+          <a href="deliveryman-app.html#customization">Deliveryman App</a> docs.
+        </div>
+      </li>
+    </ol>
+    <div class="alert alert-success">
+      <span class="alert-icon">✅</span>
+      <div>
+        <strong>White-label checklist:</strong> business name, logo, favicon, email logo, primary color,
+        secondary color, storefront banner, app name, and app icons — set all of these to fully rebrand
+        the platform as your own.
+      </div>
+    </div>
+
+    <h3>4. Developer Theming (Advanced)</h3>
+    <p>
+      For deeper visual changes beyond the admin settings, the storefront and admin UI are styled with
+      <strong>Tailwind CSS driven by CSS variables</strong>:
+    </p>
+    <ul class="list">
+      <li>Edit the color tokens and design variables in <code>resources/css/app.css</code>.</li>
+      <li>Admin panel pages live in <code>resources/js/AdminPanel/Pages/</code>; storefront pages in <code>resources/js/StoreFront/Pages/</code>.</li>
+      <li>Shared UI components are in <code>resources/js/components/</code>.</li>
+      <li>After any code-level change, rebuild assets with <code>npm run build</code>.</li>
+    </ul>
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        Most owners never need this step — logo, favicon, and colors from the admin panel are enough to
+        rebrand. Only edit <code>app.css</code> if you need to change typography, spacing, or component
+        styling site-wide.
+      </div>
+    </div>
+
+    <!-- ========================================================
          API REFERENCE
          ======================================================== -->
-    <h2 id="api-reference">API Reference</h2>
+    <h2 id="api-reference">API Reference (Developers)</h2>
 
     <p>
       The application ships with a <span class="mark">Postman collection</span>
@@ -1111,6 +1364,94 @@ php artisan up
 Base URL:  https://yourdomain.com/api/v1
 Auth:      Bearer JWT token (Authorization: Bearer {token})
 </pre>
+
+    <h3>Authentication Flow (JWT)</h3>
+    <p>
+      The API uses <strong>JWT bearer tokens</strong> (<code>tymon/jwt-auth</code>). A client logs in
+      once, stores the returned <code>token</code>, and sends it on every subsequent request.
+    </p>
+    <p><strong>1. Log in to obtain a token</strong></p>
+<pre class="code">
+POST /api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "customer@example.com",
+  "password": "secret123"
+}
+</pre>
+    <p><strong>Response</strong></p>
+<pre class="code">
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+    "token_type": "bearer",
+    "expires_in": 3600,
+    "user": { "id": 12, "name": "Jane Doe", "email": "customer@example.com" }
+  }
+}
+</pre>
+    <p><strong>2. Call a protected endpoint with the token</strong></p>
+<pre class="code">
+GET /api/v1/customer/orders
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+</pre>
+    <p><strong>3. Refresh an expiring token</strong></p>
+<pre class="code">
+POST /api/v1/auth/refresh
+Authorization: Bearer {current_token}
+</pre>
+
+    <h3>Standard Request Headers</h3>
+    <table class="doc-table">
+      <thead><tr><th>Header</th><th>Value</th><th>Required</th></tr></thead>
+      <tbody>
+        <tr><td><code>Authorization</code></td><td><code>Bearer {token}</code></td><td>On protected routes</td></tr>
+        <tr><td><code>Content-Type</code></td><td><code>application/json</code></td><td>On POST/PUT</td></tr>
+        <tr><td><code>Accept</code></td><td><code>application/json</code></td><td>Recommended</td></tr>
+        <tr><td><code>X-localization</code></td><td><code>en</code> / <code>bn</code> / <code>hi</code> / <code>ar</code> / <code>es</code></td><td>Optional — sets the response language</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Standard Response Envelope</h3>
+    <p>All API responses follow a consistent JSON shape, so clients can parse them uniformly:</p>
+<pre class="code">
+// Success
+{ "success": true,  "message": "...", "data": { ... } }
+
+// Paginated list
+{ "success": true, "data": [ ... ], "meta": { "current_page": 1, "last_page": 5, "total": 92 } }
+
+// Validation / error
+{ "success": false, "message": "The given data was invalid.",
+  "errors": { "email": ["The email field is required."] } }
+</pre>
+
+    <h3>HTTP Status &amp; Error Codes</h3>
+    <table class="doc-table">
+      <thead><tr><th>Code</th><th>Meaning</th><th>Typical cause</th></tr></thead>
+      <tbody>
+        <tr><td><code>200</code></td><td>OK</td><td>Successful GET/PUT/DELETE</td></tr>
+        <tr><td><code>201</code></td><td>Created</td><td>Successful POST that created a record</td></tr>
+        <tr><td><code>401</code></td><td>Unauthorized</td><td>Missing, invalid, or expired token</td></tr>
+        <tr><td><code>403</code></td><td>Forbidden</td><td>Authenticated but lacks permission (RBAC)</td></tr>
+        <tr><td><code>404</code></td><td>Not Found</td><td>Resource or route does not exist</td></tr>
+        <tr><td><code>422</code></td><td>Unprocessable Entity</td><td>Validation failed — see <code>errors</code> object</td></tr>
+        <tr><td><code>429</code></td><td>Too Many Requests</td><td>Rate limit exceeded</td></tr>
+        <tr><td><code>500</code></td><td>Server Error</td><td>Check <code>storage/logs/laravel.log</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        The full request/response schema for every endpoint is in the bundled
+        <strong>Postman collection</strong> (<code>postman-collection.json</code>). Import it to try
+        each call live against your own installation.
+      </div>
+    </div>
 
     <h3>Customer API Endpoints</h3>
 
@@ -1357,11 +1698,160 @@ php -d memory_limit=-1 $(which composer) update --optimize-autoloader --no-dev
     </p>
 
     <!-- ========================================================
-         CUSTOMIZATION
+         EXTENDING THE PLATFORM (developers)
          ======================================================== -->
-    <h2 id="customization">Customization</h2>
+    <h2 id="extending">Extending the Platform</h2>
 
-    <h3>Backend — Controllers &amp; Services</h3>
+    <p>
+      This section is for <strong>developers</strong> building on top of DayOneMart. The codebase follows
+      standard <strong>Laravel 12</strong> conventions with a service-oriented structure, so most
+      extensions are additive — you add controllers, services, routes, and Vue pages without modifying
+      core files.
+    </p>
+
+    <h3>Architecture at a Glance</h3>
+    <table class="doc-table">
+      <thead><tr><th>Layer</th><th>Location</th><th>Responsibility</th></tr></thead>
+      <tbody>
+        <tr><td>Routes</td><td><code>routes/api/v1/</code>, <code>routes/web/</code></td><td>Endpoint &amp; page registration</td></tr>
+        <tr><td>Controllers</td><td><code>app/Http/Controllers/</code></td><td>Request handling (thin)</td></tr>
+        <tr><td>Form Requests</td><td><code>app/Http/Requests/</code></td><td>Validation rules</td></tr>
+        <tr><td>Services</td><td><code>app/Services/</code></td><td>Business logic (fat)</td></tr>
+        <tr><td>Models</td><td><code>app/Models/</code></td><td>Eloquent data layer</td></tr>
+        <tr><td>Resources</td><td><code>app/Http/Resources/</code></td><td>API JSON transformers</td></tr>
+        <tr><td>Events / Jobs</td><td><code>app/Events/</code>, <code>app/Jobs/</code></td><td>Async &amp; decoupled side-effects</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Add a New API Endpoint (End-to-End)</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Create a controller</strong>
+          Place it under <code>app/Http/Controllers/Api/</code> and keep it thin — delegate logic to a service.
+<pre class="code">
+php artisan make:controller Api/V1/Customer/FavoriteController
+</pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Add a Form Request for validation</strong>
+<pre class="code">
+php artisan make:request StoreFavoriteRequest
+</pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Put the business logic in a service</strong>
+          Add a class under <code>app/Services/</code> and inject it into the controller's constructor.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Return an API Resource</strong>
+          Transform the model with a Resource in <code>app/Http/Resources/</code> so the response matches
+          the standard envelope (<code>success</code>, <code>message</code>, <code>data</code>).
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Register the route</strong>
+          Add it to the correct file — <code>routes/api/v1/customer.php</code>,
+          <code>admin.php</code>, or <code>deliveryman.php</code> — inside the JWT
+          <code>auth:api</code> middleware group.
+<pre class="code">
+Route::middleware('auth:api')->group(function () {
+    Route::apiResource('favorites', FavoriteController::class);
+});
+</pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Test it</strong>
+          Call the new route with a bearer token, then add it to <code>postman-collection.json</code> so
+          it stays documented.
+        </div>
+      </li>
+    </ol>
+
+    <h3>Events &amp; Listeners</h3>
+    <p>
+      Decouple side-effects (emails, push notifications, logs) from your core flow by firing events
+      instead of calling services inline:
+    </p>
+<pre class="code">
+# Generate an event and a listener
+php artisan make:event OrderPlaced
+php artisan make:listener SendOrderPushNotification --event=OrderPlaced
+
+# Dispatch from anywhere in your code
+event(new OrderPlaced($order));
+</pre>
+    <p>Register the mapping in <code>app/Providers/EventServiceProvider.php</code> (or via auto-discovery).</p>
+
+    <h3>Queued Jobs (Background Work)</h3>
+    <p>
+      Offload slow work (bulk notifications, exports, third-party API calls) to the queue so requests
+      stay fast:
+    </p>
+<pre class="code">
+php artisan make:job ProcessBulkImport
+
+# Dispatch it
+ProcessBulkImport::dispatch($payload);
+</pre>
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        Queued jobs require a running worker (<code>php artisan queue:work</code>) and
+        <code>QUEUE_CONNECTION</code> set to <code>database</code> or <code>redis</code>. On shared
+        hosting without a persistent worker, keep <code>QUEUE_CONNECTION=sync</code> so jobs run inline.
+      </div>
+    </div>
+
+    <h3>Add a Database Column / Migration</h3>
+<pre class="code">
+php artisan make:migration add_gift_note_to_orders_table
+# edit the migration, then:
+php artisan migrate
+</pre>
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        Always ship schema changes as <strong>new migrations</strong> — never edit existing migration
+        files that have already run in production. This keeps the built-in updater and other installs
+        upgradeable.
+      </div>
+    </div>
+
+    <h3>Add an Admin Page / Module</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Create the Vue page</strong> under <code>resources/js/AdminPanel/Pages/</code>, following an existing module (e.g. <code>Orders/</code>) as a template.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Add a web route</strong> in <code>routes/web/admin.php</code> that renders the page via Inertia.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Add the sidebar/menu entry</strong> and wire up any RBAC permission so it respects employee roles.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Rebuild assets</strong> with <code>npm run build</code> (or <code>npm run dev</code> during development).
+        </div>
+      </li>
+    </ol>
+
+    <h3>Backend — Controllers &amp; Services (Reference)</h3>
     <ul class="list">
       <li>API controllers live in <code>app/Http/Controllers/Api/</code></li>
       <li>Business logic is extracted to <code>app/Services/</code></li>

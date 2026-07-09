@@ -217,6 +217,62 @@
       </div>
     </div>
 
+    <h3 id="app-screens">Key Screens (Annotated)</h3>
+    <p>
+      Capture these core screens on a device or emulator and annotate the numbered areas below with
+      arrows or callouts before resubmission. Save each image with the exact file name shown.
+    </p>
+
+    <figure class="doc-figure">
+      <div class="shot shot-mobile">
+        <img src="../assets/images/screenshots/deliveryman-app-dashboard.png"
+             alt="Deliveryman App Dashboard — greeting with orders to deliver, delivery KPI cards, recent orders, and bottom navigation"
+             class="doc-img"
+             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+        <span class="pin" style="left:50%;top:14%;">1</span>
+        <span class="pin" style="left:26%;top:27%;">2</span>
+        <span class="pin" style="left:30%;top:62%;">3</span>
+        <span class="pin" style="left:50%;top:95%;">4</span>
+      </div>
+      <div class="img-placeholder" style="display:none;">
+        <span class="ph-icon">📱</span>
+        <span>Add <code>deliveryman-app-dashboard.png</code> to <code>source/assets/images/screenshots/</code> — the <strong>Dashboard</strong> screen.</span>
+      </div>
+      <p class="callout-title">Key areas of this screen</p>
+      <ol class="callout-legend">
+        <li><strong>Greeting &amp; See Orders</strong> — a summary of how many orders are waiting, with a shortcut to the order list; the bell shows new notifications.</li>
+        <li><strong>Delivery KPI cards</strong> — Pending, Ongoing, Completed, and Cancelled delivery counts.</li>
+        <li><strong>Recent orders</strong> — the latest assigned orders with status, amount, payment type, and View Details.</li>
+        <li><strong>Bottom navigation</strong> — Home, Orders, Chatting, and Account tabs.</li>
+      </ol>
+      <figcaption><strong>Dashboard.</strong> The deliveryman's home base after login. Numbered markers highlight the four key areas.</figcaption>
+    </figure>
+
+    <figure class="doc-figure">
+      <div class="shot shot-mobile">
+        <img src="../assets/images/screenshots/deliveryman-app-order.png"
+             alt="Deliveryman App Orders — status filter tabs, order cards with items and amount, View Details, and bottom navigation"
+             class="doc-img"
+             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+        <span class="pin" style="left:50%;top:12%;">1</span>
+        <span class="pin" style="left:30%;top:19%;">2</span>
+        <span class="pin" style="left:75%;top:26%;">3</span>
+        <span class="pin" style="left:50%;top:95%;">4</span>
+      </div>
+      <div class="img-placeholder" style="display:none;">
+        <span class="ph-icon">📱</span>
+        <span>Add <code>deliveryman-app-order.png</code> to <code>source/assets/images/screenshots/</code> — the <strong>Orders</strong> screen.</span>
+      </div>
+      <p class="callout-title">Key areas of this screen</p>
+      <ol class="callout-legend">
+        <li><strong>Status filter tabs</strong> — switch between On the Way, Ready to Handover, Confirmed, and Delivered.</li>
+        <li><strong>Order card header</strong> — order number, item count, and date/time.</li>
+        <li><strong>Amount &amp; View Details</strong> — the order total and the button that opens the full order (customer, address, items, and status actions).</li>
+        <li><strong>Bottom navigation</strong> — Home, Orders, Chatting, and Account tabs.</li>
+      </ol>
+      <figcaption><strong>Orders.</strong> The rider's assigned deliveries, filterable by stage; open any order to accept, navigate, and complete it. Numbered markers highlight the four key areas.</figcaption>
+    </figure>
+
     <!-- ========================================================
          PREREQUISITES
          ======================================================== -->
@@ -438,6 +494,13 @@ static String currencySymbolPosition = 'left'; // 'left' or 'right'
         <span class="ph-icon">📱</span>
         <span>Add <code>deliveryman-app-settings.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of the Deliveryman App Settings screen.</span>
       </div>
+      <p class="callout-title">Annotate on the Settings screen</p>
+      <ol class="callout-legend">
+        <li><strong>Language selector</strong> — switch the app's display language.</li>
+        <li><strong>Set up password</strong> — for accounts created via OTP login.</li>
+        <li><strong>Permission toggles</strong> — notification, location, and microphone access.</li>
+        <li><strong>Theme toggle</strong> — dark / light mode preference.</li>
+      </ol>
       <figcaption>
         <strong>Deliveryman App → Settings.</strong> The in-app Settings screen lets the rider switch
         language, set up a password, and toggle notification, location, and microphone permissions.

@@ -252,6 +252,87 @@
       </div>
     </div>
 
+    <h3 id="app-screens">Key Screens (Annotated)</h3>
+    <p>
+      Capture these core screens on a device or emulator and annotate the numbered areas below with
+      arrows or callouts before resubmission. Save each image with the exact file name shown.
+    </p>
+
+    <figure class="doc-figure">
+      <div class="shot shot-mobile">
+        <img src="../assets/images/screenshots/customer-app-home.png"
+             alt="Customer App Home screen — delivery location, module tabs, promo banners, popular categories, and flash deals"
+             class="doc-img"
+             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+        <span class="pin" style="left:32%;top:9.5%;">1</span>
+        <span class="pin" style="left:50%;top:17%;">2</span>
+        <span class="pin" style="left:30%;top:26%;">3</span>
+        <span class="pin" style="left:20%;top:42%;">4</span>
+      </div>
+      <div class="img-placeholder" style="display:none;">
+        <span class="ph-icon">📱</span>
+        <span>Add <code>customer-app-home.png</code> to <code>source/assets/images/screenshots/</code> — the app <strong>Home / Dashboard</strong> screen.</span>
+      </div>
+      <p class="callout-title">Key areas of this screen</p>
+      <ol class="callout-legend">
+        <li><strong>Delivery location</strong> — the customer's address selector, plus the gift and wallet shortcuts.</li>
+        <li><strong>Module tabs</strong> — switch between Grocery, Pharmacy, and Shop.</li>
+        <li><strong>Promotional banners</strong> — the swipeable carousel managed from the admin panel.</li>
+        <li><strong>Popular Categories &amp; Flash Deals</strong> — quick category access and time-limited offers; the bottom bar navigates Home, Search, Categories, Cart, and Account.</li>
+      </ol>
+      <figcaption><strong>Home / Dashboard.</strong> The first screen customers see after launch. Numbered markers highlight the four key areas.</figcaption>
+    </figure>
+
+    <figure class="doc-figure">
+      <div class="shot shot-mobile">
+        <img src="../assets/images/screenshots/customer-app-checkout.png"
+             alt="Customer App Checkout — personal info, delivery info, delivery schedule, payment, receipt, and Place Order"
+             class="doc-img"
+             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+        <span class="pin" style="left:30%;top:30%;">1</span>
+        <span class="pin" style="left:50%;top:45%;">2</span>
+        <span class="pin" style="left:42%;top:63%;">3</span>
+        <span class="pin" style="left:50%;top:93%;">4</span>
+      </div>
+      <div class="img-placeholder" style="display:none;">
+        <span class="ph-icon">📱</span>
+        <span>Add <code>customer-app-checkout.png</code> to <code>source/assets/images/screenshots/</code> — the <strong>Checkout</strong> screen.</span>
+      </div>
+      <p class="callout-title">Key areas of this screen</p>
+      <ol class="callout-legend">
+        <li><strong>Personal &amp; Delivery Info</strong> — the customer's email and the selected drop-off address (editable).</li>
+        <li><strong>Delivery Schedule</strong> — pick a delivery date and time slot.</li>
+        <li><strong>Select Payment</strong> — choose a payment method / gateway.</li>
+        <li><strong>Receipt &amp; Place Order</strong> — subtotal, discount, shipping fee, VAT-inclusive total, and the Place Order button.</li>
+      </ol>
+      <figcaption><strong>Checkout.</strong> The conversion flow from cart to placed order. Numbered markers highlight the four key areas.</figcaption>
+    </figure>
+
+    <figure class="doc-figure">
+      <div class="shot shot-mobile">
+        <img src="../assets/images/screenshots/customer-app-tracking.png"
+             alt="Customer App Order Details — order status, delivery info, ordered item, delivery schedule, delivery hub, and Cancel Order"
+             class="doc-img"
+             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+        <span class="pin" style="left:50%;top:30%;">1</span>
+        <span class="pin" style="left:30%;top:41%;">2</span>
+        <span class="pin" style="left:42%;top:53%;">3</span>
+        <span class="pin" style="left:50%;top:94%;">4</span>
+      </div>
+      <div class="img-placeholder" style="display:none;">
+        <span class="ph-icon">📱</span>
+        <span>Add <code>customer-app-tracking.png</code> to <code>source/assets/images/screenshots/</code> — the <strong>Order Details / Tracking</strong> screen.</span>
+      </div>
+      <p class="callout-title">Key areas of this screen</p>
+      <ol class="callout-legend">
+        <li><strong>Order status</strong> — the order number and current stage (e.g. Pending → Confirmed → On the Way → Delivered).</li>
+        <li><strong>Delivery Info</strong> — recipient name, phone, and delivery address.</li>
+        <li><strong>Ordered items &amp; schedule</strong> — the products with variation/quantity/price and the chosen delivery date and slot.</li>
+        <li><strong>Delivery Hub &amp; actions</strong> — the fulfilling hub, the floating call/support buttons, and Cancel Order.</li>
+      </ol>
+      <figcaption><strong>Order Details / Tracking.</strong> Post-purchase status and delivery information; a live map appears once the order is out for delivery. Numbered markers highlight the four key areas.</figcaption>
+    </figure>
+
     <!-- ========================================================
          PREREQUISITES
          ======================================================== -->
@@ -466,6 +547,13 @@ static const AppModule defaultModule = AppModule.grocery;
         <span class="ph-icon">📱</span>
         <span>Add <code>customer-app-settings.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of the Customer App Settings screen.</span>
       </div>
+      <p class="callout-title">Annotate on the Settings screen</p>
+      <ol class="callout-legend">
+        <li><strong>Language selector</strong> — switch the app's display language.</li>
+        <li><strong>Set up password</strong> — for accounts created via OTP/social login.</li>
+        <li><strong>Offer preferences</strong> — email/SMS marketing opt-in toggles.</li>
+        <li><strong>Permission toggles</strong> — notification, location, and microphone access.</li>
+      </ol>
       <figcaption>
         <strong>Customer App → Settings.</strong> The in-app Settings screen lets users switch
         language, set up a password, opt in to email/SMS offers, and toggle notification, location,
