@@ -1,5 +1,5 @@
 /* =========================================================
-   DayOneMart Documentation — docs.js
+   OneMart Documentation — docs.js
    ========================================================= */
 
 (function () {

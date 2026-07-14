@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Customer App — DayOneMart Docs</title>
+  <title>Customer App — OneMart Docs</title>
   <link rel="stylesheet" href="../assets/css/docs.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>" />
 </head>
@@ -15,7 +15,7 @@
 <header class="navbar">
   <a class="brand" href="../../index.html">
     <span style="font-size:1.5rem;">🛒</span>
-    <span>DayOneMart<span class="brand-dot">.</span></span>
+    <span>OneMart<span class="brand-dot">.</span></span>
   </a>
   <nav>
     <a href="../../index.html">Home</a>
@@ -76,7 +76,7 @@
     <h2 id="introduction">Introduction</h2>
 
     <p>
-      The <strong>DayOneMart Customer App</strong> is a cross-platform mobile application built with
+      The <strong>OneMart Customer App</strong> is a cross-platform mobile application built with
       <span class="mark">Flutter</span> for Android and iOS. It provides customers with an end-to-end
       shopping experience — browsing products, placing orders, real-time tracking, live chat,
       wallet management, loyalty points, and more.
@@ -1241,6 +1241,63 @@ flutter gen-l10n
          ======================================================== -->
     <h2 id="customization">Customization</h2>
 
+    <h3>Branding Checklist — Make the App Your Own</h3>
+    <p>
+      Follow these steps in order to fully rebrand the app with your own name, logo, and colors.
+      Pair this with the backend branding guide
+      (<a href="admin-and-web.html#branding">Admin &amp; Web → Branding &amp; Customization</a>) so the
+      storefront, emails, and apps all match.
+    </p>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>App display name</strong>
+          Change the name shown under the icon and in the system UI in three places:
+          <code>android/app/src/main/res/values/strings.xml</code> (<code>app_name</code>),
+          <code>ios/Runner/Info.plist</code> (<code>CFBundleDisplayName</code> / <code>CFBundleName</code>),
+          and the <code>app_name</code> entry in every <code>lib/l10n/arb/app_*.arb</code> file
+          (then run <code>flutter gen-l10n</code>).
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Bundle ID / package name</strong>
+          Set your own reverse-domain ID (e.g. <code>com.yourcompany.customerapp</code>) via
+          <code>applicationId</code> in <code>android/app/build.gradle</code> and the Bundle Identifier
+          in Xcode. Re-register both apps in Firebase afterwards and replace
+          <code>google-services.json</code> / <code>GoogleService-Info.plist</code> — they are tied to
+          the old ID.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Launcher icon</strong>
+          Replace the icon (see <em>App Icon</em> below) with a 1024 × 1024 px source image.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Splash screen</strong>
+          Swap the launch image/logo (see <em>Splash Screen</em> below) so the first frame shows your brand.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Brand colors</strong>
+          Set your primary/secondary colors in <code>lib/config/theme/</code> using the same hex values
+          you configured in <em>Admin Panel → Settings → Business Setup</em>, so the app matches the
+          storefront exactly.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Rebuild and verify</strong>
+          Run <code>flutter clean &amp;&amp; flutter pub get &amp;&amp; flutter run</code> and confirm
+          the new name, icon, splash, and colors appear on a device.
+        </div>
+      </li>
+    </ol>
+
     <h3>App Theme &amp; Colors</h3>
     <p>
       The global theme is defined in <code>lib/config/theme/</code>. Update color seeds,
@@ -1313,7 +1370,7 @@ flutter_launcher_icons
 </div>
 
 <div class="doc-footer">
-  <p>&copy; 2026 DayOneMart — E-Commerce Solution Documentation</p>
+  <p>&copy; 2026 OneMart — E-Commerce Solution Documentation</p>
   <p style="margin-top:4px;">
     <a href="../../index.html">Home</a> &nbsp;|&nbsp;
     <a href="admin-and-web.html">Admin &amp; Web</a> &nbsp;|&nbsp;
