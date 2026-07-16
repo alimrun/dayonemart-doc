@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Branding &amp; Customization Guide — DayOneMart Docs</title>
+  <link rel="stylesheet" href="../assets/css/docs.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>" />
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+<header class="navbar">
+  <a class="brand" href="../../index.html">
+    <span style="font-size:1.5rem;">🛒</span>
+    <span>DayOneMart<span class="brand-dot">.</span></span>
+  </a>
+  <nav>
+    <a href="../../index.html">Home</a>
+    <a href="admin-and-web.html">Admin &amp; Web</a>
+    <a href="customer-app.html">Customer App</a>
+    <a href="deliveryman-app.html">Deliveryman App</a>
+    <a href="api-reference.html">API Reference</a>
+    <a href="branding-guide.html" class="active">Branding</a>
+  </nav>
+  <div class="nav-actions">
+    <button class="btn-icon menu-toggle" title="Toggle menu" aria-label="Toggle sidebar">☰</button>
+    <button class="btn-icon theme-toggle" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<!-- ============================================================
+     PAGE LAYOUT
+     ============================================================ -->
+<div class="scroll-progress"><div class="scroll-progress-bar"></div></div>
+<div class="page-doc">
+
+  <!-- ---- Sidebar ---- -->
+  <aside class="sidebar">
+    <div class="sidebar-search">
+      <span class="search-icon">🔍</span>
+      <input id="search" type="search" placeholder="Search sections… ( / )" />
+    </div>
+
+    <h4>Contents</h4>
+    <nav>
+      <ul class="toc">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#branding-map">Where Everything Is Set</a></li>
+        <li><a href="#web-branding">Web — Name, Logo &amp; Colors</a></li>
+        <li><a href="#web-content">Web — Content &amp; Pages</a></li>
+        <li><a href="#email-branding">Email Templates</a></li>
+        <li><a href="#app-rename">Apps — Rename &amp; Bundle ID</a></li>
+        <li><a href="#app-icon">Apps — Icon</a></li>
+        <li><a href="#app-splash">Apps — Splash Screen</a></li>
+        <li><a href="#app-colors">Apps — Theme Colors</a></li>
+        <li><a href="#app-content">Apps — Text, Images &amp; Animations</a></li>
+        <li><a href="#advanced-theming">Advanced Web Theming (Dev)</a></li>
+        <li><a href="#whitelabel-checklist">White-Label Checklist</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ---- Main Content ---- -->
+  <section class="content">
+
+    <!-- ========================================================
+         OVERVIEW
+         ======================================================== -->
+    <h2 id="overview">Overview</h2>
+
+    <p>
+      This guide walks you through <strong>rebranding the entire DayOneMart solution as your own</strong> —
+      the web storefront, the admin panel, and both Flutter apps. It is organized so a
+      <strong>store owner</strong> can complete the web sections without touching code, and the
+      app sections give exact file paths and commands for whoever builds your mobile apps.
+    </p>
+
+    <ul class="list">
+      <li><strong>Logos &amp; identity</strong> — business name, logo, favicon, app name, app icons</li>
+      <li><strong>Colors</strong> — brand colors for the storefront, admin panel, and both apps</li>
+      <li><strong>Content</strong> — banners, policy pages, onboarding text, translations, email templates</li>
+    </ul>
+
+    <!-- ========================================================
+         BRANDING MAP
+         ======================================================== -->
+    <h2 id="branding-map">Where Everything Is Set</h2>
+
+    <p>One reference table for every brand asset across the three products:</p>
+
+    <table class="doc-table">
+      <thead><tr><th>Brand asset</th><th>Web (storefront + admin)</th><th>Customer App</th><th>Deliveryman App</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Name</strong></td>
+          <td>Admin Panel → Settings → Business Setup → Basic Info</td>
+          <td><code>android:label</code> in <code>AndroidManifest.xml</code>; <code>CFBundleName</code> in <code>Info.plist</code></td>
+          <td>Same files in the Deliveryman App project</td>
+        </tr>
+        <tr>
+          <td><strong>Logo</strong></td>
+          <td>Business Setup → Logo upload</td>
+          <td>Replace image assets in <code>assets/images/</code></td>
+          <td>Replace image assets in <code>assets/images/</code></td>
+        </tr>
+        <tr>
+          <td><strong>Favicon / app icon</strong></td>
+          <td>Business Setup → Icon upload</td>
+          <td><code>flutter_launcher_icons</code> or the <code>mipmap-*</code> / <code>AppIcon.appiconset</code> folders</td>
+          <td>Same approach</td>
+        </tr>
+        <tr>
+          <td><strong>Primary / secondary color</strong></td>
+          <td>Business Setup → Admin Primary &amp; Secondary Color (hex)</td>
+          <td><code>lib/config/theme/</code></td>
+          <td><code>lib/config/theme/</code></td>
+        </tr>
+        <tr>
+          <td><strong>Content pages</strong> (About, Terms, Privacy…)</td>
+          <td>Admin Panel → Website Setup / page builder</td>
+          <td>Fetched from the API — edit once in the admin panel</td>
+          <td>Fetched from the API — edit once in the admin panel</td>
+        </tr>
+        <tr>
+          <td><strong>UI text / translations</strong></td>
+          <td><code>lang/</code> + <code>AdminPanel/locales/</code> + <code>StoreFront/locales/</code></td>
+          <td><code>lib/l10n/arb/app_*.arb</code></td>
+          <td><code>lib/l10n/arb/app_*.arb</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-success">
+      <span class="alert-icon">✅</span>
+      <div>
+        <strong>Edit content once, everywhere.</strong> Policy pages, banners, FAQs, and support info
+        are stored in the backend and served over the API — both mobile apps and the storefront pick
+        up changes immediately, with no app update required.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         WEB BRANDING
+         ======================================================== -->
+    <h2 id="web-branding">Web — Business Name, Logo &amp; Colors (No Code)</h2>
+
+    <figure class="doc-figure">
+      <div class="shot">
+        <img src="../assets/images/screenshots/admin-branding.png"
+             alt="Admin Panel Business Setup — business name, logo, icon/favicon, and admin primary/secondary color fields"
+             class="doc-img"
+             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+        <span class="pin" style="left:51%;top:27%;">1</span>
+        <span class="pin" style="left:51%;top:74%;">2</span>
+        <span class="pin" style="left:82%;top:74%;">3</span>
+        <span class="pin" style="left:40%;top:93%;">4</span>
+      </div>
+      <div class="img-placeholder" style="display:none;">
+        <span class="ph-icon">🖼️</span>
+        <span>Add <code>admin-branding.png</code> to <code>source/assets/images/screenshots/</code>.</span>
+      </div>
+      <p class="callout-title">Fields on this screen</p>
+      <ol class="callout-legend">
+        <li><strong>Business Name</strong> — shown in the storefront header, emails, and browser title.</li>
+        <li><strong>Logo</strong> — the main brand logo (JPG/PNG, max 2 MB, ~120 × 80 px).</li>
+        <li><strong>Icon</strong> — the favicon shown in the browser tab.</li>
+        <li><strong>Admin Primary &amp; Secondary Color</strong> — accent colors used across the UI.</li>
+      </ol>
+      <figcaption>
+        <strong>Admin Panel → Settings → Business Setup → Basic Info</strong> — the single screen where
+        a store owner rebrands the web platform without touching code.
+      </figcaption>
+    </figure>
+
+    <h3>Step-by-Step</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Log in to the Admin Panel</strong>
+          Use the administrator account created during installation, then open
+          <em>Settings → Business Setup → Basic Info</em>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Set the Business Name</strong>
+          Type your store name. It appears in the storefront header and footer, the browser tab title,
+          invoices, and every transactional email.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Upload your Logo</strong>
+          Click the Logo upload field and choose a <strong>transparent PNG</strong> (~300 × 80 px works
+          well). Transparent backgrounds look correct in both light and dark headers. Keep the file
+          under ~200 KB for fast page loads.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Upload your Icon (favicon)</strong>
+          Choose a square PNG (512 × 512 px recommended). This becomes the browser-tab icon for the
+          storefront and admin panel.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Set the Primary and Secondary colors</strong>
+          Enter your brand's hex values (e.g. <code>#0EA5E9</code>). These drive buttons, links,
+          badges, and highlights across the storefront and admin panel.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Save</strong>
+          Changes apply on the next page load — no rebuild, redeploy, or cache clear needed.
+        </div>
+      </li>
+    </ol>
+
+    <table class="doc-table">
+      <thead><tr><th>Asset</th><th>Where it appears</th><th>Recommended size</th><th>Format</th></tr></thead>
+      <tbody>
+        <tr><td>Main logo</td><td>Storefront &amp; admin header</td><td>~300 × 80 px (transparent)</td><td>PNG / SVG</td></tr>
+        <tr><td>Favicon</td><td>Browser tab</td><td>512 × 512 px (square)</td><td>PNG / ICO</td></tr>
+        <tr><td>Email logo</td><td>Header of transactional emails</td><td>~300 × 80 px</td><td>PNG</td></tr>
+        <tr><td>Homepage banners</td><td>Storefront &amp; app home carousel</td><td>1200 × 600 px</td><td>PNG / JPG</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ========================================================
+         WEB CONTENT
+         ======================================================== -->
+    <h2 id="web-content">Web — Content &amp; Pages (No Code)</h2>
+
+    <p>All customer-facing content is managed from the Admin Panel and served to the storefront <em>and</em> both apps:</p>
+
+    <table class="doc-table">
+      <thead><tr><th>Content</th><th>Where to edit</th><th>Shows up in</th></tr></thead>
+      <tbody>
+        <tr><td>Homepage banners &amp; featured sections</td><td>Admin Panel → Website Setup</td><td>Storefront home + Customer App home carousel</td></tr>
+        <tr><td>About Us, Privacy Policy, Terms &amp; Conditions, Refund / Cancellation Policy</td><td>Admin Panel → Website Setup → Pages (rich-text page builder)</td><td>Storefront footer pages + app content screens</td></tr>
+        <tr><td>FAQs</td><td>Admin Panel → FAQ management</td><td>Storefront + app Help screens</td></tr>
+        <tr><td>Blog posts</td><td>Admin Panel → Blog</td><td>Storefront blog</td></tr>
+        <tr><td>Social media links</td><td>Admin Panel → Website Setup → Social Links</td><td>Storefront footer</td></tr>
+        <tr><td>Contact &amp; support info</td><td>Admin Panel → Business Setup (email, phone, address)</td><td>Storefront contact page + app Support screens</td></tr>
+        <tr><td>Cookie consent banner</td><td>Admin Panel → Settings → Cookies Setup</td><td>Storefront</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Editing a Policy Page</h3>
+    <ol class="steps">
+      <li><div class="step-body"><strong>Open the page builder</strong> — Admin Panel → Website Setup → select the page (e.g. <em>Privacy Policy</em>).</div></li>
+      <li><div class="step-body"><strong>Write your content</strong> — the rich-text editor supports headings, lists, links, and images.</div></li>
+      <li><div class="step-body"><strong>Save and verify</strong> — open the page on the storefront footer, then check the same content appears in the app under <em>Account → Privacy Policy</em> (it is fetched from <code>/api/v1/customer/app-screen/privacy</code>).</div></li>
+    </ol>
+
+    <!-- ========================================================
+         EMAIL BRANDING
+         ======================================================== -->
+    <h2 id="email-branding">Email Templates</h2>
+
+    <ul class="list">
+      <li><strong>Logo, business name, and colors</strong> used in emails come from Business Setup — set them once as described above.</li>
+      <li><strong>Template text</strong> is managed in Admin Panel → Settings → email template configuration.</li>
+      <li><strong>Developers</strong> can restyle the HTML directly: Mailable classes live in <code>app/Mail/</code>, Blade views in <code>resources/views/emails/</code>.</li>
+    </ul>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        Emails are queued — make sure the queue worker is running
+        (<code>php artisan queue:work</code>) or set <code>QUEUE_CONNECTION=sync</code> on hosts
+        without a persistent worker, otherwise template changes will appear to "not work" simply
+        because no mail is being sent.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         APP RENAME
+         ======================================================== -->
+    <h2 id="app-rename">Mobile Apps — Rename the App &amp; Change the Bundle ID</h2>
+
+    <p>
+      Do this <strong>once per app</strong> (Customer and Deliveryman), <strong>before</strong>
+      registering the apps with Firebase — the bundle ID you choose here must match the one you
+      register there.
+    </p>
+
+    <h3>Step 1 — Android: display name</h3>
+    <p>Edit <code>android/app/src/main/AndroidManifest.xml</code> and change the label:</p>
+<pre class="code highlight">
+&lt;application
+    android:label="YourStore"
+    ... &gt;
+</pre>
+
+    <h3>Step 2 — Android: application ID (package name)</h3>
+    <p>Edit <code>android/app/build.gradle.kts</code> and set your reverse-domain ID:</p>
+<pre class="code highlight">
+defaultConfig {
+    applicationId = "com.yourcompany.yourstore"
+    ...
+}
+</pre>
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        The <code>applicationId</code> permanently identifies your app on Google Play — it cannot be
+        changed after the first release. Pick your final ID now, and use a <em>different</em> ID for
+        the Customer and Deliveryman apps (e.g. <code>…yourstore</code> and
+        <code>…yourstore.delivery</code>).
+      </div>
+    </div>
+
+    <h3>Step 3 — iOS: display name and bundle identifier</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Open the workspace</strong> — <code>open ios/Runner.xcworkspace</code> in Xcode.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Set the Bundle Identifier</strong> — select the <em>Runner</em> target →
+          <em>Signing &amp; Capabilities</em> → set <strong>Bundle Identifier</strong> to
+          <code>com.yourcompany.yourstore</code>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Set the Display Name</strong> — in the <em>General</em> tab set
+          <strong>Display Name</strong> (or edit <code>CFBundleDisplayName</code> /
+          <code>CFBundleName</code> in <code>ios/Runner/Info.plist</code>).
+        </div>
+      </li>
+    </ol>
+
+    <h3>Step 4 — Re-register with Firebase</h3>
+    <p>
+      Firebase config files are tied to the bundle ID. After renaming, register the new IDs in your
+      Firebase project and replace <code>android/app/google-services.json</code> and
+      <code>ios/Runner/GoogleService-Info.plist</code>, or re-run <code>flutterfire configure</code>.
+      Then rebuild:
+    </p>
+<pre class="code">
+flutter clean
+flutter pub get
+flutter run
+</pre>
+
+    <!-- ========================================================
+         APP ICON
+         ======================================================== -->
+    <h2 id="app-icon">Mobile Apps — App Icon</h2>
+
+    <p>The fastest way is the <code>flutter_launcher_icons</code> package, which generates every required size from one image:</p>
+
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Prepare your icon</strong>
+          A 1024 × 1024 px PNG, no transparency for iOS (Apple requires an opaque icon). Save it as
+          <code>assets/images/app_icon.png</code> in the app project.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Add the dev dependency and config</strong> to <code>pubspec.yaml</code>:
+<pre class="code highlight">
+dev_dependencies:
+  flutter_launcher_icons: ^0.14.0
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"
+</pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Generate the icons:</strong>
+<pre class="code">
+flutter pub get
+dart run flutter_launcher_icons
+</pre>
+          This overwrites <code>android/app/src/main/res/mipmap-*/ic_launcher.png</code> and
+          <code>ios/Runner/Assets.xcassets/AppIcon.appiconset/</code> automatically.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Verify</strong>
+          Run <code>flutter run</code> and check the icon on the device's home screen / app drawer.
+        </div>
+      </li>
+    </ol>
+
+    <p>Prefer manual control? Replace the images directly in the two folders above using your own generated sizes.</p>
+
+    <!-- ========================================================
+         APP SPLASH
+         ======================================================== -->
+    <h2 id="app-splash">Mobile Apps — Splash Screen</h2>
+
+    <ul class="list">
+      <li><strong>Android:</strong> edit <code>android/app/src/main/res/drawable/launch_background.xml</code> and replace the referenced drawable with your logo image.</li>
+      <li><strong>iOS:</strong> replace the images in <code>ios/Runner/Assets.xcassets/LaunchImage.imageset/</code> (1x / 2x / 3x sizes).</li>
+      <li><strong>Automated alternative:</strong> the <code>flutter_native_splash</code> package generates both platforms from one config — add it to <code>pubspec.yaml</code>, set <code>color</code> and <code>image</code>, and run <code>dart run flutter_native_splash:create</code>.</li>
+      <li>The in-app animated splash (after the native splash) lives in <code>lib/features/splash/</code> — swap the Lottie/logo asset there if you want to change it.</li>
+    </ul>
+
+    <!-- ========================================================
+         APP COLORS
+         ======================================================== -->
+    <h2 id="app-colors">Mobile Apps — Theme Colors</h2>
+
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Open the theme folder</strong>
+          Both apps define their theme in <code>lib/config/theme/</code> — colors, typography, and
+          component themes for light and dark mode.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Replace the seed / primary colors</strong>
+          Set the same hex values you entered in the web installer (<em>Theme Setup</em>) or in
+          <em>Business Setup</em>, so web and mobile branding match. Every widget reads colors via
+          <code>Theme.of(context)</code>, so the change propagates app-wide.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Hot-reload to preview</strong>
+          Run <code>flutter run</code> and press <code>r</code> after each tweak. Check both light and
+          dark modes (the Deliveryman App has a theme toggle in Settings).
+        </div>
+      </li>
+    </ol>
+
+    <!-- ========================================================
+         APP CONTENT
+         ======================================================== -->
+    <h2 id="app-content">Mobile Apps — Text, Images &amp; Animations</h2>
+
+    <h3>UI Text (Translations)</h3>
+    <p>
+      Every user-visible string lives in the ARB localization files — edit the English source and any
+      other languages you support, then regenerate:
+    </p>
+<pre class="code">
+# 1. Edit the strings
+lib/l10n/arb/app_en.arb     (plus app_es / app_ar / app_hi / app_bn)
+
+# 2. Regenerate the localization classes
+flutter gen-l10n
+</pre>
+
+    <h3>Images &amp; Illustrations</h3>
+    <ul class="list">
+      <li>Static images / logos: <code>assets/images/</code> (SVGs under <code>assets/images/svg/</code>)</li>
+      <li>Lottie animations (splash, empty states, success screens): <code>assets/json/</code> — replace the <code>.json</code> files with your own from <a href="https://lottiefiles.com" target="_blank">lottiefiles.com</a></li>
+      <li>Asset references are code-generated — after adding or renaming files run <code>dart run build_runner build --delete-conflicting-outputs</code> to refresh <code>assets.gen.dart</code></li>
+    </ul>
+
+    <h3>Onboarding Screens</h3>
+    <p>
+      The first-run onboarding flow lives in <code>lib/features/onboarding/</code>. Swap the
+      illustration assets and edit the title/subtitle strings in the ARB files to tell your own story.
+    </p>
+
+    <h3>Currency Symbol (Deliveryman App)</h3>
+    <p>
+      The Customer App takes currency from the backend config; the Deliveryman App also allows a
+      local override — see <a href="deliveryman-app.html#configuration">Deliveryman App →
+      Configuration → Currency Symbol</a>.
+    </p>
+
+    <!-- ========================================================
+         ADVANCED THEMING
+         ======================================================== -->
+    <h2 id="advanced-theming">Advanced Web Theming (Developers)</h2>
+
+    <p>
+      For visual changes beyond the admin settings, the web UI is styled with
+      <strong>Tailwind CSS 4 driven by CSS variables</strong>:
+    </p>
+    <ul class="list">
+      <li>Color tokens and design variables: <code>resources/css/app.css</code> (Tailwind v4 <code>@theme</code> configuration)</li>
+      <li>Admin panel pages: <code>resources/js/AdminPanel/Pages/</code>; storefront pages: <code>resources/js/StoreFront/Pages/</code></li>
+      <li>Shared UI components: <code>resources/js/components/</code> (add Shadcn components with <code>npm run shadcn:admin</code> / <code>npm run shadcn:storefront</code>)</li>
+      <li>After any code-level change, rebuild assets: <code>npm run build</code></li>
+    </ul>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        Most owners never need this — the admin-panel branding settings cover name, logo, favicon, and
+        colors. Edit <code>app.css</code> only for typography, spacing, or component-level styling
+        changes.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         CHECKLIST
+         ======================================================== -->
+    <h2 id="whitelabel-checklist">White-Label Checklist</h2>
+
+    <p>Work through this list top to bottom for a complete rebrand:</p>
+
+    <ul class="checklist">
+      <li>Business name set in Admin Panel → Business Setup</li>
+      <li>Logo uploaded (transparent PNG) and visible on the storefront header</li>
+      <li>Favicon uploaded and visible in the browser tab</li>
+      <li>Primary + secondary brand colors set (web) and matched in both apps' <code>lib/config/theme/</code></li>
+      <li>Homepage banners replaced with your own campaigns</li>
+      <li>About / Privacy / Terms / Refund / Cancellation pages written</li>
+      <li>FAQ entries and support contact details updated</li>
+      <li>Email templates reviewed with your name and logo</li>
+      <li>Both apps renamed (Android label + iOS display name)</li>
+      <li>Both apps' bundle IDs changed and re-registered with Firebase</li>
+      <li>App icons generated for both apps (Android + iOS)</li>
+      <li>Splash screens replaced (native + in-app)</li>
+      <li>Onboarding screens and Lottie animations customized</li>
+      <li>ARB translation strings reviewed for your store's tone</li>
+    </ul>
+
+    <hr class="section-divider" />
+    <p style="color:var(--text-muted);font-size:.85rem;">
+      Need help? Contact <a href="mailto:contact@6amtech.com">contact@6amtech.com</a>
+      or visit our website for support.
+    </p>
+
+  </section>
+</div>
+
+<div class="doc-footer">
+  <p>&copy; 2026 DayOneMart — E-Commerce Solution Documentation</p>
+  <p style="margin-top:4px;">
+    <a href="../../index.html">Home</a> &nbsp;|&nbsp;
+    <a href="admin-and-web.html">Admin &amp; Web</a> &nbsp;|&nbsp;
+    <a href="customer-app.html">Customer App</a> &nbsp;|&nbsp;
+    <a href="deliveryman-app.html">Deliveryman App</a> &nbsp;|&nbsp;
+    <a href="mailto:contact@6amtech.com">Contact Support</a>
+  </p>
+</div>
+
+<button class="back-to-top" aria-label="Back to top" title="Back to top">&#8593;</button>
+
+<script src="../assets/js/docs.js"></script>
+</body>
+</html>

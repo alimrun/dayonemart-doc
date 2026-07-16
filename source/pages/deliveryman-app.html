@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Deliveryman App — OneMart Docs</title>
+  <title>Deliveryman App — DayOneMart Docs</title>
   <link rel="stylesheet" href="../assets/css/docs.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚚</text></svg>" />
 </head>
@@ -15,13 +15,15 @@
 <header class="navbar">
   <a class="brand" href="../../index.html">
     <span style="font-size:1.5rem;">🛒</span>
-    <span>OneMart<span class="brand-dot">.</span></span>
+    <span>DayOneMart<span class="brand-dot">.</span></span>
   </a>
   <nav>
     <a href="../../index.html">Home</a>
     <a href="admin-and-web.html">Admin &amp; Web</a>
     <a href="customer-app.html">Customer App</a>
     <a href="deliveryman-app.html" class="active">Deliveryman App</a>
+    <a href="api-reference.html">API Reference</a>
+    <a href="branding-guide.html">Branding</a>
   </nav>
   <div class="nav-actions">
     <button class="btn-icon menu-toggle" title="Toggle menu" aria-label="Toggle sidebar">☰</button>
@@ -49,7 +51,7 @@
         <li><a href="#app-features">App Features</a></li>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#project-structure">Project Structure</a></li>
-        <li><a href="#quick-start">Quick Start</a></li>
+        <li><a href="#quick-start">Installation (Step-by-Step)</a></li>
         <li><a href="#configuration">Configuration</a></li>
         <li><a href="#firebase-setup">Firebase Setup</a></li>
         <li><a href="#google-maps-setup">Google Maps Setup</a></li>
@@ -73,7 +75,7 @@
     <h2 id="introduction">Introduction</h2>
 
     <p>
-      The <strong>OneMart Deliveryman App</strong> is a dedicated Flutter mobile application
+      The <strong>DayOneMart Deliveryman App</strong> is a dedicated Flutter mobile application
       for delivery personnel. It enables deliverymen to receive and manage assigned orders,
       navigate to delivery locations via <span class="mark">Google Maps</span>, update order
       statuses in real-time, communicate with admin via <span class="mark">live chat</span>,
@@ -401,31 +403,106 @@ features/order/
     <!-- ========================================================
          QUICK START
          ======================================================== -->
-    <h2 id="quick-start">Quick Start</h2>
+    <h2 id="quick-start">Installation Guide (Step-by-Step)</h2>
 
-    <h3>Setup Checklist</h3>
+    <p>
+      Follow these steps <strong>in order</strong> to go from the downloaded ZIP to the app running on
+      a device. Steps 6–7 point to their own detailed sections further down this page.
+    </p>
+
+    <h3>Before You Start — Checklist</h3>
     <ul class="checklist">
       <li>Flutter SDK installed and <code>flutter doctor</code> passes</li>
       <li>Android Studio / Xcode configured with emulator/simulator</li>
-      <li>Firebase project created with Android + iOS apps registered (package: <code>com.dayonesoft.onemartdeliveryman</code>)</li>
+      <li>Firebase project created (you will register the apps in Step 6; default package: <code>com.dayonesoft.onemartdeliveryman</code>)</li>
       <li>Google Maps API key obtained and enabled for Maps SDK + Directions API</li>
-      <li>Backend (Admin &amp; Web) is deployed and accessible</li>
+      <li>Backend (Admin &amp; Web) is deployed and accessible — <a href="admin-and-web.html#installation-process">install it first</a></li>
     </ul>
 
-    <h3>Install and Run</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Extract the project</strong>
+          Unzip the package and open the <code>Delivery Man App</code> folder in your editor
+          (VS Code / Android Studio). All commands below are run from this folder.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Verify your Flutter environment</strong>
 <pre class="code">
-# 1. Get all pub packages
-flutter pub get
-
-# 2. Generate code (freezed models, injectable DI, asset refs)
-dart run build_runner build --delete-conflicting-outputs
-
-# 3. Generate localization files
-flutter gen-l10n
-
-# 4. Run the app
-flutter run
+flutter doctor -v
 </pre>
+          Fix any reported errors (missing Android SDK, unaccepted licenses, no Xcode) before
+          continuing.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Install dependencies</strong>
+<pre class="code">
+flutter pub get
+</pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Generate code</strong>
+          The project relies on code generation — it will not compile without this step:
+<pre class="code">
+dart run build_runner build --delete-conflicting-outputs
+flutter gen-l10n
+</pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Point the app at your backend</strong>
+          Open <code>lib/config/util/app_constants.dart</code> and set <code>baseUrl</code> to your
+          deployed Admin &amp; Web instance (always <code>https://</code> in production). Also set your
+          currency symbol — see <a href="#configuration">Configuration</a>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Connect Firebase</strong>
+          Register the Android and iOS apps in your Firebase project, then place
+          <code>google-services.json</code> in <code>android/app/</code> and
+          <code>GoogleService-Info.plist</code> in <code>ios/Runner/</code> (or run
+          <code>flutterfire configure</code>). Full walkthrough:
+          <a href="#firebase-setup">Firebase Setup</a>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Add your Google Maps API key</strong>
+          Copy <code>secrets.xml.example</code> to
+          <code>android/app/src/main/res/values/secrets.xml</code> and fill in the key; add the iOS
+          key to <code>Info.plist</code>. Full walkthrough:
+          <a href="#google-maps-setup">Google Maps Setup</a>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Run the app</strong>
+<pre class="code">
+flutter devices                  # list connected devices
+flutter run -d &lt;device-id&gt;      # debug build on a device
+</pre>
+          Log in with a deliveryman account created in the Admin Panel
+          (<em>Users → Deliverymen → Create New</em>), assign that deliveryman a test order, and
+          confirm it appears on the app dashboard.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Rebrand and release</strong>
+          Rename the app, set your bundle ID, icon, splash, and colors using the
+          <a href="branding-guide.html">Branding &amp; Customization Guide</a>, then produce store
+          builds following <a href="#build-and-release">Build &amp; Release</a>.
+        </div>
+      </li>
+    </ol>
 
     <!-- ========================================================
          CONFIGURATION
@@ -902,6 +979,15 @@ flutter build ipa --release --obfuscate --split-debug-info=build/ios/symbols
       and handles JWT token attachment, refresh, and error handling automatically.
     </p>
 
+    <div class="alert alert-info">
+      <span class="alert-icon">🔌</span>
+      <div>
+        The full endpoint-by-endpoint technical reference — methods, paths, auth requirements,
+        response envelope, and third-party integration points — is on the dedicated
+        <a href="api-reference.html#deliveryman-api">API Reference</a> page.
+      </div>
+    </div>
+
     <h3>Authentication Flow</h3>
 <pre class="code">
 POST /api/v1/delivery-man/auth/login               ← Email/phone + password
@@ -1081,56 +1167,15 @@ flutter gen-l10n
          ======================================================== -->
     <h2 id="customization">Customization</h2>
 
-    <h3>Branding Checklist — Make the App Your Own</h3>
-    <p>
-      Follow these steps in order to fully rebrand the app with your own name, logo, and colors.
-      Pair this with the backend branding guide
-      (<a href="admin-and-web.html#branding">Admin &amp; Web → Branding &amp; Customization</a>) so the
-      storefront, emails, and apps all match.
-    </p>
-    <ol class="steps">
-      <li>
-        <div class="step-body">
-          <strong>App display name</strong>
-          Change the name shown under the icon and in the system UI:
-          <code>android/app/src/main/res/values/strings.xml</code> (<code>app_name</code>),
-          <code>ios/Runner/Info.plist</code> (<code>CFBundleDisplayName</code> / <code>CFBundleName</code>),
-          and the <code>app_name</code> entry in every <code>lib/l10n/arb/app_*.arb</code> file
-          (then run <code>flutter gen-l10n</code>).
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Bundle ID / package name</strong>
-          Set your own reverse-domain ID (e.g. <code>com.yourcompany.deliveryapp</code>) via
-          <code>applicationId</code> in <code>android/app/build.gradle</code> and the Bundle Identifier
-          in Xcode. Re-register both apps in Firebase afterwards and replace
-          <code>google-services.json</code> / <code>GoogleService-Info.plist</code> — they are tied to
-          the old ID.
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Launcher icon</strong>
-          Replace the icon (see <em>App Icon</em> below) with a 1024 × 1024 px source image.
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Brand colors</strong>
-          Set your primary/secondary colors in <code>lib/config/theme/</code> using the same hex values
-          you configured in <em>Admin Panel → Settings → Business Setup</em>, so both apps and the
-          storefront match.
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Rebuild and verify</strong>
-          Run <code>flutter clean &amp;&amp; flutter pub get &amp;&amp; flutter run</code> and confirm
-          the new name, icon, and colors appear on a device.
-        </div>
-      </li>
-    </ol>
+    <div class="alert alert-info">
+      <span class="alert-icon">🎨</span>
+      <div>
+        For the complete white-label walkthrough — app rename, bundle ID, icon, splash, colors,
+        onboarding content, and translations for <em>both</em> apps plus the web platform — see the
+        dedicated <a href="branding-guide.html">Branding &amp; Customization Guide</a>. The essentials
+        for this app are summarized below.
+      </div>
+    </div>
 
     <h3>App Theme &amp; Colors</h3>
     <p>
@@ -1196,7 +1241,7 @@ flutter gen-l10n
 </div>
 
 <div class="doc-footer">
-  <p>&copy; 2026 OneMart — E-Commerce Solution Documentation</p>
+  <p>&copy; 2026 DayOneMart — E-Commerce Solution Documentation</p>
   <p style="margin-top:4px;">
     <a href="../../index.html">Home</a> &nbsp;|&nbsp;
     <a href="admin-and-web.html">Admin &amp; Web</a> &nbsp;|&nbsp;

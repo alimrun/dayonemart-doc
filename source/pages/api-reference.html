@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference — DayOneMart Docs</title>
+  <link rel="stylesheet" href="../assets/css/docs.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔌</text></svg>" />
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+     ============================================================ -->
+<header class="navbar">
+  <a class="brand" href="../../index.html">
+    <span style="font-size:1.5rem;">🛒</span>
+    <span>DayOneMart<span class="brand-dot">.</span></span>
+  </a>
+  <nav>
+    <a href="../../index.html">Home</a>
+    <a href="admin-and-web.html">Admin &amp; Web</a>
+    <a href="customer-app.html">Customer App</a>
+    <a href="deliveryman-app.html">Deliveryman App</a>
+    <a href="api-reference.html" class="active">API Reference</a>
+    <a href="branding-guide.html">Branding</a>
+  </nav>
+  <div class="nav-actions">
+    <button class="btn-icon menu-toggle" title="Toggle menu" aria-label="Toggle sidebar">☰</button>
+    <button class="btn-icon theme-toggle" title="Toggle theme" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<!-- ============================================================
+     PAGE LAYOUT
+     ============================================================ -->
+<div class="scroll-progress"><div class="scroll-progress-bar"></div></div>
+<div class="page-doc">
+
+  <!-- ---- Sidebar ---- -->
+  <aside class="sidebar">
+    <div class="sidebar-search">
+      <span class="search-icon">🔍</span>
+      <input id="search" type="search" placeholder="Search sections… ( / )" />
+    </div>
+
+    <h4>Contents</h4>
+    <nav>
+      <ul class="toc">
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#authentication">Authentication (JWT)</a></li>
+        <li><a href="#headers">Request Headers</a></li>
+        <li><a href="#response-format">Response Format</a></li>
+        <li><a href="#status-codes">HTTP Status Codes</a></li>
+        <li><a href="#customer-api">Customer API</a></li>
+        <li class="toc-sub"><a href="#customer-auth">— Authentication</a></li>
+        <li class="toc-sub"><a href="#customer-catalog">— Catalog (Public)</a></li>
+        <li class="toc-sub"><a href="#customer-cart-checkout">— Cart &amp; Checkout</a></li>
+        <li class="toc-sub"><a href="#customer-account">— Account (Protected)</a></li>
+        <li class="toc-sub"><a href="#customer-app-screen">— App Screen &amp; Content</a></li>
+        <li><a href="#deliveryman-api">Deliveryman API</a></li>
+        <li><a href="#admin-api">Admin API</a></li>
+        <li><a href="#payment-callbacks">Payment Gateway Endpoints</a></li>
+        <li><a href="#integration-points">Integration Points</a></li>
+        <li><a href="#postman">Postman Collection</a></li>
+        <li><a href="#extending-api">Extending the API</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- ---- Main Content ---- -->
+  <section class="content">
+
+    <!-- ========================================================
+         OVERVIEW
+         ======================================================== -->
+    <h2 id="overview">Overview</h2>
+
+    <p>
+      This page is the <strong>developer reference</strong> for the DayOneMart REST API — the single
+      integration surface shared by the <a href="customer-app.html">Customer App</a>, the
+      <a href="deliveryman-app.html">Deliveryman App</a>, and the Vue-based Admin Panel. Every endpoint
+      listed below is registered in the Laravel route files that ship with the product, so you can
+      verify each one directly in the source:
+    </p>
+
+    <table class="doc-table">
+      <thead><tr><th>Audience</th><th>URL Prefix</th><th>Route File</th></tr></thead>
+      <tbody>
+        <tr><td>Customer App / Storefront</td><td><code>/api/v1/customer</code></td><td><code>routes/api/v1/customer.php</code></td></tr>
+        <tr><td>Deliveryman App</td><td><code>/api/v1/delivery-man</code></td><td><code>routes/api/v1/deliveryman.php</code></td></tr>
+        <tr><td>Admin Panel</td><td><code>/api/v1/admin</code></td><td><code>routes/api/v1/admin.php</code></td></tr>
+        <tr><td>Payment gateway redirects</td><td><code>/payment-gateway</code></td><td><code>routes/payment.php</code></td></tr>
+      </tbody>
+    </table>
+
+<pre class="code">
+Base URL:   https://yourdomain.com/api/v1
+Format:     JSON (request and response)
+Auth:       Bearer JWT — Authorization: Bearer {token}
+</pre>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        In the tables below, the <strong>Auth</strong> column means:
+        <strong>Public</strong> — no token required;
+        <strong>JWT</strong> — requires a valid <code>Authorization: Bearer</code> token;
+        <strong>JWT + RBAC</strong> — requires a token <em>and</em> the listed employee permission.
+        All paths are relative to <code>https://yourdomain.com/api/v1</code> unless noted otherwise.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         AUTHENTICATION
+         ======================================================== -->
+    <h2 id="authentication">Authentication (JWT)</h2>
+
+    <p>
+      The API uses <strong>JWT bearer tokens</strong> issued by <code>tymon/jwt-auth</code>. Each
+      audience (customer, deliveryman, admin) obtains a token from its own login endpoint and sends it
+      on every protected request.
+    </p>
+
+    <p><strong>1. Log in to obtain a token</strong></p>
+<pre class="code">
+POST /api/v1/customer/auth/login
+Content-Type: application/json
+
+{
+  "email": "customer@example.com",
+  "password": "secret123"
+}
+</pre>
+
+    <p><strong>2. Response</strong></p>
+<pre class="code">
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+    "token_type": "bearer",
+    "expires_in": 3600,
+    "user": { "id": 12, "name": "Jane Doe", "email": "customer@example.com" }
+  }
+}
+</pre>
+
+    <p><strong>3. Call protected endpoints with the token</strong></p>
+<pre class="code">
+GET /api/v1/customer/orders
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
+</pre>
+
+    <p><strong>4. Refresh before expiry, log out to invalidate</strong></p>
+<pre class="code">
+POST /api/v1/customer/auth/refresh    Authorization: Bearer {current_token}
+POST /api/v1/customer/auth/logout     Authorization: Bearer {current_token}
+</pre>
+
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        The <code>JWT_SECRET</code> in <code>.env</code> signs every token. It is generated once with
+        <code>php artisan jwt:secret</code> during installation. Changing it invalidates all issued
+        tokens and force-logs-out every app user.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         HEADERS
+         ======================================================== -->
+    <h2 id="headers">Request Headers</h2>
+
+    <table class="doc-table">
+      <thead><tr><th>Header</th><th>Value</th><th>Required</th></tr></thead>
+      <tbody>
+        <tr><td><code>Authorization</code></td><td><code>Bearer {token}</code></td><td>On protected (JWT) routes</td></tr>
+        <tr><td><code>Content-Type</code></td><td><code>application/json</code></td><td>On POST / PUT / PATCH</td></tr>
+        <tr><td><code>Accept</code></td><td><code>application/json</code></td><td>Recommended on every call</td></tr>
+        <tr><td><code>X-localization</code></td><td><code>en</code> / <code>bn</code> / <code>hi</code> / <code>ar</code> / <code>es</code></td><td>Optional — localizes response messages</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ========================================================
+         RESPONSE FORMAT
+         ======================================================== -->
+    <h2 id="response-format">Response Format</h2>
+
+    <p>Every endpoint returns the same JSON envelope, so clients can parse responses uniformly:</p>
+<pre class="code">
+// Success
+{ "success": true,  "message": "...", "data": { ... } }
+
+// Paginated list
+{ "success": true, "data": [ ... ],
+  "meta": { "current_page": 1, "last_page": 5, "per_page": 20, "total": 92 } }
+
+// Validation / error
+{ "success": false, "message": "The given data was invalid.",
+  "errors": { "email": ["The email field is required."] } }
+</pre>
+
+    <!-- ========================================================
+         STATUS CODES
+         ======================================================== -->
+    <h2 id="status-codes">HTTP Status Codes</h2>
+
+    <table class="doc-table">
+      <thead><tr><th>Code</th><th>Meaning</th><th>Typical cause</th></tr></thead>
+      <tbody>
+        <tr><td><code>200</code></td><td>OK</td><td>Successful GET / PUT / PATCH / DELETE</td></tr>
+        <tr><td><code>201</code></td><td>Created</td><td>Successful POST that created a record</td></tr>
+        <tr><td><code>401</code></td><td>Unauthorized</td><td>Missing, invalid, or expired JWT token</td></tr>
+        <tr><td><code>403</code></td><td>Forbidden</td><td>Authenticated but lacks the RBAC permission</td></tr>
+        <tr><td><code>404</code></td><td>Not Found</td><td>Resource or route does not exist</td></tr>
+        <tr><td><code>422</code></td><td>Unprocessable Entity</td><td>Validation failed — inspect the <code>errors</code> object</td></tr>
+        <tr><td><code>429</code></td><td>Too Many Requests</td><td>Rate limit exceeded — retry after a delay</td></tr>
+        <tr><td><code>500</code></td><td>Server Error</td><td>Check <code>storage/logs/laravel.log</code> on the server</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ========================================================
+         CUSTOMER API
+         ======================================================== -->
+    <h2 id="customer-api">Customer API — <code>/api/v1/customer</code></h2>
+
+    <p>
+      Consumed by the Flutter <a href="customer-app.html">Customer App</a> and the web storefront.
+      The Flutter app declares each of these paths as a constant in
+      <code>lib/config/util/app_constants.dart</code>.
+    </p>
+
+    <h3 id="customer-auth">Authentication</h3>
+    <table class="doc-table">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/signup</code></td><td>Register a new customer account</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/login</code></td><td>Email/phone + password login → JWT</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/send-login-otp</code></td><td>Send a one-time login code via SMS</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/verify-login-otp</code></td><td>Verify the login OTP → JWT</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/verify-firebase-phone</code></td><td>Verify a Firebase phone-auth ID token → JWT</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/check-user-exists</code></td><td>Check whether an email/phone is already registered</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/forgot-password</code></td><td>Send a password-reset OTP</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/verify-otp</code></td><td>Verify the password-reset OTP</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/reset-password</code></td><td>Set a new password after OTP verification</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/google</code></td><td>Social login with a Google ID token</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/facebook</code></td><td>Social login with a Facebook access token</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/apple</code></td><td>Social login with an Apple identity token</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/refresh</code></td><td>Exchange a valid token for a fresh one</td><td>JWT</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/auth/logout</code></td><td>Invalidate the current token</td><td>JWT</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="customer-catalog">Catalog — Items, Categories, Brands, Offers (Public)</h3>
+    <p>
+      Catalog routes are public (no JWT required) but honor two identifying middlewares:
+      <code>user.id</code> ties guest activity (cart, recently viewed) to a device-generated guest ID,
+      and <code>hub.context</code> scopes results to the delivery hub resolved from the customer's
+      location.
+    </p>
+    <table class="doc-table">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td><code>POST</code></td><td><code>/customer/location/resolve</code></td><td>Resolve coordinates to the serving delivery hub/zone</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/items</code></td><td>Paginated product list (filter/sort query params)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/items/{id}/show</code></td><td>Product detail by ID</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/items/{slug}/show-by-slug</code></td><td>Product detail by SEO slug</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/items/category/{categoryId}</code></td><td>Products belonging to a category</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/items/search</code></td><td>Keyword search with autocomplete support</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/items/featured</code></td><td>Featured products</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/items/popular</code></td><td>Popular products</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/items/recommended</code></td><td>Personalized recommendations</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/items/recently-viewed</code></td><td>Recently viewed products for this user/guest</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/items/frequently-purchased</code></td><td>Frequently purchased products</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/categories</code></td><td>Category tree</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/categories/{id}/show</code></td><td>Category detail</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/categories/{id}/sub-categories</code></td><td>Sub-categories of a category</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/categories/featured</code></td><td>Featured categories</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/categories/popular</code></td><td>Popular categories</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/brands</code></td><td>Brand list</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/brands/popular</code></td><td>Popular brands</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/flash-sales</code></td><td>Active flash-sale campaigns with items</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/labels</code></td><td>Product labels (New, Best Seller, …)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/common-conditions</code></td><td>Common conditions (Pharmacy module)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/faqs</code></td><td>FAQ list</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/faqs/{id}/show</code></td><td>Single FAQ entry</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/faqs/categories</code></td><td>FAQ categories</td><td>Public</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="customer-cart-checkout">Cart, Coupons &amp; Checkout</h3>
+    <p>
+      Cart and checkout work for both logged-in customers and guests (via the <code>user.id</code>
+      guest identifier), so a cart survives login.
+    </p>
+    <table class="doc-table">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET</code></td><td><code>/customer/cart</code></td><td>Get the current cart with totals</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/cart</code></td><td>Add an item (with variation/add-ons) to the cart</td><td>Public</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/customer/cart/{id}/quantity</code></td><td>Change quantity of a cart line</td><td>Public</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/customer/cart/{id}</code></td><td>Replace a cart line (variation, add-ons)</td><td>Public</td></tr>
+        <tr><td><code>DELETE</code></td><td><code>/customer/cart/{id}</code></td><td>Remove a cart line</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/cart/count</code></td><td>Number of items in the cart (badge counter)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/coupons</code></td><td>Available coupons</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/coupons/{id}/show</code></td><td>Coupon detail</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/coupons/apply</code></td><td>Apply a coupon code to the cart</td><td>Public</td></tr>
+        <tr><td><code>DELETE</code></td><td><code>/customer/coupons/remove</code></td><td>Remove the applied coupon</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/checkout</code></td><td>Checkout summary (items, charges, totals)</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/checkout/apply-delivery-charge</code></td><td>Calculate the delivery charge for an address</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/checkout/place-order</code></td><td>Place the order (returns payment redirect for online gateways)</td><td>Public</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="customer-account">Account — Orders, Profile, Wallet &amp; More (Protected)</h3>
+    <table class="doc-table">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET</code></td><td><code>/customer/orders</code></td><td>The customer's orders (paginated)</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/orders/history</code></td><td>Completed order history</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/orders/{id}/show</code></td><td>Order detail with items and status timeline</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/customer/orders/{id}/cancel</code></td><td>Cancel an order (while still cancellable)</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/orders/{id}/track</code></td><td>Live order tracking (status + deliveryman location)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/orders/{id}/invoice</code></td><td>Order invoice (PDF-ready payload)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/refund-requests</code></td><td>The customer's refund requests</td><td>JWT</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/refund-requests</code></td><td>Open a refund request for a delivered order</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/refund-requests/{id}/show</code></td><td>Refund request detail</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/customer/refund-requests/{id}/cancel</code></td><td>Withdraw a refund request</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/profile</code></td><td>Profile of the logged-in customer</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/customer/profile</code></td><td>Update name, photo, contact details</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/customer/profile/fcm-token</code></td><td>Register the device's FCM push token</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/customer/profile/change-password</code></td><td>Change the account password</td><td>JWT</td></tr>
+        <tr><td><code>DELETE</code></td><td><code>/customer/profile/delete-account</code></td><td>Permanently delete the account (store-compliance)</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/profile/settings</code></td><td>Notification / marketing preference settings</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/customer/profile/settings</code></td><td>Update preference settings</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/addresses</code></td><td>Saved delivery addresses</td><td>JWT</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/addresses</code></td><td>Add a delivery address</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/addresses/{id}/show</code></td><td>Address detail</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/customer/addresses/{id}</code></td><td>Update an address</td><td>JWT</td></tr>
+        <tr><td><code>DELETE</code></td><td><code>/customer/addresses/{id}</code></td><td>Delete an address</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/wallet/show</code></td><td>Wallet balance and transactions</td><td>JWT</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/wallet/add-money</code></td><td>Top up the wallet via a payment gateway</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/loyalty-points/config</code></td><td>Loyalty program rules (earn/redeem rates)</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/loyalty-points/histories</code></td><td>Points earned/redeemed history</td><td>JWT</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/loyalty-points/redeem</code></td><td>Convert points to wallet credit</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/wishlist</code></td><td>Wishlist items</td><td>JWT</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/wishlist</code></td><td>Add a product to the wishlist</td><td>JWT</td></tr>
+        <tr><td><code>DELETE</code></td><td><code>/customer/wishlist/{id}</code></td><td>Remove one item (or <code>/all</code> to clear)</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/reviews</code></td><td>The customer's product reviews</td><td>JWT</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/reviews</code></td><td>Submit a review for a purchased product</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/reviews/{id}/show</code></td><td>Review detail</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/customer/reviews/{id}</code></td><td>Edit a review</td><td>JWT</td></tr>
+        <tr><td><code>DELETE</code></td><td><code>/customer/reviews/{id}</code></td><td>Delete a review</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/notifications</code></td><td>In-app notification list</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/notifications/unread</code></td><td>Unread notification count</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/customer/notifications/{id}/read</code></td><td>Mark one notification read</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/customer/notifications/mark-all-read</code></td><td>Mark all notifications read</td><td>JWT</td></tr>
+        <tr><td><code>DELETE</code></td><td><code>/customer/notifications/{id}</code></td><td>Delete one (or <code>/clear-all</code> for all)</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/notifications/preferences</code></td><td>Per-channel notification preferences</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/customer/notifications/preferences</code></td><td>Update notification preferences</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/chats</code></td><td>Support chat conversations</td><td>JWT</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/chats</code></td><td>Start a new support chat</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/chats/{id}</code></td><td>Conversation detail</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/chats/{id}/messages</code></td><td>Messages in a conversation (paginated)</td><td>JWT</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/chats/{id}/messages</code></td><td>Send a message (text / attachment)</td><td>JWT</td></tr>
+      </tbody>
+    </table>
+
+    <h3 id="customer-app-screen">App Screen, Content &amp; Maps Proxy</h3>
+    <p>
+      These endpoints power the app shell: startup configuration, the home screen payload, CMS content
+      pages, and a <strong>server-side Google Maps proxy</strong> so the Maps Platform key never has to
+      be embedded for geocoding/directions calls.
+    </p>
+    <table class="doc-table">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET</code></td><td><code>/customer/app-screen/config</code></td><td>Startup config: business info, currency, active modules, feature flags</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/app-screen/home</code></td><td>Composed home payload: banners, categories, featured rails, flash deals</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/app-screen/item-content</code></td><td>Item-detail supporting content</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/app-screen/special-offer</code></td><td>Special-offer campaign payload</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/app-screen/geo-code-reverse</code></td><td>Reverse-geocode coordinates → address (Maps proxy)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/app-screen/place-autocomplete</code></td><td>Address autocomplete suggestions (Maps proxy)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/app-screen/map-place-details</code></td><td>Place details for a suggestion (Maps proxy)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/app-screen/map-direction</code></td><td>Route polyline between two points (Maps proxy)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/app-screen/about</code> <code>/terms</code> <code>/privacy</code> <code>/refund-policy</code> <code>/cancel-policy</code></td><td>CMS content pages managed in the admin panel</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/customer/app-screen/support</code> <code>/faqs</code> <code>/contact</code></td><td>Support info, FAQ payload, contact page</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/customer/app-screen/contact-submit</code></td><td>Submit the contact form</td><td>Public</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ========================================================
+         DELIVERYMAN API
+         ======================================================== -->
+    <h2 id="deliveryman-api">Deliveryman API — <code>/api/v1/delivery-man</code></h2>
+
+    <p>Consumed by the Flutter <a href="deliveryman-app.html">Deliveryman App</a>.</p>
+
+    <h3>Authentication</h3>
+    <table class="doc-table">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td><code>POST</code></td><td><code>/delivery-man/auth/signup</code></td><td>Deliveryman self-registration (pending admin approval)</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/delivery-man/auth/login</code></td><td>Email/phone + password login → JWT</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/delivery-man/auth/send-login-otp</code></td><td>Send a one-time login code</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/delivery-man/auth/verify-login-otp</code></td><td>Verify the login OTP → JWT</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/delivery-man/auth/forgot-password</code></td><td>Send a password-reset OTP</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/delivery-man/auth/verify-otp</code></td><td>Verify the reset OTP</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/delivery-man/auth/reset-password</code></td><td>Set a new password</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/delivery-man/auth/refresh</code></td><td>Refresh the JWT</td><td>JWT</td></tr>
+        <tr><td><code>POST</code></td><td><code>/delivery-man/auth/logout</code></td><td>Invalidate the token</td><td>JWT</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Work &amp; Account</h3>
+    <table class="doc-table">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/dashboard</code></td><td>Earnings summary, delivery stats, assigned-order counts</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/orders</code></td><td>Currently assigned orders</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/orders/history</code></td><td>Completed delivery history</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/orders/{id}/show</code></td><td>Order detail: customer, address, items, payment</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/delivery-man/orders/{id}/status</code></td><td>Advance the order stage (Picked Up → Delivered, …)</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/reviews</code></td><td>Ratings the deliveryman has received</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/profile</code></td><td>Profile detail</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/delivery-man/profile</code></td><td>Update profile / photo</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/delivery-man/profile/change-password</code></td><td>Change password</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/delivery-man/profile/fcm-token</code></td><td>Register the device's FCM push token</td><td>JWT</td></tr>
+        <tr><td><code>DELETE</code></td><td><code>/delivery-man/profile/delete-account</code></td><td>Delete the account</td><td>JWT</td></tr>
+        <tr><td><code>GET</code> / <code>PUT</code></td><td><code>/delivery-man/profile/settings</code></td><td>Read / update in-app preference settings</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/chats</code></td><td>Chat conversations with admin support</td><td>JWT</td></tr>
+        <tr><td><code>POST</code></td><td><code>/delivery-man/chats</code></td><td>Start a chat</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/chats/{id}</code></td><td>Conversation detail</td><td>JWT</td></tr>
+        <tr><td><code>GET</code> / <code>POST</code></td><td><code>/delivery-man/chats/{id}/messages</code></td><td>Read / send messages</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/notifications</code></td><td>Notification list (<code>/unread</code> for the badge count)</td><td>JWT</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/delivery-man/notifications/{id}/read</code></td><td>Mark read (<code>/mark-all-read</code> for all)</td><td>JWT</td></tr>
+        <tr><td><code>DELETE</code></td><td><code>/delivery-man/notifications/{id}</code></td><td>Delete one (<code>/clear-all</code> for all)</td><td>JWT</td></tr>
+        <tr><td><code>GET</code> / <code>PUT</code></td><td><code>/delivery-man/notifications/preferences</code></td><td>Read / update notification preferences</td><td>JWT</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Config &amp; Maps Proxy</h3>
+    <table class="doc-table">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/config</code></td><td>Startup configuration for the app</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/config/geo-code-reverse</code></td><td>Reverse-geocode (Maps proxy)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/config/place-autocomplete</code></td><td>Address autocomplete (Maps proxy)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/config/map-place-details</code></td><td>Place details (Maps proxy)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/config/map-direction</code></td><td>Navigation route to the delivery address (Maps proxy)</td><td>Public</td></tr>
+        <tr><td><code>GET</code></td><td><code>/delivery-man/config/terms</code> <code>/contact</code> <code>/support</code></td><td>Terms, contact, and support content</td><td>Public</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ========================================================
+         ADMIN API
+         ======================================================== -->
+    <h2 id="admin-api">Admin API — <code>/api/v1/admin</code></h2>
+
+    <p>
+      Consumed by the Vue 3 Admin Panel. Every route (except login) requires a JWT issued to an admin
+      or employee account; many are additionally guarded by <strong>RBAC permissions</strong>
+      (shown as <em>JWT + RBAC</em>) so employee roles only reach what they are granted.
+    </p>
+
+    <h3>Authentication &amp; Dashboard</h3>
+    <table class="doc-table">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td><code>POST</code></td><td><code>/admin/auth/login</code></td><td>Admin/employee login (returns a 2FA challenge when enabled)</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/admin/auth/verify-2fa</code></td><td>Verify the TOTP code → JWT</td><td>Public</td></tr>
+        <tr><td><code>POST</code></td><td><code>/admin/auth/refresh</code> / <code>/admin/auth/logout</code></td><td>Refresh / invalidate the token</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/admin/dashboard</code></td><td>KPI cards, order status overview, sales trend</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/admin/analytics</code></td><td>Sales / category / user-activity analytics</td><td>JWT + RBAC</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Order Management</h3>
+    <table class="doc-table">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET</code></td><td><code>/admin/orders</code></td><td>Order list with status filters (<code>/recent</code> for latest)</td><td>JWT + RBAC</td></tr>
+        <tr><td><code>GET</code></td><td><code>/admin/orders/{id}</code></td><td>Full order detail</td><td>JWT + RBAC</td></tr>
+        <tr><td><code>GET</code></td><td><code>/admin/orders/customer/{customerId}</code></td><td>All orders of one customer</td><td>JWT + RBAC</td></tr>
+        <tr><td><code>PATCH</code></td><td><code>/admin/orders/{id}/status</code></td><td>Advance / change the order stage</td><td>JWT + RBAC</td></tr>
+        <tr><td><code>PATCH</code></td><td><code>/admin/orders/{id}/payment-status</code></td><td>Mark paid / unpaid</td><td>JWT + RBAC</td></tr>
+        <tr><td><code>PUT</code></td><td><code>/admin/orders/{id}/address</code> <code>/customer</code> <code>/note</code> <code>/items</code></td><td>Edit delivery address, customer info, note, or line items</td><td>JWT + RBAC</td></tr>
+        <tr><td><code>POST</code></td><td><code>/admin/orders/{id}/assign-deliveryman</code> / <code>/unassign-deliveryman</code></td><td>Assign or unassign a deliveryman</td><td>JWT + RBAC</td></tr>
+        <tr><td><code>POST</code></td><td><code>/admin/orders/{id}/cancel</code> / <code>/refund</code> / <code>/reject-refund</code></td><td>Cancel, refund, or reject a refund request</td><td>JWT + RBAC</td></tr>
+        <tr><td><code>POST</code></td><td><code>/admin/orders/bulk-action</code></td><td>Bulk status / export operations</td><td>JWT + RBAC</td></tr>
+        <tr><td><code>GET</code></td><td><code>/admin/refund-requests</code> (+ <code>/{id}</code>, <code>PATCH /{id}/status</code>)</td><td>Review and resolve refund requests</td><td>JWT + RBAC</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Catalog Management (Standard REST Resources)</h3>
+    <p>
+      Each resource below follows the Laravel <code>apiResource</code> convention —
+      <code>GET /</code> (list), <code>POST /</code> (create), <code>GET /{id}</code> (show),
+      <code>PUT /{id}</code> (update), <code>DELETE /{id}</code> (delete) — plus the listed extras:
+    </p>
+    <table class="doc-table">
+      <thead><tr><th>Resource</th><th>Base Path</th><th>Extra endpoints</th></tr></thead>
+      <tbody>
+        <tr><td>Products</td><td><code>/admin/item</code></td><td><code>PUT /{id}/status</code>, <code>PUT /{id}/price</code>, <code>PUT /{id}/stock</code></td></tr>
+        <tr><td>Categories</td><td><code>/admin/category</code></td><td><code>PUT /{id}/status</code></td></tr>
+        <tr><td>Sub-categories</td><td><code>/admin/sub-category</code></td><td>—</td></tr>
+        <tr><td>Brands</td><td><code>/admin/brand</code></td><td><code>PUT /{id}/status</code></td></tr>
+        <tr><td>Companies (Pharmacy)</td><td><code>/admin/company</code></td><td><code>PUT /{id}/status</code></td></tr>
+        <tr><td>Labels</td><td><code>/admin/label</code></td><td><code>PUT /{id}/status</code></td></tr>
+        <tr><td>Add-ons</td><td><code>/admin/addon</code></td><td><code>PUT /{id}/status</code></td></tr>
+        <tr><td>Delivery zones</td><td><code>/admin/zone</code></td><td><code>PUT /{id}/status</code></td></tr>
+        <tr><td>Taxes</td><td><code>/admin/tax</code></td><td><code>PUT /{id}/status</code></td></tr>
+        <tr><td>Currencies</td><td><code>/admin/currency</code></td><td><code>PUT /{id}/status</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>User Management</h3>
+    <table class="doc-table">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/users/customers</code></td><td>List / create customers (+ <code>GET/PUT/DELETE /{id}</code>, <code>POST /bulk-action</code>)</td><td>JWT</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/users/delivery-man</code></td><td>List / create deliverymen (+ CRUD, bulk, <code>PUT /{id}/working-hours</code>)</td><td>JWT</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/users/employees</code></td><td>List / create employees (+ CRUD, bulk, <code>PUT /{id}/role</code> for RBAC)</td><td>JWT</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Settings &amp; Integrations</h3>
+    <table class="doc-table">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET / PUT</code></td><td><code>/admin/business/setup</code></td><td>Business identity: name, logo, favicon, colors, address (<code>GET /business/countries</code> for the country list)</td><td>JWT</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/website-setups</code></td><td>Storefront content: banners, sections, footer, social links</td><td>JWT</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/login-settings</code></td><td>Login methods: email, OTP, social providers</td><td>JWT</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/payment-options-setup</code></td><td>Cash on delivery / digital payment toggles</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/admin/payment-gateways</code> (+ <code>/active</code>)</td><td>Payment gateway list and active set</td><td>JWT</td></tr>
+        <tr><td><code>POST</code></td><td><code>/admin/payment-gateways/update-settings</code></td><td>Save gateway API keys (+ <code>PUT /{id}/status</code> to enable)</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/admin/sms-gateways</code></td><td>SMS gateway list (+ per-gateway <code>PUT …/update-gateway-settings</code>, <code>PATCH …/status</code>)</td><td>JWT</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/firebase-setup</code> (+ <code>POST /{service}</code>)</td><td>Firebase service-account &amp; push credentials</td><td>JWT</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/push-notification-setup</code></td><td>Push notification message templates</td><td>JWT</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/social-media-setup</code> (+ <code>PUT /{service}/status</code>)</td><td>Social login provider credentials</td><td>JWT</td></tr>
+        <tr><td><code>GET</code></td><td><code>/admin/third-party-setups</code> (+ <code>/active</code>, <code>POST /{service}</code>, <code>PUT /{service}/status</code>)</td><td>Google Maps key, reCAPTCHA, analytics and other third-party services</td><td>JWT</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/order-setup</code></td><td>Order rules: scheduling, cancellation window, delivery verification</td><td>JWT</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/delivery-charge-setup</code></td><td>Delivery charge rules per zone / distance</td><td>JWT</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/cookies-setup</code></td><td>Cookie-consent banner configuration</td><td>JWT</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/marketing-tools</code> (+ <code>POST /{service}</code>)</td><td>Sales popups and marketing tool configuration</td><td>JWT</td></tr>
+        <tr><td><code>GET / PUT / POST / DELETE</code></td><td><code>/admin/environment/variables</code></td><td>In-app <code>.env</code> editor (+ <code>GET /environment/backups</code>)</td><td>JWT</td></tr>
+        <tr><td><code>POST</code></td><td><code>/admin/cache/clear</code></td><td>Clear the application cache</td><td>JWT + RBAC</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Communication</h3>
+    <table class="doc-table">
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Description</th><th>Auth</th></tr></thead>
+      <tbody>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/chats</code> (+ <code>GET /{id}</code>, <code>GET/POST /{id}/messages</code>)</td><td>Live chat with customers and deliverymen</td><td>JWT + RBAC</td></tr>
+        <tr><td><code>GET</code></td><td><code>/admin/customer-support</code></td><td>Customer support inbox</td><td>JWT + RBAC</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/notifications</code></td><td>Push campaign list / create (+ <code>DELETE /{id}</code>, <code>POST /bulk-action</code>, <code>PATCH /{id}/mark-seen</code>, <code>PATCH /mark-all-read</code>)</td><td>JWT + RBAC</td></tr>
+        <tr><td><code>GET / POST</code></td><td><code>/admin/bookmarks</code> (+ <code>DELETE /{id}</code>)</td><td>Admin panel bookmarks</td><td>JWT + RBAC</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ========================================================
+         PAYMENT CALLBACKS
+         ======================================================== -->
+    <h2 id="payment-callbacks">Payment Gateway Endpoints — <code>/payment-gateway</code></h2>
+
+    <p>
+      Online payments run through hosted gateway pages. When a customer chooses digital payment, the
+      client opens <code>/payment-gateway/{gateway}/checkout</code> (the mobile apps open it in an
+      in-app webview), the customer pays on the gateway's page, and the gateway redirects back to the
+      success / cancel / callback URL, where the order's payment status is updated. These routes live
+      at the <strong>web root</strong> (not under <code>/api/v1</code>) and are CSRF-exempt so gateway
+      redirects always land.
+    </p>
+
+    <table class="doc-table">
+      <thead><tr><th>Gateway</th><th>Checkout</th><th>Return endpoints</th></tr></thead>
+      <tbody>
+        <tr><td>Stripe</td><td><code>/payment-gateway/stripe/checkout</code></td><td><code>/success</code>, <code>/cancel</code></td></tr>
+        <tr><td>PayPal</td><td><code>/payment-gateway/paypal/checkout</code></td><td><code>/success</code>, <code>/cancel</code></td></tr>
+        <tr><td>Razorpay</td><td><code>/payment-gateway/razorpay/checkout</code></td><td><code>/success</code>, <code>/cancel</code></td></tr>
+        <tr><td>Flutterwave</td><td><code>/payment-gateway/flutterwave/checkout</code></td><td><code>/success</code>, <code>/cancel</code></td></tr>
+        <tr><td>SSLCommerz</td><td><code>/payment-gateway/sslcommerz/checkout</code></td><td><code>/success</code>, <code>/cancel</code> (POST or GET)</td></tr>
+        <tr><td>Mercado Pago</td><td><code>/payment-gateway/mercadopago/checkout</code></td><td><code>/success</code>, <code>/cancel</code></td></tr>
+        <tr><td>LiqPay</td><td><code>/payment-gateway/liqpay/checkout</code></td><td><code>/success</code>, <code>/cancel</code></td></tr>
+        <tr><td>Paytm</td><td><code>/payment-gateway/paytm/checkout</code></td><td><code>/callback</code></td></tr>
+        <tr><td>PayTabs</td><td><code>/payment-gateway/paytabs/checkout</code></td><td><code>/callback</code></td></tr>
+        <tr><td>senangPay</td><td><code>/payment-gateway/senangpay/checkout</code></td><td><code>/success</code>, <code>/cancel</code></td></tr>
+        <tr><td>bKash</td><td><code>/payment-gateway/bkash/checkout</code></td><td><code>/callback</code></td></tr>
+        <tr><td>Nagad</td><td><code>/payment-gateway/nagad/checkout</code></td><td><code>/success</code>, <code>/cancel</code></td></tr>
+        <tr><td>Paystack</td><td><code>/payment-gateway/paystack/checkout</code></td><td><code>/callback</code></td></tr>
+        <tr><td>Paymob Accept</td><td><code>/payment-gateway/paymob-accept/checkout</code></td><td><code>/success</code>, <code>/cancel</code></td></tr>
+        <tr><td>Mollie</td><td><code>/payment-gateway/mollie/checkout</code></td><td><code>/success</code>, <code>/cancel</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        Gateway API keys are entered in <strong>Admin Panel → Settings → 3rd Party →
+        Payment Gateways</strong> — never hard-code them. Only gateways toggled <em>active</em> there
+        are offered to customers at checkout. Each gateway controller lives in
+        <code>app/Http/Controllers/Payment/</code> if you need to inspect or extend the flow.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         INTEGRATION POINTS
+         ======================================================== -->
+    <h2 id="integration-points">Integration Points (Third-Party Services)</h2>
+
+    <p>
+      The platform integrates with external services at well-defined points. All credentials are
+      entered in the <strong>Admin Panel → Settings</strong> after installation — the table shows
+      where each integration plugs into the codebase.
+    </p>
+
+    <table class="doc-table">
+      <thead><tr><th>Service</th><th>Used for</th><th>Configured at</th><th>Code integration point</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Firebase Cloud Messaging</strong></td>
+          <td>Push notifications to both apps; chat and order-status alerts</td>
+          <td>Admin Panel → Settings → Firebase Setup (service-account JSON)</td>
+          <td>Backend publishes to device tokens (<code>PUT …/profile/fcm-token</code>) and topics <code>customer-group</code>, <code>deliveryman-group</code>, <code>all-general</code></td>
+        </tr>
+        <tr>
+          <td><strong>Google Maps Platform</strong></td>
+          <td>Geocoding, autocomplete, directions, live tracking maps</td>
+          <td>Admin Panel → Settings → 3rd Party Setup (server key); app-side keys in <code>secrets.xml</code> / <code>Info.plist</code></td>
+          <td>Server-side proxy endpoints: <code>…/app-screen/geo-code-reverse</code>, <code>…/place-autocomplete</code>, <code>…/map-place-details</code>, <code>…/map-direction</code></td>
+        </tr>
+        <tr>
+          <td><strong>Payment gateways</strong> (15)</td>
+          <td>Online payment at checkout and wallet top-up</td>
+          <td>Admin Panel → Settings → Payment Gateways</td>
+          <td><code>routes/payment.php</code> + <code>app/Http/Controllers/Payment/</code> (see table above)</td>
+        </tr>
+        <tr>
+          <td><strong>SMS gateways</strong> (Twilio, Vonage/Nexmo)</td>
+          <td>Login and password-reset OTP delivery</td>
+          <td>Admin Panel → Settings → SMS Gateways</td>
+          <td>OTP endpoints: <code>…/auth/send-login-otp</code>, <code>…/auth/forgot-password</code></td>
+        </tr>
+        <tr>
+          <td><strong>Social login</strong> (Google, Facebook, Apple)</td>
+          <td>One-tap sign-in in the customer app and storefront</td>
+          <td>Admin Panel → Settings → Social Media Setup + Firebase Authentication providers</td>
+          <td>Token-verification endpoints: <code>/customer/auth/google</code>, <code>/facebook</code>, <code>/apple</code></td>
+        </tr>
+        <tr>
+          <td><strong>Mail provider</strong> (SMTP, Mailgun, SES)</td>
+          <td>Transactional email: order confirmations, password resets, invoices</td>
+          <td>Admin Panel → Settings (mail configuration)</td>
+          <td>Mailables in <code>app/Mail/</code>, templates in <code>resources/views/emails/</code>, sent via the queue worker</td>
+        </tr>
+        <tr>
+          <td><strong>AWS S3</strong> (optional)</td>
+          <td>Product image and file storage instead of local disk</td>
+          <td><code>.env</code> — <code>FILESYSTEM_DISK=s3</code> + <code>AWS_*</code> keys</td>
+          <td>Laravel filesystem abstraction — no code changes needed</td>
+        </tr>
+        <tr>
+          <td><strong>reCAPTCHA v3</strong></td>
+          <td>Bot protection on admin login</td>
+          <td>Admin Panel → Settings → 3rd Party Setup</td>
+          <td>Validated in the admin login flow</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        <strong>Third-party service costs are not included with the product license.</strong>
+        Google Maps Platform and Firebase require a Google Cloud billing account (both have free
+        tiers), SMS gateways charge per message, payment gateways charge per-transaction fees, and
+        publishing the apps requires Google Play ($25 one-time) and Apple Developer ($99/year)
+        accounts. Review each provider's pricing before going live.
+      </div>
+    </div>
+
+    <!-- ========================================================
+         POSTMAN
+         ======================================================== -->
+    <h2 id="postman">Postman Collection</h2>
+
+    <p>
+      A complete <strong>Postman collection</strong> ships in the Admin &amp; Web package root as
+      <code>postman-collection.json</code> (~485 KB) with the full request/response schema — bodies,
+      parameters, and example responses — for every endpoint on this page.
+    </p>
+
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Import the collection</strong>
+          In Postman: <em>File → Import</em> and select <code>postman-collection.json</code> from the
+          <em>Admin and Web Install</em> folder. (Insomnia and Bruno can import the same file.)
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Set the base URL variable</strong>
+          Point the collection's <code>base_url</code> variable at your installation, e.g.
+          <code>https://yourdomain.com</code>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Authenticate once</strong>
+          Run the login request for the audience you are testing (customer, deliveryman, or admin) and
+          copy the returned <code>token</code> into the collection's bearer-token auth so every
+          subsequent request is authorized.
+        </div>
+      </li>
+    </ol>
+
+    <!-- ========================================================
+         EXTENDING
+         ======================================================== -->
+    <h2 id="extending-api">Extending the API</h2>
+
+    <p>
+      To add your own endpoints, follow the layered pattern used across the codebase — thin controller,
+      Form Request validation, business logic in a service, API Resource for the response envelope, and
+      a route registered in <code>routes/api/v1/</code>. The
+      <a href="admin-and-web.html#extending">Extending the Platform</a> section of the Admin &amp; Web
+      docs walks through this end-to-end with commands and code samples.
+    </p>
+
+    <hr class="section-divider" />
+    <p style="color:var(--text-muted);font-size:.85rem;">
+      Need help? Contact <a href="mailto:contact@6amtech.com">contact@6amtech.com</a>
+      or visit our website for support.
+    </p>
+
+  </section>
+</div>
+
+<div class="doc-footer">
+  <p>&copy; 2026 DayOneMart — E-Commerce Solution Documentation</p>
+  <p style="margin-top:4px;">
+    <a href="../../index.html">Home</a> &nbsp;|&nbsp;
+    <a href="admin-and-web.html">Admin &amp; Web</a> &nbsp;|&nbsp;
+    <a href="customer-app.html">Customer App</a> &nbsp;|&nbsp;
+    <a href="deliveryman-app.html">Deliveryman App</a> &nbsp;|&nbsp;
+    <a href="mailto:contact@6amtech.com">Contact Support</a>
+  </p>
+</div>
+
+<button class="back-to-top" aria-label="Back to top" title="Back to top">&#8593;</button>
+
+<script src="../assets/js/docs.js"></script>
+</body>
+</html>

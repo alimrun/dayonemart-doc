@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Customer App — OneMart Docs</title>
+  <title>Customer App — DayOneMart Docs</title>
   <link rel="stylesheet" href="../assets/css/docs.css" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📱</text></svg>" />
 </head>
@@ -15,13 +15,15 @@
 <header class="navbar">
   <a class="brand" href="../../index.html">
     <span style="font-size:1.5rem;">🛒</span>
-    <span>OneMart<span class="brand-dot">.</span></span>
+    <span>DayOneMart<span class="brand-dot">.</span></span>
   </a>
   <nav>
     <a href="../../index.html">Home</a>
     <a href="admin-and-web.html">Admin &amp; Web</a>
     <a href="customer-app.html" class="active">Customer App</a>
     <a href="deliveryman-app.html">Deliveryman App</a>
+    <a href="api-reference.html">API Reference</a>
+    <a href="branding-guide.html">Branding</a>
   </nav>
   <div class="nav-actions">
     <button class="btn-icon menu-toggle" title="Toggle menu" aria-label="Toggle sidebar">☰</button>
@@ -49,7 +51,7 @@
         <li><a href="#app-features">App Features</a></li>
         <li><a href="#prerequisites">Prerequisites</a></li>
         <li><a href="#project-structure">Project Structure</a></li>
-        <li><a href="#quick-start">Quick Start</a></li>
+        <li><a href="#quick-start">Installation (Step-by-Step)</a></li>
         <li><a href="#configuration">Configuration</a></li>
         <li><a href="#firebase-setup">Firebase Setup</a></li>
         <li><a href="#google-maps-setup">Google Maps Setup</a></li>
@@ -76,7 +78,7 @@
     <h2 id="introduction">Introduction</h2>
 
     <p>
-      The <strong>OneMart Customer App</strong> is a cross-platform mobile application built with
+      The <strong>DayOneMart Customer App</strong> is a cross-platform mobile application built with
       <span class="mark">Flutter</span> for Android and iOS. It provides customers with an end-to-end
       shopping experience — browsing products, placing orders, real-time tracking, live chat,
       wallet management, loyalty points, and more.
@@ -467,39 +469,118 @@ features/order/
     <!-- ========================================================
          QUICK START
          ======================================================== -->
-    <h2 id="quick-start">Quick Start</h2>
+    <h2 id="quick-start">Installation Guide (Step-by-Step)</h2>
 
-    <h3>Setup Checklist</h3>
+    <p>
+      Follow these steps <strong>in order</strong> to go from the downloaded ZIP to the app running on
+      a device. Steps 6–8 point to their own detailed sections further down this page.
+    </p>
+
+    <h3>Before You Start — Checklist</h3>
     <ul class="checklist">
       <li>Flutter SDK installed and <code>flutter doctor</code> passes</li>
       <li>Android Studio / Xcode configured with emulator/simulator</li>
-      <li>Firebase project created and both Android + iOS apps registered</li>
+      <li>Firebase project created (you will register the apps in Step 6)</li>
       <li>Google Maps API key obtained and enabled for Maps SDK, Geocoding, Places APIs</li>
-      <li>Backend (Admin &amp; Web) is deployed and accessible</li>
+      <li>Backend (Admin &amp; Web) is deployed and accessible — <a href="admin-and-web.html#installation-process">install it first</a></li>
       <li>Facebook App ID and client token ready (if enabling Facebook login)</li>
     </ul>
 
-    <h3>Clone and Install Dependencies</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Extract the project</strong>
+          Unzip the package and open the <code>Customer App</code> folder in your editor
+          (VS Code / Android Studio). All commands below are run from this folder.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Verify your Flutter environment</strong>
 <pre class="code">
-# Get all pub packages
+flutter doctor -v
+</pre>
+          Fix any reported errors before continuing (missing Android SDK, unaccepted licenses, no
+          Xcode). Warnings about platforms you don't target can be ignored.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Install dependencies</strong>
+<pre class="code">
 flutter pub get
-
-# Generate code (freezed models, injectable DI, asset refs, l10n)
+</pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Generate code</strong>
+          The project uses code generation for models, dependency injection, assets, and translations
+          — the app will not compile without this step:
+<pre class="code">
 dart run build_runner build --delete-conflicting-outputs
 flutter gen-l10n
 </pre>
-
-    <h3>Run the App</h3>
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Point the app at your backend</strong>
+          Open <code>lib/config/util/app_constants.dart</code> and set <code>baseUrl</code> to your
+          deployed Admin &amp; Web instance (always <code>https://</code> in production):
 <pre class="code">
-# List connected devices
-flutter devices
-
-# Run on a specific device (debug mode)
-flutter run -d &lt;device-id&gt;
-
-# Run in release mode (closer to production)
-flutter run --release
+static const String baseUrl = 'https://yourdomain.com';
 </pre>
+          Details in <a href="#configuration">Configuration</a>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Connect Firebase</strong>
+          Register the Android and iOS apps in your Firebase project, then place
+          <code>google-services.json</code> in <code>android/app/</code> and
+          <code>GoogleService-Info.plist</code> in <code>ios/Runner/</code> (or run
+          <code>flutterfire configure</code>). Full walkthrough:
+          <a href="#firebase-setup">Firebase Setup</a>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Add your Google Maps API key</strong>
+          Copy <code>secrets.xml.example</code> to
+          <code>android/app/src/main/res/values/secrets.xml</code> and fill in the key; add the iOS
+          key to <code>Info.plist</code>. Full walkthrough:
+          <a href="#google-maps-setup">Google Maps Setup</a>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>(Optional) Configure social login</strong>
+          Google works out of the box once Firebase is connected; Facebook and Apple need provider
+          setup — see <a href="#social-auth">Social Auth Setup</a>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Run the app</strong>
+<pre class="code">
+flutter devices                  # list connected devices
+flutter run -d &lt;device-id&gt;      # debug build on a device
+flutter run --release            # production-like build
+</pre>
+          Log in with a customer account created on your storefront, browse products, and place a test
+          order to confirm the backend connection.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Rebrand and release</strong>
+          Rename the app, set your bundle ID, icon, splash, and colors using the
+          <a href="branding-guide.html">Branding &amp; Customization Guide</a>, then produce store
+          builds following <a href="#build-and-release">Build &amp; Release</a>.
+        </div>
+      </li>
+    </ol>
 
     <!-- ========================================================
          CONFIGURATION
@@ -1052,6 +1133,15 @@ dart run build_runner watch --delete-conflicting-outputs
       core HTTP client in <code>lib/core/data/</code>.
     </p>
 
+    <div class="alert alert-info">
+      <span class="alert-icon">🔌</span>
+      <div>
+        The full endpoint-by-endpoint technical reference — methods, paths, auth requirements,
+        response envelope, payment callbacks, and third-party integration points — is on the dedicated
+        <a href="api-reference.html#customer-api">API Reference</a> page.
+      </div>
+    </div>
+
     <h3>Authentication Flow</h3>
 <pre class="code">
 POST /api/v1/customer/auth/check-user-exists  ← Check if user exists
@@ -1241,62 +1331,15 @@ flutter gen-l10n
          ======================================================== -->
     <h2 id="customization">Customization</h2>
 
-    <h3>Branding Checklist — Make the App Your Own</h3>
-    <p>
-      Follow these steps in order to fully rebrand the app with your own name, logo, and colors.
-      Pair this with the backend branding guide
-      (<a href="admin-and-web.html#branding">Admin &amp; Web → Branding &amp; Customization</a>) so the
-      storefront, emails, and apps all match.
-    </p>
-    <ol class="steps">
-      <li>
-        <div class="step-body">
-          <strong>App display name</strong>
-          Change the name shown under the icon and in the system UI in three places:
-          <code>android/app/src/main/res/values/strings.xml</code> (<code>app_name</code>),
-          <code>ios/Runner/Info.plist</code> (<code>CFBundleDisplayName</code> / <code>CFBundleName</code>),
-          and the <code>app_name</code> entry in every <code>lib/l10n/arb/app_*.arb</code> file
-          (then run <code>flutter gen-l10n</code>).
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Bundle ID / package name</strong>
-          Set your own reverse-domain ID (e.g. <code>com.yourcompany.customerapp</code>) via
-          <code>applicationId</code> in <code>android/app/build.gradle</code> and the Bundle Identifier
-          in Xcode. Re-register both apps in Firebase afterwards and replace
-          <code>google-services.json</code> / <code>GoogleService-Info.plist</code> — they are tied to
-          the old ID.
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Launcher icon</strong>
-          Replace the icon (see <em>App Icon</em> below) with a 1024 × 1024 px source image.
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Splash screen</strong>
-          Swap the launch image/logo (see <em>Splash Screen</em> below) so the first frame shows your brand.
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Brand colors</strong>
-          Set your primary/secondary colors in <code>lib/config/theme/</code> using the same hex values
-          you configured in <em>Admin Panel → Settings → Business Setup</em>, so the app matches the
-          storefront exactly.
-        </div>
-      </li>
-      <li>
-        <div class="step-body">
-          <strong>Rebuild and verify</strong>
-          Run <code>flutter clean &amp;&amp; flutter pub get &amp;&amp; flutter run</code> and confirm
-          the new name, icon, splash, and colors appear on a device.
-        </div>
-      </li>
-    </ol>
+    <div class="alert alert-info">
+      <span class="alert-icon">🎨</span>
+      <div>
+        For the complete white-label walkthrough — app rename, bundle ID, icon, splash, colors,
+        onboarding content, and translations for <em>both</em> apps plus the web platform — see the
+        dedicated <a href="branding-guide.html">Branding &amp; Customization Guide</a>. The essentials
+        for this app are summarized below.
+      </div>
+    </div>
 
     <h3>App Theme &amp; Colors</h3>
     <p>
@@ -1370,7 +1413,7 @@ flutter_launcher_icons
 </div>
 
 <div class="doc-footer">
-  <p>&copy; 2026 OneMart — E-Commerce Solution Documentation</p>
+  <p>&copy; 2026 DayOneMart — E-Commerce Solution Documentation</p>
   <p style="margin-top:4px;">
     <a href="../../index.html">Home</a> &nbsp;|&nbsp;
     <a href="admin-and-web.html">Admin &amp; Web</a> &nbsp;|&nbsp;
