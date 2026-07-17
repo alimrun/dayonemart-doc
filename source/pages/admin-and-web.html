@@ -24,6 +24,7 @@
     <a href="deliveryman-app.html">Deliveryman App</a>
     <a href="api-reference.html">API Reference</a>
     <a href="branding-guide.html">Branding</a>
+    <a href="../../index.html#glossary">Glossary</a>
   </nav>
   <div class="nav-actions">
     <button class="btn-icon menu-toggle" title="Toggle menu" aria-label="Toggle sidebar">☰</button>
@@ -475,6 +476,24 @@
          ======================================================== -->
     <h2 id="quick-start">Quick Start</h2>
 
+    <div class="alert alert-info">
+      <span class="alert-icon">📁</span>
+      <div>
+        <strong>Path conventions — VPS vs shared hosting.</strong> File paths differ between the two
+        environments, and every path example in this guide is labeled accordingly:
+        <ul class="list" style="margin:8px 0 0;">
+          <li><strong>VPS / dedicated server</strong> — the project lives in a folder you choose, written as
+            <code>/path/to/your-project</code> (commonly <code>/var/www/onemart</code>).</li>
+          <li><strong>Shared hosting (cPanel)</strong> — the project lives inside your home directory, written as
+            <code>/home/username/your-project</code>, where <code>username</code> is your cPanel username.</li>
+        </ul>
+        Substitute the real path for <em>your</em> environment wherever a placeholder appears.
+        Not sure which environment you have? See the <a href="../../index.html#glossary">plain-language glossary</a>.
+        Shared-hosting buyers should follow the dedicated
+        <a href="#cpanel-shared-hosting">cPanel / Shared Hosting walkthrough</a> instead of the VPS steps.
+      </div>
+    </div>
+
     <h3>Pre-flight Checklist</h3>
     <ul class="checklist">
       <li>PHP 8.2+ with all required extensions installed</li>
@@ -493,7 +512,10 @@
       <li>
         <div class="step-body">
           <strong>Extract the archive</strong>
-          Extract the downloaded ZIP to your server's web directory (e.g. <code>/path/to/your-project</code>).
+          Extract the downloaded ZIP to your server's web directory —
+          <strong>VPS:</strong> e.g. <code>/var/www/onemart</code> (written as <code>/path/to/your-project</code> below);
+          <strong>shared hosting:</strong> e.g. <code>/home/username/your-project</code> (see the
+          <a href="#cpanel-shared-hosting">cPanel walkthrough</a>).
           Point your Nginx/Apache document root to the <code>/public</code> folder.
         </div>
       </li>
@@ -501,8 +523,13 @@
         <div class="step-body">
           <strong>Set permissions</strong>
 <pre class="code">
+# VPS (Ubuntu/Debian) — www-data is the web server user:
 chmod -R 775 storage bootstrap/cache
 chown -R www-data:www-data .
+
+# Shared hosting (cPanel) — skip chown (files already belong to your
+# cPanel user); only set the permissions:
+chmod -R 775 storage bootstrap/cache
 </pre>
         </div>
       </li>
@@ -755,6 +782,16 @@ PURCHASE_USERNAME=your_username
          ======================================================== -->
     <h2 id="server-configuration">Server Configuration</h2>
 
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        <strong>This section is for VPS / dedicated servers only</strong>, where you control the web
+        server. On shared hosting you cannot edit Nginx, Supervisor, or system configs — your host
+        manages them. Shared-hosting buyers: skip to the
+        <a href="#cpanel-shared-hosting">cPanel / Shared Hosting walkthrough</a>.
+      </div>
+    </div>
+
     <h3>Nginx (Recommended)</h3>
 <pre class="code">
 server {
@@ -769,6 +806,7 @@ server {
     listen [::]:443 ssl http2;
     server_name yourdomain.com www.yourdomain.com;
 
+    # VPS path — e.g. /var/www/onemart/public
     root /path/to/your-project/public;
     index index.php;
 
@@ -825,6 +863,8 @@ certbot --nginx -d yourdomain.com -d www.yourdomain.com
     <p>Create a Supervisor config to keep the queue worker running persistently:</p>
 <pre class="code">
 # /etc/supervisor/conf.d/onemart-worker.conf
+# VPS only — Supervisor is not available on shared hosting
+# (see the cPanel Limitations table below)
 
 [program:onemart-worker]
 process_name=%(program_name)s_%(process_num)02d
@@ -846,10 +886,17 @@ supervisorctl start onemart-worker:*
 </pre>
 
     <h3>Cron Job</h3>
-    <p>Add the Laravel scheduler to your crontab (<code>crontab -e</code>):</p>
+    <p><strong>VPS</strong> — add the Laravel scheduler to your crontab (<code>crontab -e</code>):</p>
 <pre class="code">
+# VPS path — e.g. /var/www/onemart
 * * * * * cd /path/to/your-project && php artisan schedule:run >> /dev/null 2>&1
 </pre>
+    <p>
+      <strong>Shared hosting</strong> — create the cron job via <strong>cPanel → Cron Jobs</strong>
+      instead, using your home-directory path
+      (<code>php /home/username/your-project/artisan schedule:run</code>) — see
+      <a href="#cpanel-shared-hosting">Step 9 of the cPanel walkthrough</a>.
+    </p>
 
     <h3>CORS Configuration</h3>
     <p>
@@ -869,6 +916,11 @@ supervisorctl start onemart-worker:*
     <h2 id="deployment">Deployment</h2>
 
     <h3>First-Time Deploy</h3>
+    <p>
+      The commands below assume a <strong>VPS</strong> shell session in the project root
+      (e.g. <code>cd /var/www/onemart</code>). On <strong>shared hosting</strong>, follow the
+      <a href="#cpanel-shared-hosting">cPanel / Shared Hosting walkthrough</a> below instead.
+    </p>
 <pre class="code">
 # 1. Install PHP dependencies
 composer install --optimize-autoloader --no-dev
@@ -892,7 +944,7 @@ php artisan event:cache
 
 # 6. Set permissions
 chmod -R 775 storage bootstrap/cache
-chown -R www-data:www-data .
+chown -R www-data:www-data .    # VPS only — skip chown on shared hosting
 </pre>
 
     <h3>Subsequent Deploys</h3>
@@ -927,7 +979,7 @@ supervisorctl restart onemart-worker:*
       <li>Confirm file uploads and storage links work</li>
     </ul>
 
-    <h3>cPanel / Shared Hosting</h3>
+    <h3 id="cpanel-shared-hosting">cPanel / Shared Hosting</h3>
     <div class="alert alert-warning">
       <span class="alert-icon">⚠️</span>
       <div>
@@ -1122,6 +1174,8 @@ php artisan view:cache
           Connect via SSH and run <code>composer update</code> in the project root to install the
           new PHP dependencies that ship with the update:
 <pre class="code">
+# VPS:            cd /path/to/your-project   (e.g. /var/www/onemart)
+# Shared hosting: cd /home/username/your-project
 cd /path/to/your-project
 composer update --optimize-autoloader --no-dev
 php artisan optimize:clear
@@ -1144,6 +1198,7 @@ php artisan optimize
 php artisan down --message="Updating, back in 5 minutes" --retry=300
 
 # 2. Backup database
+#    (VPS shown; on shared hosting use your cPanel DB user, e.g. youruser_onemart)
 mysqldump -u root -p onemart > backup_$(date +%Y%m%d).sql
 
 # 3. Extract and overwrite files (keep your .env and storage/)
@@ -1616,7 +1671,7 @@ php artisan storage:link
 
     <h3>404 — Page Not Found</h3>
     <ul class="list">
-      <li>Confirm the Nginx/Apache document root points to <code>/public</code></li>
+      <li>Confirm the document root points to <code>/public</code> — on a VPS check your Nginx/Apache config; on shared hosting check <strong>cPanel → Domains → Document Root</strong></li>
       <li>For Nginx: ensure <code>try_files $uri $uri/ /index.php?$query_string;</code> is present</li>
       <li>For Apache: confirm <code>mod_rewrite</code> is enabled and <code>AllowOverride All</code> is set</li>
     </ul>

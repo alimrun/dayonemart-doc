@@ -25,6 +25,7 @@
     <a href="source/pages/deliveryman-app.html">Deliveryman App</a>
     <a href="source/pages/api-reference.html">API Reference</a>
     <a href="source/pages/branding-guide.html">Branding</a>
+    <a href="#glossary">Glossary</a>
   </nav>
 
   <div class="nav-actions">
@@ -259,6 +260,60 @@ composer dump-autoload</pre>
           </div>
         </li>
       </ol>
+    </div>
+  </div>
+
+  <!-- Glossary for Non-Technical Users -->
+  <div style="max-width:1200px;margin:48px auto 0;padding:0 24px;">
+    <div class="card" id="glossary" style="border-left:4px solid var(--accent);">
+      <h3 style="margin-bottom:12px;">📖 Glossary — Plain-Language Terms for Non-Technical Users</h3>
+      <p style="margin-bottom:16px;">
+        New to hosting and app terminology? These are the technical terms used throughout this
+        documentation, explained in plain language. You do <strong>not</strong> need to memorize
+        them — come back to this table whenever a term is unclear.
+      </p>
+
+      <h4 style="margin:16px 0 8px;">Hosting &amp; Server Terms</h4>
+      <table class="doc-table">
+        <thead><tr><th style="width:220px;">Term</th><th>What it means</th></tr></thead>
+        <tbody>
+          <tr><td><strong>VPS (Virtual Private Server)</strong></td><td>A rented server you fully control (e.g. DigitalOcean, Hetzner, AWS). You install software yourself using the command line. Paths shown in this documentation like <code>/var/www/onemart</code> refer to a VPS.</td></tr>
+          <tr><td><strong>Shared hosting</strong></td><td>Budget web hosting managed through a control panel (usually cPanel). You share the server with other customers and manage files through a visual File Manager. Paths shown like <code>/home/username/onemart</code> refer to shared hosting.</td></tr>
+          <tr><td><strong>cPanel</strong></td><td>The web-based control panel most shared hosts provide for managing files, databases, domains, and cron jobs — no command line needed.</td></tr>
+          <tr><td><strong>SSH / Terminal</strong></td><td>A way to type commands directly on the server. A VPS always has it; on shared hosting it may need to be enabled by your hosting provider.</td></tr>
+          <tr><td><strong>Document root</strong></td><td>The folder your domain serves files from. For OneMart this must always point to the project's <code>/public</code> folder.</td></tr>
+          <tr><td><strong>Cron job</strong></td><td>A task the server runs automatically on a schedule. OneMart uses one that fires every minute to handle scheduled work.</td></tr>
+          <tr><td><strong>Queue worker</strong></td><td>A background process that handles slow jobs (emails, push notifications) so customers never wait for them.</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="margin:20px 0 8px;">Installation &amp; Backend Terms</h4>
+      <table class="doc-table">
+        <thead><tr><th style="width:220px;">Term</th><th>What it means</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Database (MySQL)</strong></td><td>Where the application stores its data — products, orders, customers. Created once during installation.</td></tr>
+          <tr><td><strong>.env file</strong></td><td>The configuration file holding settings such as database credentials. Created from <code>.env.example</code> during installation.</td></tr>
+          <tr><td><strong>Composer</strong></td><td>The tool that downloads the PHP libraries the backend needs. Run once at install and again after each update.</td></tr>
+          <tr><td><strong>vendor/ folder</strong></td><td>The folder of PHP libraries that Composer generates. It is <em>not</em> included in the download ZIP — you create it by running <code>composer update</code>.</td></tr>
+          <tr><td><strong>Node.js / npm</strong></td><td>Tools used once at install time to build the website's CSS and JavaScript files (<code>npm run build</code>). Not needed for day-to-day running.</td></tr>
+          <tr><td><strong>Artisan</strong></td><td>Laravel's built-in command-line helper. Commands look like <code>php artisan …</code>.</td></tr>
+          <tr><td><strong>Migration</strong></td><td>A script that creates or updates the database tables. The installer wizard runs these for you automatically.</td></tr>
+          <tr><td><strong>Storage symlink</strong></td><td>A shortcut that makes uploaded images publicly visible, created with <code>php artisan storage:link</code>. If product images don't show, this is usually why.</td></tr>
+          <tr><td><strong>Purchase code</strong></td><td>The license code from your CodeCanyon purchase. The installer asks for it to verify your license.</td></tr>
+        </tbody>
+      </table>
+
+      <h4 style="margin:20px 0 8px;">Mobile App &amp; Integration Terms</h4>
+      <table class="doc-table">
+        <thead><tr><th style="width:220px;">Term</th><th>What it means</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Flutter</strong></td><td>The framework both mobile apps are built with — one codebase produces both the Android and iOS versions.</td></tr>
+          <tr><td><strong>REST API / endpoint</strong></td><td>The web addresses through which the mobile apps talk to your backend server.</td></tr>
+          <tr><td><strong>Firebase</strong></td><td>Google's service used by the apps for push notifications and social login. Requires a free Google account to set up.</td></tr>
+          <tr><td><strong>Bundle ID / package name</strong></td><td>The unique identifier of a mobile app in the app stores (e.g. <code>com.yourbrand.app</code>). You change it when white-labeling.</td></tr>
+          <tr><td><strong>White-label</strong></td><td>Replacing OneMart's branding — name, logos, colors, and app identifiers — with your own so the product ships as yours.</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
