@@ -202,16 +202,11 @@
       <div class="shot">
         <img src="../assets/images/screenshots/admin-dashboard.png"
              alt="Admin Panel Dashboard — business analytics KPI cards, order status overview, sales trend, and order type breakdown"
-             class="doc-img"
-             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+             class="doc-img" />
         <span class="pin" style="left:27%;top:27%;">1</span>
         <span class="pin" style="left:27%;top:59%;">2</span>
         <span class="pin" style="left:26%;top:88%;">3</span>
         <span class="pin" style="left:77%;top:88%;">4</span>
-      </div>
-      <div class="img-placeholder" style="display:none;">
-        <span class="ph-icon">🖼️</span>
-        <span>Add <code>admin-dashboard.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of the <strong>Admin Panel → Dashboard</strong>.</span>
       </div>
       <p class="callout-title">Key areas of this screen</p>
       <ol class="callout-legend">
@@ -242,16 +237,11 @@
       <div class="shot">
         <img src="../assets/images/screenshots/admin-orders.png"
              alt="Admin Panel Order Management — order list with status filters, search, order-status dropdowns, and per-order actions"
-             class="doc-img"
-             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+             class="doc-img" />
         <span class="pin" style="left:8%;top:33%;">1</span>
         <span class="pin" style="left:70%;top:12%;">2</span>
         <span class="pin" style="left:84%;top:24%;">3</span>
         <span class="pin" style="left:95%;top:24%;">4</span>
-      </div>
-      <div class="img-placeholder" style="display:none;">
-        <span class="ph-icon">🖼️</span>
-        <span>Add <code>admin-orders.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of <strong>Admin Panel → Orders</strong>.</span>
       </div>
       <p class="callout-title">Key areas of this screen</p>
       <ol class="callout-legend">
@@ -280,16 +270,11 @@
       <div class="shot">
         <img src="../assets/images/screenshots/admin-products.png"
              alt="Admin Panel Item List — products with image, name, category, price, stock, status toggle, and row actions"
-             class="doc-img"
-             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+             class="doc-img" />
         <span class="pin" style="left:32%;top:23%;">1</span>
         <span class="pin" style="left:49%;top:23%;">2</span>
         <span class="pin" style="left:70%;top:23%;">3</span>
         <span class="pin" style="left:87%;top:23%;">4</span>
-      </div>
-      <div class="img-placeholder" style="display:none;">
-        <span class="ph-icon">🖼️</span>
-        <span>Add <code>admin-products.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of <strong>Admin Panel → Item List</strong>.</span>
       </div>
       <p class="callout-title">Key areas of this screen</p>
       <ol class="callout-legend">
@@ -318,16 +303,11 @@
       <div class="shot">
         <img src="../assets/images/screenshots/admin-promotions.png"
              alt="Admin Panel Coupon List — coupon name and code, coupon info, validity, status toggle, and actions"
-             class="doc-img"
-             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+             class="doc-img" />
         <span class="pin" style="left:27%;top:24%;">1</span>
         <span class="pin" style="left:49%;top:24%;">2</span>
         <span class="pin" style="left:78%;top:24%;">3</span>
         <span class="pin" style="left:86%;top:24%;">4</span>
-      </div>
-      <div class="img-placeholder" style="display:none;">
-        <span class="ph-icon">🖼️</span>
-        <span>Add <code>admin-promotions.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of <strong>Admin Panel → Promotions → Coupons</strong>.</span>
       </div>
       <p class="callout-title">Key areas of this screen</p>
       <ol class="callout-legend">
@@ -383,12 +363,7 @@
     <figure class="doc-figure">
       <img src="../assets/images/screenshots/admin-settings.png"
            alt="Admin Panel Settings — Business Setup Basic Info form with the settings sidebar (System Modules, Delivery, Vat/Tax, 3rd Party Setup)"
-           class="doc-img"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-      <div class="img-placeholder" style="display:none;">
-        <span class="ph-icon">🖼️</span>
-        <span>Add <code>admin-settings.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of <strong>Admin Panel → Settings</strong>.</span>
-      </div>
+           class="doc-img" />
       <figcaption>
         <strong>Admin Panel → Settings → Business Setup.</strong> The Settings area is where you
         configure business details (name, email, phone, address, time zone), plus System Modules,
@@ -419,6 +394,65 @@
          PREREQUISITES
          ======================================================== -->
     <h2 id="prerequisites">Prerequisites</h2>
+
+    <h3 id="identify-hosting">First: Identify Your Hosting Type (VPS or Shared Hosting)</h3>
+    <p>
+      Commands and file paths in this documentation differ depending on whether your server is a
+      <strong>VPS</strong> or <strong>shared hosting</strong>. Take 60 seconds to identify which one
+      you have before installing — it determines which instructions and paths apply to you.
+    </p>
+
+    <table class="doc-table">
+      <thead>
+        <tr><th>Question</th><th>You have SHARED HOSTING if…</th><th>You have a VPS if…</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>How do you log in to manage the server?</strong></td>
+          <td>Through a browser control panel such as <strong>cPanel</strong>, <strong>Plesk</strong>, or <strong>hPanel</strong>, with a visual File Manager.</td>
+          <td>Through an <strong>SSH terminal</strong> (e.g. <code>ssh root@your-server-ip</code>) where you type commands.</td>
+        </tr>
+        <tr>
+          <td><strong>Who installed the web server (Nginx/Apache), PHP, and MySQL?</strong></td>
+          <td>Your hosting company — they were already there when you signed up.</td>
+          <td>You (or your developer) installed and configured them yourself.</td>
+        </tr>
+        <tr>
+          <td><strong>Typical providers / plans</strong></td>
+          <td>Hostinger, Namecheap, Bluehost, GoDaddy "web hosting" plans — usually a few dollars per month.</td>
+          <td>DigitalOcean, Hetzner, Vultr, Linode, AWS EC2 "cloud server / droplet / instance" plans.</td>
+        </tr>
+        <tr>
+          <td><strong>Typical file paths you will see</strong></td>
+          <td><code>/home/<em>username</em>/onemart</code> and <code>/home/<em>username</em>/public_html</code></td>
+          <td><code>/var/www/onemart</code> (web root: <code>/var/www/onemart/public</code>)</td>
+        </tr>
+        <tr>
+          <td><strong>Root / sudo access?</strong></td>
+          <td>No — you cannot run <code>sudo</code>, install system packages, or edit Nginx configs.</td>
+          <td>Yes — full control of the operating system.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">🤔</span>
+      <div>
+        <strong>Still not sure?</strong> Ask your hosting provider one question: <em>"Do I have root
+        SSH access to my own server?"</em> If the answer is <strong>yes</strong>, you have a VPS —
+        follow the <a href="#server-configuration">Server Configuration</a> and
+        <a href="#deployment">Deployment</a> sections. If the answer is <strong>no</strong>, you have
+        shared hosting — follow the <a href="#cpanel-shared-hosting">cPanel / Shared Hosting</a>
+        guide instead.
+      </div>
+    </div>
+
+    <p>
+      Throughout this documentation, path examples are labeled accordingly: paths beginning with
+      <code>/var/www/…</code> are for a <span class="mark">VPS</span>, and paths beginning with
+      <code>/home/<em>username</em>/…</code> are for <span class="mark">shared hosting</span>.
+      Substitute your own username, domain, or folder name where they appear.
+    </p>
 
     <h3>Server Requirements</h3>
 
@@ -487,8 +521,10 @@
           <li><strong>Shared hosting (cPanel)</strong> — the project lives inside your home directory, written as
             <code>/home/username/your-project</code>, where <code>username</code> is your cPanel username.</li>
         </ul>
-        Substitute the real path for <em>your</em> environment wherever a placeholder appears.
-        Not sure which environment you have? See the <a href="../../index.html#glossary">plain-language glossary</a>.
+        Substitute the real path for <em>your</em> environment wherever an example path appears.
+        Not sure which environment you have? See
+        <a href="#identify-hosting">First: Identify Your Hosting Type</a> in the Prerequisites, or the
+        <a href="../../index.html#glossary">plain-language glossary</a>.
         Shared-hosting buyers should follow the dedicated
         <a href="#cpanel-shared-hosting">cPanel / Shared Hosting walkthrough</a> instead of the VPS steps.
       </div>
@@ -1283,16 +1319,11 @@ php artisan up
       <div class="shot">
         <img src="../assets/images/screenshots/admin-branding.png"
              alt="Admin Panel Business Setup — business name, logo, icon/favicon, and admin primary/secondary color fields"
-             class="doc-img"
-             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+             class="doc-img" />
         <span class="pin" style="left:51%;top:27%;">1</span>
         <span class="pin" style="left:51%;top:74%;">2</span>
         <span class="pin" style="left:82%;top:74%;">3</span>
         <span class="pin" style="left:40%;top:93%;">4</span>
-      </div>
-      <div class="img-placeholder" style="display:none;">
-        <span class="ph-icon">🖼️</span>
-        <span>Add <code>admin-branding.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of <strong>Admin Panel → Settings → Business Setup</strong>.</span>
       </div>
       <p class="callout-title">Fields on this screen</p>
       <ol class="callout-legend">
@@ -2050,7 +2081,7 @@ php artisan octane:start             # Octane performance server (if enabled)
 
     <hr class="section-divider" />
     <p style="color:var(--text-muted);font-size:.85rem;">
-      Need help? Contact <a href="mailto:contact@6amtech.com">contact@6amtech.com</a>
+      Need help? Reach us via the item’s Support tab on CodeCanyon or <a href="https://dayonesoft.com" target="_blank">dayonesoft.com</a>
       or visit our website for support.
     </p>
 
@@ -2063,7 +2094,7 @@ php artisan octane:start             # Octane performance server (if enabled)
     <a href="../../index.html">Home</a> &nbsp;|&nbsp;
     <a href="customer-app.html">Customer App</a> &nbsp;|&nbsp;
     <a href="deliveryman-app.html">Deliveryman App</a> &nbsp;|&nbsp;
-    <a href="mailto:contact@6amtech.com">Contact Support</a>
+    <a href="https://dayonesoft.com" target="_blank">Contact Support</a>
   </p>
 </div>
 

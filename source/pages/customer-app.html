@@ -265,16 +265,11 @@
       <div class="shot shot-mobile">
         <img src="../assets/images/screenshots/customer-app-home.png"
              alt="Customer App Home screen — delivery location, module tabs, promo banners, popular categories, and flash deals"
-             class="doc-img"
-             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+             class="doc-img" />
         <span class="pin" style="left:32%;top:9.5%;">1</span>
         <span class="pin" style="left:50%;top:17%;">2</span>
         <span class="pin" style="left:30%;top:26%;">3</span>
         <span class="pin" style="left:20%;top:42%;">4</span>
-      </div>
-      <div class="img-placeholder" style="display:none;">
-        <span class="ph-icon">📱</span>
-        <span>Add <code>customer-app-home.png</code> to <code>source/assets/images/screenshots/</code> — the app <strong>Home / Dashboard</strong> screen.</span>
       </div>
       <p class="callout-title">Key areas of this screen</p>
       <ol class="callout-legend">
@@ -290,16 +285,11 @@
       <div class="shot shot-mobile">
         <img src="../assets/images/screenshots/customer-app-checkout.png"
              alt="Customer App Checkout — personal info, delivery info, delivery schedule, payment, receipt, and Place Order"
-             class="doc-img"
-             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+             class="doc-img" />
         <span class="pin" style="left:30%;top:30%;">1</span>
         <span class="pin" style="left:50%;top:45%;">2</span>
         <span class="pin" style="left:42%;top:63%;">3</span>
         <span class="pin" style="left:50%;top:93%;">4</span>
-      </div>
-      <div class="img-placeholder" style="display:none;">
-        <span class="ph-icon">📱</span>
-        <span>Add <code>customer-app-checkout.png</code> to <code>source/assets/images/screenshots/</code> — the <strong>Checkout</strong> screen.</span>
       </div>
       <p class="callout-title">Key areas of this screen</p>
       <ol class="callout-legend">
@@ -315,16 +305,11 @@
       <div class="shot shot-mobile">
         <img src="../assets/images/screenshots/customer-app-tracking.png"
              alt="Customer App Order Details — order status, delivery info, ordered item, delivery schedule, delivery hub, and Cancel Order"
-             class="doc-img"
-             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+             class="doc-img" />
         <span class="pin" style="left:50%;top:30%;">1</span>
         <span class="pin" style="left:30%;top:41%;">2</span>
         <span class="pin" style="left:42%;top:53%;">3</span>
         <span class="pin" style="left:50%;top:94%;">4</span>
-      </div>
-      <div class="img-placeholder" style="display:none;">
-        <span class="ph-icon">📱</span>
-        <span>Add <code>customer-app-tracking.png</code> to <code>source/assets/images/screenshots/</code> — the <strong>Order Details / Tracking</strong> screen.</span>
       </div>
       <p class="callout-title">Key areas of this screen</p>
       <ol class="callout-legend">
@@ -623,12 +608,7 @@ static const AppModule defaultModule = AppModule.grocery;
     <figure class="doc-figure">
       <img src="../assets/images/screenshots/customer-app-settings.png"
            alt="Customer App in-app Settings screen — Language, Setup Password, offer preferences, and Notification / Location / Microphone permission toggles"
-           class="doc-img"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-      <div class="img-placeholder" style="display:none;">
-        <span class="ph-icon">📱</span>
-        <span>Add <code>customer-app-settings.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of the Customer App Settings screen.</span>
-      </div>
+           class="doc-img" />
       <p class="callout-title">Annotate on the Settings screen</p>
       <ol class="callout-legend">
         <li><strong>Language selector</strong> — switch the app's display language.</li>
@@ -705,8 +685,8 @@ flutterfire configure
     <div class="alert alert-info">
       <span class="alert-icon">ℹ️</span>
       <div>
-        The <code>firebase_options.dart</code> file is already present in the project as a placeholder.
-        Replace its contents with the output from <code>flutterfire configure</code>.
+        The <code>firebase_options.dart</code> file already exists in the project with sample
+        values. Replace its contents with the output from <code>flutterfire configure</code>.
       </div>
     </div>
 
@@ -1068,6 +1048,183 @@ flutter build ipa --release \
 </pre>
     <p>Then open <code>build/ios/ipa</code> in Xcode Organizer or use Transporter to upload to App Store Connect.</p>
 
+    <h3 id="publish-google-play">Publishing to Google Play — Step by Step</h3>
+    <p>
+      With the signed <code>.aab</code> from the previous section, here is the complete path from
+      build to a live Google Play listing:
+    </p>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Create a Google Play developer account</strong>
+          Register at <a href="https://play.google.com/console" target="_blank">play.google.com/console</a>
+          (one-time $25 fee). Identity verification can take a day or two for new accounts.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Create the app</strong>
+          In the Play Console: <em>All apps → Create app</em>. Enter your app name, default
+          language, select <em>App</em> (not Game) and <em>Free</em>, and accept the declarations.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Complete the "Set up your app" checklist</strong>
+          On the app's Dashboard, work through every task before your first release:
+          <em>privacy policy URL</em> (the storefront's Privacy Policy page works),
+          <em>App access</em> (provide a working demo login so Google's reviewers can sign in),
+          <em>Ads declaration</em>, <em>Content rating</em> questionnaire, <em>Target audience</em>,
+          and the <em>Data safety</em> form — declare that the app collects location, name, email,
+          and phone number for order delivery.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Build the signed bundle</strong>
+          Confirm <code>android/key.properties</code> is in place, then run
+          <code>flutter build appbundle --release</code>. The signed bundle is written to
+          <code>build/app/outputs/bundle/release/app-release.aab</code>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Test with an Internal testing release first</strong>
+          Go to <em>Testing → Internal testing → Create new release</em>, upload the
+          <code>.aab</code>, add your email as a tester, and install the app on a real device via
+          the opt-in link. Verify login, browsing, checkout, and push notifications against your
+          live backend before going public.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Roll out to Production</strong>
+          Once the internal build works, go to <em>Production → Create new release</em> (or promote
+          the internal release), add release notes, review, and <em>Start rollout</em>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Wait for review</strong>
+          First-time reviews typically take from a few hours up to about 7 days. Subsequent updates
+          are usually much faster.
+        </div>
+      </li>
+    </ol>
+
+    <h3 id="publish-app-store">Publishing to the App Store — Step by Step</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Prerequisites</strong>
+          Complete the <a href="#build-requirements">iOS code-signing setup</a> above: Apple
+          Developer membership, App ID, signing configured in Xcode, and the app record created in
+          App Store Connect.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Build the signed archive</strong>
+          Run <code>flutter build ipa --release</code>. The signed <code>.ipa</code> is written to
+          <code>build/ios/ipa/</code>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Upload the build</strong>
+          Open Apple's free <strong>Transporter</strong> app (Mac App Store), sign in with your
+          Apple ID, drag the <code>.ipa</code> in, and click <em>Deliver</em>. (Alternative: open
+          the archive in Xcode Organizer and click <em>Distribute App</em>.)
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Wait for processing, then test via TestFlight</strong>
+          In App Store Connect the build appears under <em>TestFlight</em> after 15–60 minutes of
+          processing. Install it on a real device with the TestFlight app and verify login,
+          checkout, and push notifications.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Complete the App Store listing</strong>
+          In App Store Connect fill in: screenshots for the required device sizes, description,
+          keywords, support URL, privacy policy URL, and the <em>App Privacy</em> questionnaire
+          (declare location, contact info, and identifiers collected for order delivery).
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Submit for review</strong>
+          Select the build, add <em>review notes with a working demo account</em> (Apple rejects
+          apps it cannot log in to), and submit. Reviews typically complete within 24–48 hours.
+        </div>
+      </li>
+    </ol>
+
+    <div class="alert alert-info">
+      <span class="alert-icon">ℹ️</span>
+      <div>
+        <strong>Common App Store rejection traps</strong> — both are already handled by this app,
+        just don't remove them: Apple requires <em>Sign in with Apple</em> whenever other social
+        logins are offered, and requires an in-app <em>account deletion</em> option (Profile →
+        Delete Account).
+      </div>
+    </div>
+
+    <h3>Versioning App Updates</h3>
+    <p>
+      The app version lives in <code>pubspec.yaml</code>:
+    </p>
+<pre class="code">
+# pubspec.yaml
+version: 4.0.0+40
+#        │     └─ build number → Android versionCode / iOS build number
+#        └─────── display version → Android versionName / iOS version
+</pre>
+    <p>
+      Every upload to Google Play or App Store Connect must have a <em>higher build number</em>
+      (the part after <code>+</code>) than the previous upload. Bump it, rebuild, and re-upload —
+      e.g. <code>4.0.0+40</code> → <code>4.0.1+41</code>.
+    </p>
+
+    <h3>Common Build &amp; Signing Errors</h3>
+    <table class="doc-table">
+      <thead><tr><th>Error</th><th>Cause</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>Keystore was tampered with, or password was incorrect</code></td>
+          <td>Wrong <code>storePassword</code> / <code>keyPassword</code> in <code>key.properties</code></td>
+          <td>Re-check both passwords; they must match what you entered in <code>keytool</code>.</td>
+        </tr>
+        <tr>
+          <td>Release build is signed with debug keys / Play rejects the upload</td>
+          <td><code>android/key.properties</code> missing, or <code>storeFile</code> path wrong</td>
+          <td>The <code>storeFile</code> path is relative to <code>android/app/</code>. Place the <code>.jks</code> at <code>android/app/upload-keystore.jks</code> and use <code>storeFile=upload-keystore.jks</code>.</td>
+        </tr>
+        <tr>
+          <td><code>Android sdkmanager licences not accepted</code></td>
+          <td>SDK licences never accepted on this machine</td>
+          <td>Run <code>flutter doctor --android-licenses</code> and accept all.</td>
+        </tr>
+        <tr>
+          <td>CocoaPods errors during iOS build</td>
+          <td>Stale or missing pods</td>
+          <td><code>cd ios && pod repo update && pod install</code>, then rebuild.</td>
+        </tr>
+        <tr>
+          <td><code>No signing certificate "iOS Distribution" found</code></td>
+          <td>Distribution certificate not installed in this Mac's Keychain</td>
+          <td>Enable <em>Automatically manage signing</em> with your Team selected in Xcode, or download and double-click your distribution certificate.</td>
+        </tr>
+        <tr>
+          <td><code>Version code X has already been used</code> (Play Console)</td>
+          <td>Uploading a build with the same or lower build number</td>
+          <td>Increase the <code>+N</code> build number in <code>pubspec.yaml</code> and rebuild.</td>
+        </tr>
+      </tbody>
+    </table>
+
     <h3>Code Generation (after model changes)</h3>
 <pre class="code">
 # One-time build
@@ -1406,7 +1563,7 @@ flutter_launcher_icons
 
     <hr class="section-divider" />
     <p style="color:var(--text-muted);font-size:.85rem;">
-      Need help? Contact <a href="mailto:contact@6amtech.com">contact@6amtech.com</a>
+      Need help? Reach us via the item’s Support tab on CodeCanyon or <a href="https://dayonesoft.com" target="_blank">dayonesoft.com</a>
       or visit our website for support.
     </p>
 
@@ -1419,7 +1576,7 @@ flutter_launcher_icons
     <a href="../../index.html">Home</a> &nbsp;|&nbsp;
     <a href="admin-and-web.html">Admin &amp; Web</a> &nbsp;|&nbsp;
     <a href="deliveryman-app.html">Deliveryman App</a> &nbsp;|&nbsp;
-    <a href="mailto:contact@6amtech.com">Contact Support</a>
+    <a href="https://dayonesoft.com" target="_blank">Contact Support</a>
   </p>
 </div>
 

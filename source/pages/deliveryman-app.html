@@ -230,16 +230,11 @@
       <div class="shot shot-mobile">
         <img src="../assets/images/screenshots/deliveryman-app-dashboard.png"
              alt="Deliveryman App Dashboard — greeting with orders to deliver, delivery KPI cards, recent orders, and bottom navigation"
-             class="doc-img"
-             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+             class="doc-img" />
         <span class="pin" style="left:50%;top:14%;">1</span>
         <span class="pin" style="left:26%;top:27%;">2</span>
         <span class="pin" style="left:30%;top:62%;">3</span>
         <span class="pin" style="left:50%;top:95%;">4</span>
-      </div>
-      <div class="img-placeholder" style="display:none;">
-        <span class="ph-icon">📱</span>
-        <span>Add <code>deliveryman-app-dashboard.png</code> to <code>source/assets/images/screenshots/</code> — the <strong>Dashboard</strong> screen.</span>
       </div>
       <p class="callout-title">Key areas of this screen</p>
       <ol class="callout-legend">
@@ -255,16 +250,11 @@
       <div class="shot shot-mobile">
         <img src="../assets/images/screenshots/deliveryman-app-order.png"
              alt="Deliveryman App Orders — status filter tabs, order cards with items and amount, View Details, and bottom navigation"
-             class="doc-img"
-             onerror="this.closest('.shot').style.display='none';this.closest('figure').querySelector('.img-placeholder').style.display='flex';" />
+             class="doc-img" />
         <span class="pin" style="left:50%;top:12%;">1</span>
         <span class="pin" style="left:30%;top:19%;">2</span>
         <span class="pin" style="left:75%;top:26%;">3</span>
         <span class="pin" style="left:50%;top:95%;">4</span>
-      </div>
-      <div class="img-placeholder" style="display:none;">
-        <span class="ph-icon">📱</span>
-        <span>Add <code>deliveryman-app-order.png</code> to <code>source/assets/images/screenshots/</code> — the <strong>Orders</strong> screen.</span>
       </div>
       <p class="callout-title">Key areas of this screen</p>
       <ol class="callout-legend">
@@ -566,12 +556,7 @@ static String currencySymbolPosition = 'left'; // 'left' or 'right'
     <figure class="doc-figure">
       <img src="../assets/images/screenshots/deliveryman-app-settings.png"
            alt="Deliveryman App in-app Settings screen — Language, Setup Password, and Notification / Location / Microphone permission toggles"
-           class="doc-img"
-           onerror="this.style.display='none';this.nextElementSibling.style.display='flex';" />
-      <div class="img-placeholder" style="display:none;">
-        <span class="ph-icon">📱</span>
-        <span>Add <code>deliveryman-app-settings.png</code> to <code>source/assets/images/screenshots/</code> — a screenshot of the Deliveryman App Settings screen.</span>
-      </div>
+           class="doc-img" />
       <p class="callout-title">Annotate on the Settings screen</p>
       <ol class="callout-legend">
         <li><strong>Language selector</strong> — switch the app's display language.</li>
@@ -969,6 +954,179 @@ flutter build ipa --release --obfuscate --split-debug-info=build/ios/symbols
       to App Store Connect.
     </p>
 
+    <h3 id="publish-google-play">Publishing to Google Play — Step by Step</h3>
+    <p>
+      With the signed <code>.aab</code> from the previous section, here is the complete path from
+      build to a live Google Play listing:
+    </p>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Create a Google Play developer account</strong>
+          Register at <a href="https://play.google.com/console" target="_blank">play.google.com/console</a>
+          (one-time $25 fee). Identity verification can take a day or two for new accounts.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Create the app</strong>
+          In the Play Console: <em>All apps → Create app</em>. Enter the app name, default
+          language, select <em>App</em> (not Game) and <em>Free</em>, and accept the declarations.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Complete the "Set up your app" checklist</strong>
+          On the app's Dashboard, work through every task before your first release:
+          <em>privacy policy URL</em>, <em>App access</em> (provide a working demo deliveryman
+          login so Google's reviewers can sign in), <em>Ads declaration</em>, <em>Content
+          rating</em>, <em>Target audience</em>, and the <em>Data safety</em> form — declare that
+          the app collects the rider's location, name, email, and phone number for delivery
+          operations.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Build the signed bundle</strong>
+          Confirm <code>android/key.properties</code> is in place, then run
+          <code>flutter build appbundle --release</code>. The signed bundle is written to
+          <code>build/app/outputs/bundle/release/app-release.aab</code>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Test with an Internal testing release first</strong>
+          Go to <em>Testing → Internal testing → Create new release</em>, upload the
+          <code>.aab</code>, add your email as a tester, and install the app on a real device via
+          the opt-in link. Verify rider login, going online, receiving an assigned order, status
+          updates, and map navigation against your live backend before going public.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Roll out to Production</strong>
+          Once the internal build works, go to <em>Production → Create new release</em> (or promote
+          the internal release), add release notes, review, and <em>Start rollout</em>.
+        </div>
+      </li>
+    </ol>
+
+    <div class="alert alert-warning">
+      <span class="alert-icon">⚠️</span>
+      <div>
+        <strong>Location permission declaration.</strong> Delivery apps that request location access
+        trigger an extra <em>Sensitive app permissions</em> declaration in the Play Console. Fill in
+        the location-permissions form honestly (location is used to track active deliveries) and, if
+        Google asks for one, provide a short screen-recording showing the in-app feature that uses
+        location. Skipping this declaration is a common cause of Play Store rejections for
+        deliveryman apps.
+      </div>
+    </div>
+
+    <h3 id="publish-app-store">Publishing to the App Store — Step by Step</h3>
+    <ol class="steps">
+      <li>
+        <div class="step-body">
+          <strong>Prerequisites</strong>
+          Complete the <a href="#build-requirements">iOS code-signing setup</a> above: Apple
+          Developer membership, App ID, signing configured in Xcode, and the app record created in
+          App Store Connect.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Build the signed archive</strong>
+          Run <code>flutter build ipa --release</code>. The signed <code>.ipa</code> is written to
+          <code>build/ios/ipa/</code>.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Upload the build</strong>
+          Open Apple's free <strong>Transporter</strong> app (Mac App Store), sign in with your
+          Apple ID, drag the <code>.ipa</code> in, and click <em>Deliver</em>. (Alternative: open
+          the archive in Xcode Organizer and click <em>Distribute App</em>.)
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Wait for processing, then test via TestFlight</strong>
+          In App Store Connect the build appears under <em>TestFlight</em> after 15–60 minutes of
+          processing. Install it on a real device with the TestFlight app and verify rider login,
+          order flow, and push notifications.
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Complete the App Store listing</strong>
+          In App Store Connect fill in: screenshots for the required device sizes, description,
+          keywords, support URL, privacy policy URL, and the <em>App Privacy</em> questionnaire
+          (declare location, contact info, and identifiers collected for delivery operations).
+        </div>
+      </li>
+      <li>
+        <div class="step-body">
+          <strong>Submit for review</strong>
+          Select the build, add <em>review notes with a working demo deliveryman account</em>
+          (Apple rejects apps it cannot log in to), and submit. Reviews typically complete within
+          24–48 hours.
+        </div>
+      </li>
+    </ol>
+
+    <h3>Versioning App Updates</h3>
+    <p>
+      The app version lives in <code>pubspec.yaml</code>:
+    </p>
+<pre class="code">
+# pubspec.yaml
+version: 3.0.0+30
+#        │     └─ build number → Android versionCode / iOS build number
+#        └─────── display version → Android versionName / iOS version
+</pre>
+    <p>
+      Every upload to Google Play or App Store Connect must have a <em>higher build number</em>
+      (the part after <code>+</code>) than the previous upload. Bump it, rebuild, and re-upload —
+      e.g. <code>3.0.0+30</code> → <code>3.0.1+31</code>.
+    </p>
+
+    <h3>Common Build &amp; Signing Errors</h3>
+    <table class="doc-table">
+      <thead><tr><th>Error</th><th>Cause</th><th>Fix</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>Keystore was tampered with, or password was incorrect</code></td>
+          <td>Wrong <code>storePassword</code> / <code>keyPassword</code> in <code>key.properties</code></td>
+          <td>Re-check both passwords; they must match what you entered in <code>keytool</code>.</td>
+        </tr>
+        <tr>
+          <td>Release build is signed with debug keys / Play rejects the upload</td>
+          <td><code>android/key.properties</code> missing, or <code>storeFile</code> path wrong</td>
+          <td>The <code>storeFile</code> path is relative to <code>android/app/</code>. Place the <code>.jks</code> at <code>android/app/upload-keystore.jks</code> and use <code>storeFile=upload-keystore.jks</code>.</td>
+        </tr>
+        <tr>
+          <td><code>Android sdkmanager licences not accepted</code></td>
+          <td>SDK licences never accepted on this machine</td>
+          <td>Run <code>flutter doctor --android-licenses</code> and accept all.</td>
+        </tr>
+        <tr>
+          <td>CocoaPods errors during iOS build</td>
+          <td>Stale or missing pods</td>
+          <td><code>cd ios && pod repo update && pod install</code>, then rebuild.</td>
+        </tr>
+        <tr>
+          <td><code>No signing certificate "iOS Distribution" found</code></td>
+          <td>Distribution certificate not installed in this Mac's Keychain</td>
+          <td>Enable <em>Automatically manage signing</em> with your Team selected in Xcode, or download and double-click your distribution certificate.</td>
+        </tr>
+        <tr>
+          <td><code>Version code X has already been used</code> (Play Console)</td>
+          <td>Uploading a build with the same or lower build number</td>
+          <td>Increase the <code>+N</code> build number in <code>pubspec.yaml</code> and rebuild.</td>
+        </tr>
+      </tbody>
+    </table>
+
     <!-- ========================================================
          API INTEGRATION
          ======================================================== -->
@@ -1234,7 +1392,7 @@ flutter gen-l10n
 
     <hr class="section-divider" />
     <p style="color:var(--text-muted);font-size:.85rem;">
-      Need help? Contact <a href="mailto:contact@6amtech.com">contact@6amtech.com</a>
+      Need help? Reach us via the item’s Support tab on CodeCanyon or <a href="https://dayonesoft.com" target="_blank">dayonesoft.com</a>
       or visit our website for support.
     </p>
 
@@ -1247,7 +1405,7 @@ flutter gen-l10n
     <a href="../../index.html">Home</a> &nbsp;|&nbsp;
     <a href="admin-and-web.html">Admin &amp; Web</a> &nbsp;|&nbsp;
     <a href="customer-app.html">Customer App</a> &nbsp;|&nbsp;
-    <a href="mailto:contact@6amtech.com">Contact Support</a>
+    <a href="https://dayonesoft.com" target="_blank">Contact Support</a>
   </p>
 </div>
 

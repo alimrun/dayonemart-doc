@@ -614,24 +614,6 @@ pre.code .cmd     { color: #c4b5fd; }
   color: var(--text-muted);
   line-height: 1.5;
 }
-/* placeholder shown until a real screenshot is dropped in */
-.img-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  text-align: center;
-  min-height: 200px;
-  padding: 24px;
-  border: 2px dashed var(--border);
-  border-radius: var(--radius);
-  background: var(--bg-alt, rgba(127,127,127,.06));
-  color: var(--text-muted);
-  font-size: .85rem;
-}
-.img-placeholder .ph-icon { font-size: 1.8rem; }
-
 /* ---------- Annotated screenshot callouts ---------- */
 .callout-legend {
   counter-reset: callout;
